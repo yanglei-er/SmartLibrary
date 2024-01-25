@@ -1,0 +1,164 @@
+﻿<Page
+    x:Class="SmartLibrary.Views.Pages.Home"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:SmartLibrary.Views.Pages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    Title="Home"
+    d:DataContext="{d:DesignInstance local:Home,
+                                     IsDesignTimeCreatable=False}"
+    d:DesignHeight="550"
+    d:DesignWidth="800"
+    ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
+    ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+    Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+    mc:Ignorable="d">
+
+    <StackPanel Margin="16">
+        <ui:InfoBar
+            Title="消息提示"
+            IsClosable="False"
+            IsOpen="True"
+            Message="当前使用的程序版本为测试版本，可能会有各种各样不可言明的Bug，遇到问题请理性反馈，谢谢。"
+            Severity="Warning" />
+        <Border
+            Height="200"
+            Margin="0,16,0,0"
+            CornerRadius="8">
+            <Border.Background>
+                <ImageBrush
+                    ImageSource="pack://application:,,,/Assets/background.jpg"
+                    RenderOptions.BitmapScalingMode="HighQuality"
+                    Stretch="UniformToFill" />
+            </Border.Background>
+            <Border CornerRadius="8">
+                <Border.Background>
+                    <RadialGradientBrush>
+                        <GradientStop Offset="0" Color="#1F000000" />
+                        <GradientStop Offset="1" Color="#4F000000" />
+                    </RadialGradientBrush>
+                </Border.Background>
+                <Grid>
+                    <StackPanel
+                        Margin="48,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Background="Transparent">
+                        <ui:TextBlock
+                            FontTypography="Title"
+                            Foreground="#FFFFFF"
+                            Text="智慧图书馆" />
+                        <ui:TextBlock
+                            FontTypography="Subtitle"
+                            Foreground="#B7FFFFFF"
+                            Text="Manage books intelligently" />
+                        <ui:TextBlock
+                            FontTypography="BodyStrong"
+                            Foreground="#B7FFFFFF"
+                            Text="by using Smart Library System on Windows." />
+                    </StackPanel>
+                    <ui:TextBlock
+                        Margin="12"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Bottom"
+                        FontTypography="Caption"
+                        Foreground="#57FFFFFF"
+                        Text="Created by Zhao Yanglei" />
+                </Grid>
+            </Border>
+        </Border>
+        <Grid Margin="0,16,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <ui:CardAction
+                Grid.Column="0"
+                Margin="0,0,4,0"
+                Padding="0"
+                VerticalAlignment="Stretch"
+                Command="{Binding ViewModel.CardClickCommand, Mode=OneWay}"
+                CommandParameter="我要找书"
+                IsChevronVisible="False">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <ui:Image
+                        Width="60"
+                        Margin="24,0,0,0"
+                        RenderOptions.BitmapScalingMode="HighQuality"
+                        Source="pack://application:,,,/Assets/findbook-512x512.png"
+                        Stretch="UniformToFill" />
+                    <ui:TextBlock
+                        Grid.Column="1"
+                        Margin="24"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontSize="22"
+                        Text="我要找书" />
+                </Grid>
+            </ui:CardAction>
+            <ui:CardAction
+                Grid.Column="1"
+                Margin="8,0,4,0"
+                Padding="0"
+                VerticalAlignment="Stretch"
+                Command="{Binding ViewModel.CardClickCommand, Mode=OneWay}"
+                CommandParameter="我要借/还书"
+                IsChevronVisible="False">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <ui:Image
+                        Width="60"
+                        Margin="24,0,0,0"
+                        RenderOptions.BitmapScalingMode="HighQuality"
+                        Source="pack://application:,,,/Assets/borrowbook-512x512.png"
+                        Stretch="UniformToFill" />
+                    <ui:TextBlock
+                        Grid.Column="1"
+                        Margin="14"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontSize="22"
+                        Text="我要借/还书" />
+                </Grid>
+            </ui:CardAction>
+            <ui:CardAction
+                Grid.Column="2"
+                Margin="8,0,0,0"
+                Padding="0"
+                VerticalAlignment="Stretch"
+                Command="{Binding ViewModel.CardClickCommand, Mode=OneWay}"
+                CommandParameter="图书信息查询"
+                IsChevronVisible="False">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <ui:Image
+                        Width="50"
+                        Margin="24,0,0,0"
+                        RenderOptions.BitmapScalingMode="HighQuality"
+                        Source="pack://application:,,,/Assets/bookinfo-512x512.png"
+                        Stretch="UniformToFill" />
+                    <ui:TextBlock
+                        Grid.Column="1"
+                        Margin="12"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontSize="22"
+                        Text="图书信息查询" />
+                </Grid>
+            </ui:CardAction>
+        </Grid>
+    </StackPanel>
+</Page>
