@@ -17,6 +17,8 @@
     <None Remove="Assets\.net-48x48.png" />
     <None Remove="Assets\applicationIcon-512.png" />
     <None Remove="Assets\background.jpg" />
+    <None Remove="Assets\bluetooth-connected.png" />
+    <None Remove="Assets\bluetooth.png" />
     <None Remove="Assets\bookinfo-512x512.png" />
     <None Remove="Assets\borrowbook-512x512.png" />
     <None Remove="Assets\findbook-512x512.png" />
@@ -28,6 +30,8 @@
     <Resource Include="Assets\.net-48x48.png" />
     <Resource Include="Assets\applicationIcon-512.png" />
     <Resource Include="Assets\background.jpg" />
+    <Resource Include="Assets\bluetooth-connected.png" />
+    <Resource Include="Assets\bluetooth.png" />
     <Resource Include="Assets\bookinfo-512x512.png" />
     <Resource Include="Assets\borrowbook-512x512.png" />
     <Resource Include="Assets\findbook-512x512.png" />
@@ -36,6 +40,7 @@
   </ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="32feet.NET" Version="3.5.0" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
 		<PackageReference Include="WPF-UI" Version="3.0.0-preview.13" />

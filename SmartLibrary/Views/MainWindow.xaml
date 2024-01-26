@@ -38,6 +38,7 @@
                     Source="pack://application:,,,/Assets/applicationIcon-512.png" />
             </ui:TitleBar.Icon>
         </ui:TitleBar>
+
         <ui:NavigationView
             x:Name="RootNavigation"
             Grid.Row="1"

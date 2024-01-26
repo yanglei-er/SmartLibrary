@@ -3,8 +3,10 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:helpers="clr-namespace:SmartLibrary.Helpers"
     xmlns:local="clr-namespace:SmartLibrary.Views.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="clr-namespace:SmartLibrary.Models"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     Title="BluetoothSettings"
     d:DataContext="{d:DesignInstance local:BluetoothSettings,
@@ -16,7 +18,143 @@
     Foreground="{DynamicResource TextFillColorPrimaryBrush}"
     mc:Ignorable="d">
 
+    <Page.Resources>
+        <helpers:StringToImageSourceConverter x:Key="StringToImageSourceConverter" />
+        <helpers:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        <helpers:StringToSolidColorBrushConvert x:Key="StringToSolidColorBrushConvert" />
+    </Page.Resources>
+
     <StackPanel Margin="16">
-        <ui:TextBlock FontSize="28" Text="{Binding ViewModel.Title, Mode=OneWay}" />
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <ui:Image
+                Grid.Column="0"
+                Width="64"
+                Height="64"
+                RenderOptions.BitmapScalingMode="HighQuality"
+                Source="{Binding ViewModel.StatusImageSource, Converter={StaticResource StringToImageSourceConverter}, Mode=OneWay}"
+                Stretch="UniformToFill" />
+            <StackPanel Grid.Column="1" Margin="4,4,12,0">
+                <ui:TextBlock
+                    VerticalAlignment="Center"
+                    FontTypography="TitleLarge"
+                    Text="{Binding ViewModel.StateText, Mode=OneWay}" />
+                <ProgressBar IsIndeterminate="{Binding ViewModel.ProgressBarIsIndeterminate, Mode=OneWay}" Visibility="{Binding ViewModel.ProgressBarVisibility, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}" />
+            </StackPanel>
+            <ui:Button
+                Grid.Column="2"
+                Margin="0,0,12,0"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Command="{Binding ViewModel.RefleshButtonClickCommand, Mode=OneWay}"
+                IsEnabled="{Binding ViewModel.ScanButtonEnabled, Mode=OneWay}">
+                <ui:TextBlock
+                    FontSize="24"
+                    FontTypography="Body"
+                    Text="刷新" />
+            </ui:Button>
+            <ui:Button
+                Grid.Column="3"
+                MinWidth="150"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Appearance="Primary"
+                Command="{Binding ViewModel.ScanButtonClickCommand, Mode=OneWay}"
+                Foreground="{Binding ViewModel.ScanButtonForeground, Converter={StaticResource StringToSolidColorBrushConvert}, Mode=OneWay}"
+                IsEnabled="{Binding ViewModel.ScanButtonEnabled, Mode=OneWay}">
+                <ui:TextBlock
+                    FontSize="24"
+                    FontTypography="Body"
+                    Text="{Binding ViewModel.ScanButtonText, Mode=OneWay}" />
+            </ui:Button>
+        </Grid>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Border
+                Grid.Column="0"
+                Margin="0,12,0,0"
+                Background="{ui:ThemeResource ControlFillColorDefaultBrush}"
+                CornerRadius="8">
+                <ListView
+                    Height="300"
+                    d:ItemsSource="{d:SampleData ItemCount=6}"
+                    ItemsSource="{Binding ViewModel.ListViewItems, Mode=TwoWay}"
+                    SelectionMode="Single">
+                    <ListView.ItemTemplate>
+                        <DataTemplate DataType="{x:Type models:BluetoothDevice}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Grid Grid.Column="0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <ui:SymbolIcon Symbol="Bluetooth48" />
+                                    <ui:TextBlock
+                                        Grid.Column="1"
+                                        Margin="4,0,0,0"
+                                        VerticalAlignment="Center"
+                                        FontSize="24"
+                                        FontTypography="Subtitle"
+                                        Text="{Binding Name, Mode=OneWay}" />
+                                </Grid>
+                                <Grid Grid.Column="1">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                    </Grid.RowDefinitions>
+                                    <ui:TextBlock
+                                        Grid.Row="0"
+                                        Margin="12,2,8,2"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Center"
+                                        FontTypography="Body"
+                                        Text="{Binding Address, Mode=OneWay}" />
+                                    <ui:TextBlock
+                                        Grid.Row="1"
+                                        Margin="12,2,8,2"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Center"
+                                        FontTypography="Body"
+                                        Text="{Binding ClassOfDevice, Mode=OneWay}" />
+                                </Grid>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </Border>
+            <StackPanel Grid.Column="1" Margin="12,12,0,0">
+                <ui:Button
+                    MinWidth="150"
+                    HorizontalAlignment="Center"
+                    IsEnabled="{Binding ViewModel.ScanButtonEnabled, Mode=OneWay}">
+                    <ui:TextBlock
+                        FontSize="24"
+                        FontTypography="Body"
+                        Text="连接" />
+                </ui:Button>
+                <ui:Button
+                    MinWidth="150"
+                    Margin="0,8,0,0"
+                    HorizontalAlignment="Center"
+                    IsEnabled="{Binding ViewModel.ScanButtonEnabled, Mode=OneWay}">
+                    <ui:TextBlock
+                        FontSize="24"
+                        FontTypography="Body"
+                        Text="断开" />
+                </ui:Button>
+            </StackPanel>
+        </Grid>
     </StackPanel>
 </Page>

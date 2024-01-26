@@ -20,8 +20,8 @@ namespace SmartLibrary.Views
             Wpf.Ui.Appearance.SystemThemeWatcher.Watch(this);
 
             InitializeComponent();
-            SetPageService(pageService);
 
+            SetPageService(pageService);
             navigationService.SetNavigationControl(RootNavigation);
         }
 
