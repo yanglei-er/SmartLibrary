@@ -21,11 +21,15 @@
     <Page.Resources>
         <helpers:StringToImageSourceConverter x:Key="StringToImageSourceConverter" />
         <helpers:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
-        <helpers:StringToSolidColorBrushConvert x:Key="StringToSolidColorBrushConvert" />
+        <Style BasedOn="{StaticResource MyButtonStyle}" TargetType="ui:Button" />
     </Page.Resources>
 
-    <StackPanel Margin="16">
-        <Grid>
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
@@ -48,16 +52,14 @@
             </StackPanel>
             <ui:Button
                 Grid.Column="2"
+                MinWidth="150"
                 Margin="0,0,12,0"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center"
                 Command="{Binding ViewModel.RefleshButtonClickCommand, Mode=OneWay}"
-                IsEnabled="{Binding ViewModel.ScanButtonEnabled, Mode=OneWay}">
-                <ui:TextBlock
-                    FontSize="24"
-                    FontTypography="Body"
-                    Text="刷新" />
-            </ui:Button>
+                Content="刷新"
+                FontSize="24"
+                IsEnabled="{Binding ViewModel.RefelshButtonDisabled, Mode=OneWay}" />
             <ui:Button
                 Grid.Column="3"
                 MinWidth="150"
@@ -65,15 +67,11 @@
                 VerticalAlignment="Center"
                 Appearance="Primary"
                 Command="{Binding ViewModel.ScanButtonClickCommand, Mode=OneWay}"
-                Foreground="{Binding ViewModel.ScanButtonForeground, Converter={StaticResource StringToSolidColorBrushConvert}, Mode=OneWay}"
-                IsEnabled="{Binding ViewModel.ScanButtonEnabled, Mode=OneWay}">
-                <ui:TextBlock
-                    FontSize="24"
-                    FontTypography="Body"
-                    Text="{Binding ViewModel.ScanButtonText, Mode=OneWay}" />
-            </ui:Button>
+                Content="{Binding ViewModel.ScanButtonText, Mode=OneWay}"
+                FontSize="24"
+                IsEnabled="{Binding ViewModel.ScanButtonEnabled, Mode=OneWay}" />
         </Grid>
-        <Grid>
+        <Grid Name="RootGrid" Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
@@ -84,7 +82,7 @@
                 Background="{ui:ThemeResource ControlFillColorDefaultBrush}"
                 CornerRadius="8">
                 <ListView
-                    Height="300"
+                    Height="{Binding ElementName=RootGrid, Path=Height, Mode=OneWay}"
                     d:ItemsSource="{d:SampleData ItemCount=6}"
                     ItemsSource="{Binding ViewModel.ListViewItems, Mode=TwoWay}"
                     SelectionMode="Single">
@@ -138,23 +136,17 @@
                 <ui:Button
                     MinWidth="150"
                     HorizontalAlignment="Center"
-                    IsEnabled="{Binding ViewModel.ScanButtonEnabled, Mode=OneWay}">
-                    <ui:TextBlock
-                        FontSize="24"
-                        FontTypography="Body"
-                        Text="连接" />
-                </ui:Button>
+                    Content="连接"
+                    FontSize="24"
+                    IsEnabled="{Binding ViewModel.ScanButtonEnabled, Mode=OneWay}" />
                 <ui:Button
                     MinWidth="150"
                     Margin="0,8,0,0"
                     HorizontalAlignment="Center"
-                    IsEnabled="{Binding ViewModel.ScanButtonEnabled, Mode=OneWay}">
-                    <ui:TextBlock
-                        FontSize="24"
-                        FontTypography="Body"
-                        Text="断开" />
-                </ui:Button>
+                    Content="断开"
+                    FontSize="24"
+                    IsEnabled="{Binding ViewModel.ScanButtonEnabled, Mode=OneWay}" />
             </StackPanel>
         </Grid>
-    </StackPanel>
+    </Grid>
 </Page>
