@@ -31,6 +31,14 @@ namespace SmartLibrary.ViewModels
             {
                 _navigationService.Navigate(typeof(Views.Pages.BookInfo));
             }
+            else if(parameter == "蓝牙")
+            {
+                _navigationService.Navigate(typeof(Views.Pages.BluetoothSettings));
+            }
+            else if( parameter == "设置")
+            {
+                _navigationService.Navigate(typeof(Views.Pages.Settings));
+            }
         }
     }
 }

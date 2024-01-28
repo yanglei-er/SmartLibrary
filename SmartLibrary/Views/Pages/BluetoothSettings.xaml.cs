@@ -1,4 +1,5 @@
 ﻿using SmartLibrary.ViewModels;
+using System.Windows.Controls;
 using Wpf.Ui.Controls;
 
 namespace SmartLibrary.Views.Pages
@@ -12,6 +13,11 @@ namespace SmartLibrary.Views.Pages
             DataContext = this;
 
             InitializeComponent();
+        }
+
+        private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ViewModel.OnListViewSelecteChanged();
         }
     }
 }

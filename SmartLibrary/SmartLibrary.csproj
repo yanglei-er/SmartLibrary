@@ -18,12 +18,21 @@
     <None Remove="Assets\applicationIcon-512.png" />
     <None Remove="Assets\background.jpg" />
     <None Remove="Assets\bluetooth-connected.png" />
+    <None Remove="Assets\bluetooth-disabled.png" />
     <None Remove="Assets\bluetooth.png" />
     <None Remove="Assets\bookinfo-512x512.png" />
     <None Remove="Assets\borrowbook-512x512.png" />
     <None Remove="Assets\findbook-512x512.png" />
+    <None Remove="Assets\flush.gif" />
     <None Remove="Assets\gplv3-127x51.png" />
+    <None Remove="Assets\homeBluetooth.png" />
+    <None Remove="Assets\homeSetting.png" />
     <None Remove="Assets\wpfui-48x48.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\bluetooth-disabled.png" />
+    <Resource Include="Assets\flush.gif" />
   </ItemGroup>
 
   <ItemGroup>
@@ -36,6 +45,12 @@
     <Resource Include="Assets\borrowbook-512x512.png" />
     <Resource Include="Assets\findbook-512x512.png" />
     <Resource Include="Assets\gplv3-127x51.png" />
+    <Resource Include="Assets\homeBluetooth.png">
+      <CopyToOutputDirectory></CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\homeSetting.png">
+      <CopyToOutputDirectory></CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Assets\wpfui-48x48.png" />
   </ItemGroup>
 
