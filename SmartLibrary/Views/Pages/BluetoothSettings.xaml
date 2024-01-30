@@ -75,16 +75,15 @@
                 Margin="0,0,12,0"
                 HorizontalAlignment="Center"
                 Command="{Binding ViewModel.ConnectButtonClickCommand, Mode=OneWay}"
-                Content="连接设备"
+                Content="{Binding ViewModel.ConnectButtonText, Mode=OneWay}"
                 FontSize="24"
                 IsEnabled="{Binding ViewModel.ConnectButtonEnabled, Mode=OneWay}" />
             <ui:Button
                 Grid.Column="2"
-                MinWidth="200"
+                MinWidth="230"
                 HorizontalAlignment="Right"
-                VerticalAlignment="Center"
                 Command="{Binding ViewModel.RefleshButtonClickCommand, Mode=OneWay}"
-                Content="刷新蓝牙管理器"
+                Content="刷新本机蓝牙状态"
                 FontSize="24"
                 IsEnabled="{Binding ViewModel.ScanButtonEnabled, Mode=OneWay}" />
         </Grid>

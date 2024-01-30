@@ -1,6 +1,6 @@
-﻿using Wpf.Ui.Appearance;
+﻿using System.Globalization;
 using System.Windows.Data;
-using System.Globalization;
+using Wpf.Ui.Appearance;
 
 namespace SmartLibrary.Helpers
 {

@@ -8,9 +8,9 @@ namespace SmartLibrary.Helpers
     {
         public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if((bool)value)
+            if ((bool)value)
             {
-                return new SolidColorBrush(Color.FromRgb(14,176,201));
+                return new SolidColorBrush(Color.FromRgb(14, 176, 201));
             }
             else
             {

@@ -8,7 +8,6 @@ namespace SmartLibrary.ViewModels
     public partial class BluetoothSettingsViewModel : ObservableObject
     {
         private bool _isInitialized = false;
-        private bool _isBleConnected = false;
         private int _connectedDeviceIndex = -1;
 
         private readonly BluetoothHelper ble = BluetoothHelper.Instance;
@@ -32,7 +31,7 @@ namespace SmartLibrary.ViewModels
         private bool _progressBarVisibility = false;
 
         [ObservableProperty]
-        private string _connectButtonText = "连接";
+        private string _connectButtonText = "连接设备";
 
         [ObservableProperty]
         private bool _connectButtonEnabled = false;
@@ -46,24 +45,31 @@ namespace SmartLibrary.ViewModels
         [ObservableProperty]
         private ObservableCollection<BluetoothDevice> _listViewItems = new ObservableCollection<BluetoothDevice>();
 
-        public BluetoothSettingsViewModel() 
-        { 
-            if(!_isInitialized)
+        public BluetoothSettingsViewModel()
+        {
+            if (!_isInitialized)
             {
                 OnRefleshButtonClick();
                 ble.DiscoverDevice += DiscoverDevice;
                 ble.DiscoverComplete += ScanComplete;
-
                 ble.ConnectEvent += ConnectEvent;
+                ble.BleStateChangedEvent += OnBleStateChanged;
 
                 _isInitialized = true;
             }
         }
 
+        ~BluetoothSettingsViewModel()
+        {
+            ble.DiscoverDevice -= DiscoverDevice;
+            ble.DiscoverComplete -= ScanComplete;
+            ble.ConnectEvent -= ConnectEvent;
+            ble.BleStateChangedEvent -= OnBleStateChanged;
+        }
+
         [RelayCommand]
         private void OnRefleshButtonClick()
         {
-            ble.RefreshState();
             if (!ble.IsPlatformSupportBT())
             {
                 StateText = "蓝牙未启用";
@@ -78,10 +84,26 @@ namespace SmartLibrary.ViewModels
             }
         }
 
+        private void OnBleStateChanged(bool state)
+        {
+            if (state)
+            {
+                StateText = "蓝牙未连接";
+                ScanButtonText = "扫描设备";
+                StatusImageSource = "pack://application:,,,/Assets/bluetooth.png";
+            }
+            else
+            {
+                StateText = "蓝牙未启用";
+                ScanButtonText = "开启蓝牙";
+                StatusImageSource = "pack://application:,,,/Assets/bluetooth-disabled.png";
+            }
+        }
+
         [RelayCommand]
         private void OnScanButtonClick()
         {
-            if(ble.IsPlatformSupportBT())
+            if (ble.IsPlatformSupportBT())
             {
                 ListViewItems.Clear();
                 ScanButtonEnabled = ConnectButtonEnabled = false;
@@ -110,9 +132,9 @@ namespace SmartLibrary.ViewModels
 
         public void OnListViewSelecteChanged()
         {
-            if(ListviewSelectedIndex == -1)
+            if (ListviewSelectedIndex == -1)
             {
-                ConnectButtonEnabled = false; 
+                ConnectButtonEnabled = false;
             }
             else
             {
@@ -123,7 +145,7 @@ namespace SmartLibrary.ViewModels
         [RelayCommand]
         private void OnConnectButtonClick()
         {
-            if (!_isBleConnected)
+            if (!ble.isBleConnected())
             {
                 StateText = "正在连接 " + ListViewItems[ListviewSelectedIndex].Name;
                 ScanButtonEnabled = ConnectButtonEnabled = false;
@@ -139,11 +161,11 @@ namespace SmartLibrary.ViewModels
 
         private void ConnectEvent(string info)
         {
-            if(info == "Success")
+            if (info == "Success")
             {
-                _isBleConnected = true;
                 _connectedDeviceIndex = ListviewSelectedIndex;
                 StateText = ListViewItems[ListviewSelectedIndex].Name + " 已连接";
+                StatusImageSource = "pack://application:,,,/Assets/bluetooth-connected.png";
             }
             else
             {

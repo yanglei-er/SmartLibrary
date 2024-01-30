@@ -9,7 +9,7 @@
     Title="Home"
     d:DataContext="{d:DesignInstance local:Home,
                                      IsDesignTimeCreatable=False}"
-    d:DesignHeight="620"
+    d:DesignHeight="630"
     d:DesignWidth="900"
     ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
     ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"

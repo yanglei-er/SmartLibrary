@@ -1,5 +1,4 @@
-﻿using System.Windows;
-using Wpf.Ui;
+﻿using Wpf.Ui;
 
 namespace SmartLibrary.Services
 {

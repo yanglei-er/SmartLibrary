@@ -1,10 +1,12 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using SmartLibrary.Services;
-using Wpf.Ui;
-using System.Windows.Threading;
+using Microsoft.Toolkit.Uwp.Notifications;
 using SmartLibrary.Models;
+using SmartLibrary.Services;
+using System.Windows.Threading;
+using Windows.Foundation.Collections;
+using Wpf.Ui;
 
 namespace SmartLibrary
 {
@@ -14,7 +16,7 @@ namespace SmartLibrary
     public partial class App : Application
     {
         private static readonly IHost _host = Host.CreateDefaultBuilder()
-            .ConfigureAppConfiguration(c=>
+            .ConfigureAppConfiguration(c =>
             {
                 c.SetBasePath(AppContext.BaseDirectory);
             })
