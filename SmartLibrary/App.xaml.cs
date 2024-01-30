@@ -1,11 +1,9 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Toolkit.Uwp.Notifications;
 using SmartLibrary.Models;
 using SmartLibrary.Services;
 using System.Windows.Threading;
-using Windows.Foundation.Collections;
 using Wpf.Ui;
 
 namespace SmartLibrary

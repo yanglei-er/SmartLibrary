@@ -8,7 +8,7 @@ namespace SmartLibrary.ViewModels
     public partial class BluetoothSettingsViewModel : ObservableObject
     {
         private bool _isInitialized = false;
-        private int _connectedDeviceIndex = -1;
+        private string _connectedName = string.Empty;
 
         private readonly BluetoothHelper ble = BluetoothHelper.Instance;
 
@@ -73,14 +73,19 @@ namespace SmartLibrary.ViewModels
             if (!ble.IsPlatformSupportBT())
             {
                 StateText = "蓝牙未启用";
-                ScanButtonText = "开启蓝牙";
                 StatusImageSource = "pack://application:,,,/Assets/bluetooth-disabled.png";
+                ScanButtonText = "开启蓝牙";
+                ConnectButtonEnabled = false;
+                ListViewItems.Clear();
             }
             else
             {
-                StateText = "蓝牙未连接";
-                ScanButtonText = "扫描设备";
-                StatusImageSource = "pack://application:,,,/Assets/bluetooth.png";
+                if (!ble.isBleConnected())
+                {
+                    StateText = "蓝牙未连接";
+                    ScanButtonText = "扫描设备";
+                    StatusImageSource = "pack://application:,,,/Assets/bluetooth.png";
+                }
             }
         }
 
@@ -97,6 +102,8 @@ namespace SmartLibrary.ViewModels
                 StateText = "蓝牙未启用";
                 ScanButtonText = "开启蓝牙";
                 StatusImageSource = "pack://application:,,,/Assets/bluetooth-disabled.png";
+                ConnectButtonEnabled = false;
+                ListViewItems.Clear();
             }
         }
 
@@ -105,9 +112,9 @@ namespace SmartLibrary.ViewModels
         {
             if (ble.IsPlatformSupportBT())
             {
+                StateText = "正在扫描设备";
                 ListViewItems.Clear();
                 ScanButtonEnabled = ConnectButtonEnabled = false;
-                ScanButtonText = "正在扫描";
                 ProgressBarVisibility = ProgressBarIsIndeterminate = true;
                 ble.StartScan();
             }
@@ -125,8 +132,8 @@ namespace SmartLibrary.ViewModels
 
         private void ScanComplete(object? sender, EventArgs e)
         {
+            StateText = "一共扫描到 " + ListViewItems.Count.ToString() + " 个设备";
             ScanButtonEnabled = true;
-            ScanButtonText = "扫描设备";
             ProgressBarIsIndeterminate = ProgressBarVisibility = false;
         }
 
@@ -139,6 +146,17 @@ namespace SmartLibrary.ViewModels
             else
             {
                 ConnectButtonEnabled = true;
+                if (ble.isBleConnected())
+                {
+                    if (ListViewItems[ListviewSelectedIndex].Name == _connectedName)
+                    {
+                        ConnectButtonText = "断开连接";
+                    }
+                    else
+                    {
+                        ConnectButtonText = "连接新设备";
+                    }
+                }
             }
         }
 
@@ -150,22 +168,39 @@ namespace SmartLibrary.ViewModels
                 StateText = "正在连接 " + ListViewItems[ListviewSelectedIndex].Name;
                 ScanButtonEnabled = ConnectButtonEnabled = false;
                 ListviewEnabled = false;
-                ConnectButtonEnabled = ProgressBarIsIndeterminate = true;
+                ProgressBarVisibility = ProgressBarIsIndeterminate = true;
                 ble.StartConnect(ListViewItems[ListviewSelectedIndex].Address);
             }
             else
             {
-
+                ble.StartDisconnect();
+                if (ConnectButtonText == "连接新设备")
+                {
+                    OnConnectButtonClick();
+                }
+                else
+                {
+                    StatusImageSource = "pack://application:,,,/Assets/bluetooth.png";
+                    StateText = "蓝牙未连接";
+                    ConnectButtonText = "连接设备";
+                    _connectedName = string.Empty;
+                }
             }
         }
 
         private void ConnectEvent(string info)
         {
-            if (info == "Success")
+            if (info == "正在配对")
             {
-                _connectedDeviceIndex = ListviewSelectedIndex;
+                StateText = "正在与 " + ListViewItems[ListviewSelectedIndex].Name + " 配对";
+                return;
+            }
+            else if (info == "连接成功")
+            {
                 StateText = ListViewItems[ListviewSelectedIndex].Name + " 已连接";
                 StatusImageSource = "pack://application:,,,/Assets/bluetooth-connected.png";
+                ConnectButtonText = "断开连接";
+                _connectedName = ListViewItems[ListviewSelectedIndex].Name;
             }
             else
             {
@@ -173,7 +208,7 @@ namespace SmartLibrary.ViewModels
             }
             ScanButtonEnabled = ConnectButtonEnabled = true;
             ListviewEnabled = true;
-            ConnectButtonEnabled = ProgressBarIsIndeterminate = false;
+            ProgressBarVisibility = ProgressBarIsIndeterminate = false;
         }
     }
 }

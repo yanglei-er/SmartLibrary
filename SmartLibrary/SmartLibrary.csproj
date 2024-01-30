@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net8.0-windows10.0.17763.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
@@ -45,18 +45,14 @@
     <Resource Include="Assets\borrowbook-512x512.png" />
     <Resource Include="Assets\findbook-512x512.png" />
     <Resource Include="Assets\gplv3-127x51.png" />
-    <Resource Include="Assets\homeBluetooth.png">
-      <CopyToOutputDirectory></CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Assets\homeSetting.png">
-      <CopyToOutputDirectory></CopyToOutputDirectory>
-    </Resource>
+    <Resource Include="Assets\homeBluetooth.png" />
+    <Resource Include="Assets\homeSetting.png" />
     <Resource Include="Assets\wpfui-48x48.png" />
   </ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="32feet.NET" Version="3.5.0" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
-		<PackageReference Include="InTheHand.Net.Bluetooth" Version="4.1.40" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
 		<PackageReference Include="WPF-UI" Version="3.0.0-preview.13" />
 	</ItemGroup>

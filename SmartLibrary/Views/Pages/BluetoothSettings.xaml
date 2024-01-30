@@ -21,7 +21,6 @@
     <Page.Resources>
         <helpers:StringToImageSourceConverter x:Key="StringToImageSourceConverter" />
         <helpers:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
-        <helpers:BoolToSolidColorBrushConvert x:Key="BoolToSolidColorBrushConvert" />
         <Style BasedOn="{StaticResource MyButtonStyle}" TargetType="ui:Button" />
     </Page.Resources>
 
@@ -103,68 +102,66 @@
                     SelectionMode="Single">
                     <ListView.ItemTemplate>
                         <DataTemplate DataType="{x:Type models:BluetoothDevice}">
-                            <Border Background="{Binding IsConnected, Converter={StaticResource BoolToSolidColorBrushConvert}, Mode=OneWay}" CornerRadius="4">
-                                <Grid>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Grid Grid.Column="0">
                                     <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
                                         <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <ui:SymbolIcon Symbol="Bluetooth48" />
+                                    <ui:TextBlock
+                                        Grid.Column="1"
+                                        Margin="4,0,0,0"
+                                        VerticalAlignment="Center"
+                                        FontSize="24"
+                                        FontTypography="Subtitle"
+                                        Text="{Binding Name, Mode=OneWay}" />
+                                </Grid>
+                                <Grid Grid.Column="1">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
-                                    <Grid Grid.Column="0">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="*" />
-                                        </Grid.ColumnDefinitions>
-                                        <ui:SymbolIcon Symbol="Bluetooth48" />
-                                        <ui:TextBlock
-                                            Grid.Column="1"
-                                            Margin="4,0,0,0"
-                                            VerticalAlignment="Center"
-                                            FontSize="24"
-                                            FontTypography="Subtitle"
-                                            Text="{Binding Name, Mode=OneWay}" />
-                                    </Grid>
-                                    <Grid Grid.Column="1">
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="*" />
-                                            <RowDefinition Height="*" />
-                                        </Grid.RowDefinitions>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="Auto" />
-                                        </Grid.ColumnDefinitions>
-                                        <ui:TextBlock
-                                            Grid.Row="0"
-                                            Grid.Column="0"
-                                            Margin="0,2,0,2"
-                                            VerticalAlignment="Center"
-                                            FontTypography="Body"
-                                            Text="地址：" />
-                                        <ui:TextBlock
-                                            Grid.Row="1"
-                                            Grid.Column="0"
-                                            Margin="0,2,0,2"
-                                            VerticalAlignment="Center"
-                                            FontTypography="Body"
-                                            Text="设备类型：" />
-                                        <ui:TextBlock
-                                            Grid.Row="0"
-                                            Grid.Column="1"
-                                            Margin="0,2,8,2"
-                                            HorizontalAlignment="Right"
-                                            VerticalAlignment="Center"
-                                            FontTypography="Body"
-                                            Text="{Binding Address, Mode=OneWay}" />
-                                        <ui:TextBlock
-                                            Grid.Row="1"
-                                            Grid.Column="1"
-                                            Margin="0,2,8,2"
-                                            HorizontalAlignment="Right"
-                                            VerticalAlignment="Center"
-                                            FontTypography="Body"
-                                            Text="{Binding ClassOfDevice, Mode=OneWay}" />
-                                    </Grid>
+                                    <ui:TextBlock
+                                        Grid.Row="0"
+                                        Grid.Column="0"
+                                        Margin="0,2,0,2"
+                                        VerticalAlignment="Center"
+                                        FontTypography="Body"
+                                        Text="地址：" />
+                                    <ui:TextBlock
+                                        Grid.Row="1"
+                                        Grid.Column="0"
+                                        Margin="0,2,0,2"
+                                        VerticalAlignment="Center"
+                                        FontTypography="Body"
+                                        Text="设备类型：" />
+                                    <ui:TextBlock
+                                        Grid.Row="0"
+                                        Grid.Column="1"
+                                        Margin="0,2,8,2"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Center"
+                                        FontTypography="Body"
+                                        Text="{Binding Address, Mode=OneWay}" />
+                                    <ui:TextBlock
+                                        Grid.Row="1"
+                                        Grid.Column="1"
+                                        Margin="0,2,8,2"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Center"
+                                        FontTypography="Body"
+                                        Text="{Binding ClassOfDevice, Mode=OneWay}" />
                                 </Grid>
-                            </Border>
+                            </Grid>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
