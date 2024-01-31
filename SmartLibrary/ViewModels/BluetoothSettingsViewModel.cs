@@ -137,13 +137,9 @@ namespace SmartLibrary.ViewModels
             ProgressBarIsIndeterminate = ProgressBarVisibility = false;
         }
 
-        public void OnListViewSelecteChanged()
+        partial void OnListviewSelectedIndexChanged(int value)
         {
-            if (ListviewSelectedIndex == -1)
-            {
-                ConnectButtonEnabled = false;
-            }
-            else
+            if (ListviewSelectedIndex != -1)
             {
                 ConnectButtonEnabled = true;
                 if (ble.isBleConnected())

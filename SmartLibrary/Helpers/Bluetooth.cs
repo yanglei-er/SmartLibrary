@@ -14,12 +14,12 @@ namespace SmartLibrary.Helpers
 
         //连接线程设置
         private readonly BackgroundWorker _BGconnectWorker = new BackgroundWorker();
+        public delegate void ConnectEventHandler(string info);
+        public event ConnectEventHandler ConnectEvent = delegate { };
 
         public delegate void DiscoverDeviceEventHandler(List<string> deviceInfo);
-        public delegate void ConnectEventHandler(string info);
         public event DiscoverDeviceEventHandler DiscoverDevice = delegate { };
         public event EventHandler DiscoverComplete = delegate { };
-        public event ConnectEventHandler ConnectEvent = delegate { };
 
         public static BluetoothHelper Instance
         {
@@ -85,6 +85,15 @@ namespace SmartLibrary.Helpers
                     }
                     return true;
                 }
+            }
+            return false;
+        }
+
+        public bool isBleConnected()
+        {
+            if (bluetoothClient != null)
+            {
+                return bluetoothClient.Connected;
             }
             return false;
         }
@@ -165,15 +174,6 @@ namespace SmartLibrary.Helpers
                 bluetoothClient.Close();
                 bluetoothClient = new BluetoothClient();
             }
-        }
-
-        public bool isBleConnected()
-        {
-            if (bluetoothClient != null)
-            {
-                return bluetoothClient.Connected;
-            }
-            return false;
         }
     }
 }

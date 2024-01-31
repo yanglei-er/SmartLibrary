@@ -44,6 +44,12 @@
             Grid.Row="1"
             FooterMenuItemsSource="{Binding ViewModel.NavigationFooter, Mode=OneWay}"
             MenuItemsSource="{Binding ViewModel.NavigationItems, Mode=OneWay}"
-            PaneDisplayMode="LeftFluent" />
+            PaneDisplayMode="LeftFluent">
+            <ui:NavigationView.ContentOverlay>
+                <Grid>
+                    <ui:SnackbarPresenter x:Name="SnackbarPresenter" />
+                </Grid>
+            </ui:NavigationView.ContentOverlay>
+        </ui:NavigationView>
     </Grid>
 </ui:FluentWindow>

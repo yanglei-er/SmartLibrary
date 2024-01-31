@@ -30,8 +30,8 @@ namespace SmartLibrary
                     // Theme manipulation
                     services.AddSingleton<IThemeService, ThemeService>();
 
-                    // TaskBar manipulation
-                    services.AddSingleton<ITaskBarService, TaskBarService>();
+                    // SnackBar manipulation
+                    services.AddSingleton<ISnackbarService, SnackbarService>();
 
                     // Service containing navigation, same as INavigationWindow... but without window
                     services.AddSingleton<INavigationService, NavigationService>();

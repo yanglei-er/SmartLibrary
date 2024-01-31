@@ -9,22 +9,16 @@ namespace SmartLibrary.ViewModels
         private bool _isInitialized = false;
 
         [ObservableProperty]
-        private ObservableCollection<object> _navigationItems = new();
+        private ObservableCollection<object> _navigationItems = [];
 
         [ObservableProperty]
-        private ObservableCollection<object> _navigationFooter = new();
+        private ObservableCollection<object> _navigationFooter = [];
 
         public MainWindowViewModel(INavigationService navigationService)
         {
             if (!_isInitialized)
             {
-                InitializeViewModel();
-            }
-        }
-
-        private void InitializeViewModel()
-        {
-            NavigationItems = new ObservableCollection<object>
+                NavigationItems = new ObservableCollection<object>
             {
                 new NavigationViewItem()
                 {
@@ -53,7 +47,7 @@ namespace SmartLibrary.ViewModels
                 }
             };
 
-            NavigationFooter = new ObservableCollection<object>
+                NavigationFooter = new ObservableCollection<object>
             {
                 new NavigationViewItem()
                 {
@@ -69,7 +63,8 @@ namespace SmartLibrary.ViewModels
                 }
             };
 
-            _isInitialized = true;
+                _isInitialized = true;
+            }
         }
     }
 }

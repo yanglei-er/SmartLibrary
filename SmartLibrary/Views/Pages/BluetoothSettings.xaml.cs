@@ -14,10 +14,5 @@ namespace SmartLibrary.Views.Pages
 
             InitializeComponent();
         }
-
-        private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            ViewModel.OnListViewSelecteChanged();
-        }
     }
 }

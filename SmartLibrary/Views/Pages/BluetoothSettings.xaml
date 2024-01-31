@@ -98,7 +98,6 @@
                     IsEnabled="{Binding ViewModel.ListviewEnabled, Mode=OneWay}"
                     ItemsSource="{Binding ViewModel.ListViewItems, Mode=TwoWay}"
                     SelectedIndex="{Binding ViewModel.ListviewSelectedIndex, Mode=TwoWay}"
-                    SelectionChanged="ListView_SelectionChanged"
                     SelectionMode="Single">
                     <ListView.ItemTemplate>
                         <DataTemplate DataType="{x:Type models:BluetoothDevice}">
