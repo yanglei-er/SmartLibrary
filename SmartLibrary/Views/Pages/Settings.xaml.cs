@@ -1,11 +1,12 @@
-﻿using Wpf.Ui.Controls;
+﻿using SmartLibrary.ViewModels;
+using Wpf.Ui.Controls;
 
 namespace SmartLibrary.Views.Pages
 {
-    public partial class Settings : INavigableView<ViewModels.SettingsViewModel>
+    public partial class Settings : INavigableView<SettingsViewModel>
     {
-        public ViewModels.SettingsViewModel ViewModel { get; }
-        public Settings(ViewModels.SettingsViewModel viewModel)
+        public SettingsViewModel ViewModel { get; }
+        public Settings(SettingsViewModel viewModel)
         {
             ViewModel = viewModel;
             DataContext = this;

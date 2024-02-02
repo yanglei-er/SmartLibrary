@@ -181,6 +181,34 @@
                     Padding="0"
                     VerticalAlignment="Stretch"
                     Command="{Binding ViewModel.CardClickCommand, Mode=OneWay}"
+                    CommandParameter="管理"
+                    IsChevronVisible="False">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <ui:Image
+                            Width="48"
+                            Margin="26,0,0,0"
+                            RenderOptions.BitmapScalingMode="HighQuality"
+                            Source="pack://application:,,,/Assets/database.png"
+                            Stretch="UniformToFill" />
+                        <ui:TextBlock
+                            Grid.Column="1"
+                            Margin="29,20,24,20"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            FontSize="22"
+                            Text="图书管理" />
+                    </Grid>
+                </ui:CardAction>
+                <ui:CardAction
+                    Grid.Column="1"
+                    Margin="8,0,4,0"
+                    Padding="0"
+                    VerticalAlignment="Stretch"
+                    Command="{Binding ViewModel.CardClickCommand, Mode=OneWay}"
                     CommandParameter="蓝牙"
                     IsChevronVisible="False">
                     <Grid>
@@ -204,7 +232,7 @@
                     </Grid>
                 </ui:CardAction>
                 <ui:CardAction
-                    Grid.Column="1"
+                    Grid.Column="2"
                     Margin="8,0,4,0"
                     Padding="0"
                     VerticalAlignment="Stretch"

@@ -39,8 +39,12 @@
 
 ## 图标
 <a href="https://www.flaticon.com/free-icons/reading" title="reading icons">Reading icons created by Freepik - Flaticon</a>
+
 <a href="https://www.flaticon.com/free-icons/refresh-data" title="refresh data icons">Refresh data icons created by Freepik - Flaticon</a>
+
 <a href="https://www.flaticon.com/free-icons/borrow" title="borrow icons">Borrow icons created by max.icons - Flaticon</a>
+
+<a href="https://www.flaticon.com/free-icons/database" title="database icons">Database icons created by Freepik - Flaticon</a>
 
 ## License
 SmartLibrary is licensed under [GPLv3](./LICENSE).

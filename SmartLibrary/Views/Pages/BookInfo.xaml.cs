@@ -1,14 +1,15 @@
-﻿using System.Windows.Controls;
+﻿using SmartLibrary.ViewModels;
+using Wpf.Ui.Controls;
 
 namespace SmartLibrary.Views.Pages
 {
-    /// <summary>
-    /// BookInfo.xaml 的交互逻辑
-    /// </summary>
-    public partial class BookInfo : Page
+    public partial class BookInfo : INavigableView<BookInfoViewModel>
     {
-        public BookInfo()
+        public BookInfoViewModel ViewModel { get; }
+        public BookInfo(BookInfoViewModel viewModel)
         {
+            ViewModel = viewModel;
+            DataContext = this;
             InitializeComponent();
         }
     }

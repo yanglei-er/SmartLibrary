@@ -3,14 +3,13 @@ using Wpf.Ui.Controls;
 
 namespace SmartLibrary.Views.Pages
 {
-    public partial class BluetoothSettings : INavigableView<BluetoothSettingsViewModel>
+    public partial class BookManage : INavigableView<BookManageViewModel>
     {
-        public BluetoothSettingsViewModel ViewModel { get; }
-        public BluetoothSettings(BluetoothSettingsViewModel viewModel)
+        public BookManageViewModel ViewModel { get; }
+        public BookManage(BookManageViewModel viewModel)
         {
             ViewModel = viewModel;
             DataContext = this;
-
             InitializeComponent();
         }
     }

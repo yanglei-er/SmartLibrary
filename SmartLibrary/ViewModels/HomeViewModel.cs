@@ -18,7 +18,6 @@ namespace SmartLibrary.ViewModels
             {
                 return;
             }
-
             if (parameter == "我要找书")
             {
                 _navigationService.Navigate(typeof(Views.Pages.Bookshelf));
@@ -30,6 +29,10 @@ namespace SmartLibrary.ViewModels
             else if (parameter == "图书信息查询")
             {
                 _navigationService.Navigate(typeof(Views.Pages.BookInfo));
+            }
+            else if (parameter == "管理")
+            {
+                _navigationService.Navigate(typeof(Views.Pages.BookManage));
             }
             else if (parameter == "蓝牙")
             {

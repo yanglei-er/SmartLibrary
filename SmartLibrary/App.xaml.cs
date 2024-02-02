@@ -49,6 +49,8 @@ namespace SmartLibrary
                     services.AddSingleton<ViewModels.Borrow_Return_BookViewModel>();
                     services.AddSingleton<Views.Pages.BookInfo>();
                     services.AddSingleton<ViewModels.BookInfoViewModel>();
+                    services.AddSingleton<Views.Pages.BookManage>();
+                    services.AddSingleton<ViewModels.BookManageViewModel>();
                     services.AddSingleton<Views.Pages.BluetoothSettings>();
                     services.AddSingleton<ViewModels.BluetoothSettingsViewModel>();
                     services.AddSingleton<Views.Pages.Settings>();
