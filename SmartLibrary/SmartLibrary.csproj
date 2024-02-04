@@ -7,6 +7,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>applicationIcon.ico</ApplicationIcon>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
     <ItemGroup>
@@ -28,6 +29,13 @@
     <None Remove="Assets\gplv3-127x51.png" />
     <None Remove="Assets\homeBluetooth.png" />
     <None Remove="Assets\homeSetting.png" />
+    <None Remove="Assets\pic\cross.png" />
+    <None Remove="Assets\pic\green.png" />
+    <None Remove="Assets\pic\red.png" />
+    <None Remove="Assets\pic\right.png" />
+    <None Remove="Assets\pic\tick.png" />
+    <None Remove="Assets\pic\wrong.png" />
+    <None Remove="Assets\pic\yellow.png" />
     <None Remove="Assets\wpfui-48x48.png" />
   </ItemGroup>
 
@@ -35,9 +43,6 @@
     <Resource Include="Assets\bluetooth-disabled.png" />
     <Resource Include="Assets\database.png" />
     <Resource Include="Assets\flush.gif" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Resource Include="Assets\.net-48x48.png" />
     <Resource Include="Assets\applicationIcon-512.png" />
     <Resource Include="Assets\background.jpg" />
@@ -49,6 +54,13 @@
     <Resource Include="Assets\gplv3-127x51.png" />
     <Resource Include="Assets\homeBluetooth.png" />
     <Resource Include="Assets\homeSetting.png" />
+    <Resource Include="Assets\pic\cross.png" />
+    <Resource Include="Assets\pic\green.png" />
+    <Resource Include="Assets\pic\red.png" />
+    <Resource Include="Assets\pic\right.png" />
+    <Resource Include="Assets\pic\tick.png" />
+    <Resource Include="Assets\pic\wrong.png" />
+    <Resource Include="Assets\pic\yellow.png" />
     <Resource Include="Assets\wpfui-48x48.png" />
   </ItemGroup>
 
@@ -56,6 +68,7 @@
 		<PackageReference Include="32feet.NET" Version="3.5.0" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
+		<PackageReference Include="System.Data.SQLite" Version="1.0.118" />
 		<PackageReference Include="WPF-UI" Version="3.0.0-preview.13" />
 	</ItemGroup>
 

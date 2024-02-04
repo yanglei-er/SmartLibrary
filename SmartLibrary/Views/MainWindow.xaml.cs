@@ -10,7 +10,7 @@ namespace SmartLibrary.Views
         private readonly ISnackbarService _snackbarService;
         public ViewModels.MainWindowViewModel ViewModel { get; }
 
-        public MainWindow(ViewModels.MainWindowViewModel viewModel, IPageService pageService, INavigationService navigationService, ISnackbarService snackbarService)
+        public MainWindow(ViewModels.MainWindowViewModel viewModel, IPageService pageService, INavigationService navigationService, ISnackbarService snackbarService, IContentDialogService contentDialogService)
         {
             ViewModel = viewModel;
             DataContext = this;
@@ -22,6 +22,8 @@ namespace SmartLibrary.Views
             SetPageService(pageService);
             navigationService.SetNavigationControl(RootNavigation);
             snackbarService.SetSnackbarPresenter(SnackbarPresenter);
+            contentDialogService.SetContentPresenter(RootContentDialog);
+
             _snackbarService = snackbarService;
 
             this.Loaded += Window_Loaded;

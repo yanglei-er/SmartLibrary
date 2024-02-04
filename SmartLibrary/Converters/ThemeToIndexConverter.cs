@@ -2,7 +2,7 @@
 using System.Windows.Data;
 using Wpf.Ui.Appearance;
 
-namespace SmartLibrary.Helpers
+namespace SmartLibrary.Converters
 {
     internal sealed class ThemeToIndexConverter : IValueConverter
     {

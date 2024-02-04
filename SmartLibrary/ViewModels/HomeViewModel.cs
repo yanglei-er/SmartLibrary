@@ -14,10 +14,6 @@ namespace SmartLibrary.ViewModels
         [RelayCommand]
         private void OnCardClick(string parameter)
         {
-            if (String.IsNullOrWhiteSpace(parameter))
-            {
-                return;
-            }
             if (parameter == "我要找书")
             {
                 _navigationService.Navigate(typeof(Views.Pages.Bookshelf));

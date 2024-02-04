@@ -3,7 +3,6 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:helpers="clr-namespace:SmartLibrary.Helpers"
     xmlns:local="clr-namespace:SmartLibrary.Views.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="clr-namespace:SmartLibrary.Models"
@@ -19,8 +18,6 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-        <helpers:StringToImageSourceConverter x:Key="StringToImageSourceConverter" />
-        <helpers:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
         <Style BasedOn="{StaticResource MyButtonStyle}" TargetType="ui:Button" />
     </Page.Resources>
 
@@ -40,7 +37,7 @@
                 Width="64"
                 Height="64"
                 RenderOptions.BitmapScalingMode="HighQuality"
-                Source="{Binding ViewModel.StatusImageSource, Converter={StaticResource StringToImageSourceConverter}, Mode=OneWay}"
+                Source="{Binding ViewModel.StateImageSource, Converter={StaticResource StringToImageSourceConverter}, Mode=OneWay}"
                 Stretch="UniformToFill" />
             <StackPanel Grid.Column="1" Margin="4,4,0,0">
                 <ui:TextBlock
@@ -96,7 +93,7 @@
                     Height="{Binding ElementName=RootGrid, Path=Height, Mode=OneWay}"
                     d:ItemsSource="{d:SampleData ItemCount=6}"
                     IsEnabled="{Binding ViewModel.ListviewEnabled, Mode=OneWay}"
-                    ItemsSource="{Binding ViewModel.ListViewItems, Mode=TwoWay}"
+                    ItemsSource="{Binding ViewModel.ListViewItems, Mode=OneWay}"
                     SelectedIndex="{Binding ViewModel.ListviewSelectedIndex, Mode=TwoWay}"
                     SelectionMode="Single">
                     <ListView.ItemTemplate>

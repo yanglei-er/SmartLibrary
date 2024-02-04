@@ -2,7 +2,7 @@
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
 
-namespace SmartLibrary.Helpers
+namespace SmartLibrary.Converters
 {
     internal sealed class StringToImageSourceConverter : IValueConverter
     {

@@ -6,7 +6,6 @@ namespace SmartLibrary.ViewModels
 {
     public partial class MainWindowViewModel : ObservableObject
     {
-        private bool _isInitialized = false;
 
         [ObservableProperty]
         private ObservableCollection<object> _navigationItems = [];
@@ -16,9 +15,7 @@ namespace SmartLibrary.ViewModels
 
         public MainWindowViewModel(INavigationService navigationService)
         {
-            if (!_isInitialized)
-            {
-                NavigationItems = new ObservableCollection<object>
+            NavigationItems = new ObservableCollection<object>
                 {
                     new NavigationViewItem()
                     {
@@ -47,7 +44,7 @@ namespace SmartLibrary.ViewModels
                     }
                 };
 
-                NavigationFooter = new ObservableCollection<object>
+            NavigationFooter = new ObservableCollection<object>
                 {
                     new NavigationViewItem()
                     {
@@ -68,8 +65,6 @@ namespace SmartLibrary.ViewModels
                         TargetPageType = typeof(Views.Pages.Settings)
                     }
                 };
-                _isInitialized = true;
-            }
         }
     }
 }

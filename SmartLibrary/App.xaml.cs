@@ -30,6 +30,9 @@ namespace SmartLibrary
                     // Theme manipulation
                     services.AddSingleton<IThemeService, ThemeService>();
 
+                    // ContentDialog manipulation
+                    services.AddSingleton<IContentDialogService, ContentDialogService>();
+
                     // SnackBar manipulation
                     services.AddSingleton<ISnackbarService, SnackbarService>();
 
