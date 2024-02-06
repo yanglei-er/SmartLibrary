@@ -44,6 +44,10 @@
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter Property="Background" Value="#673AB7" />
                 </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="#FF5830CE" />
+                    <Setter Property="Foreground" Value="#FFBDBDBD" />
+                </Trigger>
             </Style.Triggers>
         </Style>
         <Style
@@ -68,200 +72,353 @@
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter Property="Background" Value="#F44336" />
                 </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="#FFBF2E23" />
+                    <Setter Property="Foreground" Value="#FFBDBDBD" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style
+            x:Key="AddButton"
+            BasedOn="{StaticResource EditButton}"
+            TargetType="ui:Button">
+            <Setter Property="Background" Value="#6741D9" />
+            <Setter Property="Height" Value="37" />
+            <Setter Property="Width" Value="50" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border
+                            Padding="5"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="5">
+                            <ui:SymbolIcon Symbol="Add24" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#7B5CD6" />
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="#FF5830CE" />
+                    <Setter Property="Foreground" Value="#FFBDBDBD" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style
+            x:Key="DelButton"
+            BasedOn="{StaticResource EditButton}"
+            TargetType="ui:Button">
+            <Setter Property="Background" Value="#D32F2F" />
+            <Setter Property="Height" Value="37" />
+            <Setter Property="Width" Value="50" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border
+                            Padding="5"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="5">
+                            <ui:SymbolIcon Symbol="Delete24" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#F44336" />
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="#FFBF2E23" />
+                    <Setter Property="Foreground" Value="#FFBDBDBD" />
+                </Trigger>
             </Style.Triggers>
         </Style>
     </Page.Resources>
 
-    <Grid Margin="16">
+    <Grid Margin="16,16,16,12">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <ui:AutoSuggestBox Grid.Row="0" PlaceholderText="快速查找" />
-        <Grid Grid.Row="1" Margin="0,12,0,0">
+        <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <Border
-                Name="RootGrid"
+            <ui:AutoSuggestBox
                 Grid.Column="0"
-                Background="{ui:ThemeResource ControlFillColorDefaultBrush}"
-                CornerRadius="8">
-                <ui:DataGrid
-                    Height="{Binding ElementName=RootGrid, Path=Height, Mode=OneWay}"
-                    d:ItemsSource="{d:SampleData ItemCount=8}"
-                    AutoGenerateColumns="False"
-                    CanUserAddRows="False"
-                    ItemsSource="{Binding ViewModel.DataGridItems, Mode=OneWay}"
-                    RowHeaderWidth="0">
-                    <DataGrid.Columns>
-                        <DataGridCheckBoxColumn Width="40" CanUserResize="False">
-                            <DataGridCheckBoxColumn.HeaderTemplate>
-                                <DataTemplate>
-                                    <CheckBox HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                </DataTemplate>
-                            </DataGridCheckBoxColumn.HeaderTemplate>
-                        </DataGridCheckBoxColumn>
-                        <DataGridTemplateColumn
-                            Width="130"
-                            CanUserResize="False"
-                            Header="ISBN">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <TextBlock
-                                        HorizontalAlignment="Center"
-                                        VerticalAlignment="Center"
-                                        Text="{Binding isbn}" />
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                        <DataGridTemplateColumn
-                            Width="2*"
-                            CanUserResize="False"
-                            Header="书名">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <TextBlock
-                                        Margin="4,0,4,0"
-                                        HorizontalAlignment="Left"
-                                        VerticalAlignment="Center"
-                                        Text="{Binding bookName}" />
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                        <DataGridTemplateColumn
-                            Width="*"
-                            CanUserResize="False"
-                            Header="作者">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <TextBlock
-                                        Margin="4,0,4,0"
-                                        HorizontalAlignment="Center"
-                                        VerticalAlignment="Center"
-                                        Text="{Binding author}" />
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                        <DataGridTemplateColumn
-                            Width="60"
-                            CanUserResize="False"
-                            Header="书架号">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <TextBlock
-                                        HorizontalAlignment="Center"
-                                        VerticalAlignment="Center"
-                                        Text="{Binding shelfNumber}" />
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                        <DataGridCheckBoxColumn
-                            Width="70"
-                            Binding="{Binding isBorrowed}"
-                            CanUserResize="False"
-                            Header="是否借出" />
-                        <DataGridTemplateColumn
-                            Width="Auto"
-                            CanUserResize="False"
-                            Header="操作">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <StackPanel Orientation="Horizontal">
-                                        <ui:Button
-                                            Margin="2,0,0,0"
-                                            Style="{StaticResource EditButton}"
-                                            ToolTip="编辑图书信息" />
-                                        <ui:Button
-                                            Margin="2,0,2,0"
-                                            Style="{StaticResource RemoveButton}"
-                                            ToolTip="删除图书" />
-                                    </StackPanel>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                    </DataGrid.Columns>
-                </ui:DataGrid>
-            </Border>
-            <Grid Grid.Column="1" Margin="12,0,0,0">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-                <StackPanel Grid.Row="0">
-                    <Grid Margin="8,0,0,0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <ui:Image
-                            Grid.Column="0"
-                            Width="32"
-                            Height="32"
-                            RenderOptions.BitmapScalingMode="HighQuality"
-                            Source="{Binding ViewModel.NetworkStateImageSource, Converter={StaticResource StringToImageSourceConverter}, Mode=OneWay}" />
-                        <ui:TextBlock
-                            Grid.Column="1"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            FontSize="24"
-                            Text="网络数据库" />
-                    </Grid>
-                    <Grid Margin="8,6,0,0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <ui:Image
-                            Grid.Column="0"
-                            Width="32"
-                            Height="32"
-                            RenderOptions.BitmapScalingMode="HighQuality"
-                            Source="{Binding ViewModel.DatabaseStateImageSource, Converter={StaticResource StringToImageSourceConverter}, Mode=OneWay}" />
-                        <ui:TextBlock
-                            Grid.Column="1"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            FontSize="24"
-                            Text="本地数据库" />
-                    </Grid>
-                </StackPanel>
-                <StackPanel Grid.Row="2">
-                    <ui:Button
-                        MinWidth="190"
-                        MinHeight="45"
-                        Command="{Binding ViewModel.ButtonClickCommand, Mode=OneWay}"
-                        CommandParameter="Import"
-                        Content="导入数据库"
-                        FontSize="24" />
-                    <ui:Button
-                        MinWidth="190"
-                        MinHeight="45"
-                        Margin="0,10,0,0"
-                        Command="{Binding ViewModel.ButtonClickCommand, Mode=OneWay}"
-                        CommandParameter="Export"
-                        Content="导出数据库"
-                        FontSize="24" />
-                    <ui:Button
-                        MinWidth="190"
-                        MinHeight="45"
-                        Margin="0,10,0,0"
-                        Command="{Binding ViewModel.ButtonClickCommand, Mode=OneWay}"
-                        CommandParameter="AddBook"
-                        Content="添加图书"
-                        FontSize="24" />
-                    <ui:Button
-                        MinWidth="190"
-                        MinHeight="45"
-                        Margin="0,10,0,0"
-                        Command="{Binding ViewModel.ButtonClickCommand, Mode=OneWay}"
-                        CommandParameter="DelBook"
-                        Content="删除图书"
-                        FontSize="24" />
-                </StackPanel>
-            </Grid>
+                VerticalAlignment="Center"
+                PlaceholderText="快速查找" />
+            <ui:Button
+                Grid.Column="1"
+                Height="35"
+                Margin="8,0,0,0"
+                VerticalAlignment="Center"
+                Command="{Binding ViewModel.TopButtonClickCommand, Mode=OneWay}"
+                CommandParameter="Import"
+                Content="导入"
+                FontSize="18"
+                ToolTip="导入数据库" />
+            <ui:Button
+                Grid.Column="2"
+                Height="35"
+                Margin="8,0,0,0"
+                VerticalAlignment="Center"
+                Command="{Binding ViewModel.TopButtonClickCommand, Mode=OneWay}"
+                CommandParameter="Export"
+                Content="导出"
+                FontSize="18"
+                ToolTip="导出数据库" />
+            <ui:Button
+                Grid.Column="3"
+                Margin="8,0,0,0"
+                Command="{Binding ViewModel.TopButtonClickCommand, Mode=OneWay}"
+                CommandParameter="DelBook"
+                Style="{StaticResource DelButton}"
+                ToolTip="删除所选图书" />
+            <ui:Button
+                Grid.Column="4"
+                Margin="8,0,0,0"
+                Command="{Binding ViewModel.TopButtonClickCommand, Mode=OneWay}"
+                CommandParameter="AddBook"
+                Style="{StaticResource AddButton}"
+                ToolTip="添加图书" />
+        </Grid>
+        <ui:DataGrid
+            Grid.Row="1"
+            Margin="0,12,0,0"
+            d:ItemsSource="{d:SampleData ItemCount=8}"
+            AutoGenerateColumns="False"
+            CanUserAddRows="False"
+            ItemsSource="{Binding ViewModel.DataGridItems, Mode=OneWay}"
+            RowHeaderWidth="0">
+            <DataGrid.Columns>
+                <DataGridCheckBoxColumn Width="40" CanUserResize="False">
+                    <DataGridCheckBoxColumn.HeaderTemplate>
+                        <DataTemplate>
+                            <CheckBox HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </DataTemplate>
+                    </DataGridCheckBoxColumn.HeaderTemplate>
+                </DataGridCheckBoxColumn>
+                <DataGridTemplateColumn
+                    Width="130"
+                    CanUserResize="False"
+                    Header="ISBN">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Text="{Binding isbn}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn
+                    Width="2*"
+                    CanUserResize="False"
+                    Header="书名">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock
+                                Margin="4,0,4,0"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                Text="{Binding bookName}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn
+                    Width="*"
+                    CanUserResize="False"
+                    Header="作者">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock
+                                Margin="4,0,4,0"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                Text="{Binding author}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn
+                    Width="60"
+                    CanUserResize="False"
+                    Header="书架号">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Text="{Binding shelfNumber}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridCheckBoxColumn
+                    Width="70"
+                    Binding="{Binding isBorrowed}"
+                    CanUserResize="False"
+                    Header="是否借出" />
+                <DataGridTemplateColumn
+                    Width="58"
+                    CanUserResize="False"
+                    Header="操作">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <ui:Button
+                                    Margin="2,0,0,0"
+                                    Style="{StaticResource EditButton}"
+                                    ToolTip="编辑图书信息" />
+                                <ui:Button
+                                    Margin="2,0,2,0"
+                                    Style="{StaticResource RemoveButton}"
+                                    ToolTip="删除图书" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </ui:DataGrid>
+        <Grid Grid.Row="2" Margin="0,12,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <StackPanel
+                Grid.Column="0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                Orientation="Horizontal">
+                <ui:TextBlock
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontSize="18"
+                    Text="共" />
+                <ui:TextBlock
+                    Margin="4,0,4,0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontSize="18"
+                    Text="{Binding ViewModel.TotalCount, Mode=OneWay}" />
+                <ui:TextBlock
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontSize="18"
+                    Text="条" />
+                <ui:TextBlock
+                    Margin="12,0,0,0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontSize="18"
+                    Text="每页" />
+                <ComboBox
+                    Height="32"
+                    Margin="4,0,4,0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    ItemsSource="{Binding ViewModel.PageCountList, Mode=OneTime}"
+                    SelectedIndex="{Binding ViewModel.CurrentIndex, Mode=TwoWay}" />
+                <ui:TextBlock
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontSize="18"
+                    Text="条" />
+            </StackPanel>
+            <StackPanel
+                Grid.Column="1"
+                Margin="8,0,8,0"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Orientation="Horizontal">
+                <ui:Button
+                    Command="{Binding ViewModel.PageButtonClickCommand, Mode=OneWay}"
+                    CommandParameter="HomePage"
+                    Icon="{ui:SymbolIcon ArrowPrevious24}"
+                    ToolTip="首页" />
+                <ui:Button
+                    Margin="4,0,12,0"
+                    Command="{Binding ViewModel.PageButtonClickCommand, Mode=OneWay}"
+                    CommandParameter="PageUp"
+                    Icon="{ui:SymbolIcon ChevronLeft24}"
+                    ToolTip="上一页" />
+                <ItemsControl ItemsSource="{Binding ViewModel.PageButtonList, Mode=OneWay}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Button
+                                Margin="4,0,0,0"
+                                Command="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.ViewModel.GotoPageCommand, Mode=OneWay}"
+                                CommandParameter="{Binding Name}"
+                                Content="{Binding Name}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+                <ui:Button
+                    Margin="16,0,0,0"
+                    Command="{Binding ViewModel.PageButtonClickCommand, Mode=OneWay}"
+                    CommandParameter="PageDown"
+                    Icon="{ui:SymbolIcon ChevronRight24}"
+                    ToolTip="下一页" />
+                <ui:Button
+                    Margin="4,0,0,0"
+                    Command="{Binding ViewModel.PageButtonClickCommand, Mode=OneWay}"
+                    CommandParameter="EndPage"
+                    Icon="{ui:SymbolIcon ArrowNext24}"
+                    ToolTip="尾页" />
+            </StackPanel>
+            <StackPanel
+                Grid.Column="2"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Orientation="Horizontal">
+                <TextBox Name="XuNiBox" Width="0" />
+                <ui:Flyout
+                    VerticalAlignment="Center"
+                    IsOpen="{Binding ViewModel.IsFlyoutOpen, Mode=TwoWay}"
+                    Placement="Top">
+                    <TextBlock
+                        Width="200"
+                        HorizontalAlignment="Center"
+                        FontSize="18"
+                        Text="{Binding ViewModel.FlyoutText, Mode=OneWay}"
+                        TextWrapping="WrapWithOverflow" />
+                </ui:Flyout>
+                <ui:TextBlock
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontSize="18"
+                    Text="第" />
+                <ui:TextBox
+                    x:Name="textBox"
+                    Height="32"
+                    Margin="4,0,4,0"
+                    InputMethod.IsInputMethodEnabled="False"
+                    PreviewKeyDown="TextBox_PreviewKeyDown"
+                    PreviewTextInput="Text_PreviewTextInput"
+                    Text="{Binding ViewModel.TargetPage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <ui:TextBlock
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontSize="18"
+                    Text="页" />
+            </StackPanel>
         </Grid>
     </Grid>
 </Page>

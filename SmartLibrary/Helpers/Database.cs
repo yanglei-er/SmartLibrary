@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using System.Data.SQLite;
 using System.IO;
+using System.Text;
 
 namespace SmartLibrary.Helpers
 {
@@ -8,24 +9,43 @@ namespace SmartLibrary.Helpers
     /// 构造函数
     /// </summary>
     /// <param name="filename">数据库文件名</param>
-    public sealed class SQLiteHelper(string filename)
+    public class SQLiteHelper
     {
-        /// <summary>
-        /// 数据库列表
-        /// </summary>
-        public static Dictionary<string, SQLiteHelper> DataBaceList = [];
+        private static readonly Dictionary<string, SQLiteHelper> DataBaceList = [];
+        private readonly string DataSource = string.Empty;
+
+        public delegate void ExecuteCompletedEventHandler(DataTable datatable);
+        public event ExecuteCompletedEventHandler ExecutePagerCompleted = delegate { };
+        public event ExecuteCompletedEventHandler ExecuteDataTableCompleted = delegate { };
+
+        private SQLiteHelper(string filename)
+        {
+            DataSource = @".\database\" + filename;
+        }
+
+        public static SQLiteHelper GetDatabase(string filename)
+        {
+            if (DataBaceList.TryGetValue(filename, out SQLiteHelper? value))
+            {
+                return value;
+            }
+            else
+            {
+                SQLiteHelper db = new(filename);
+                if (File.Exists(@".\database\" + filename))
+                {
+                    DataBaceList.Add(filename, db);
+                }
+                return db;
+            }
+        }
 
         /// <summary>
-        /// 数据库地址
-        /// </summary>
-        public string DataSource { get; set; } = @".\database\" + filename;
-
-        /// <summary>
-        /// 数据库是否存在
+        /// 数据库是否连接
         /// </summary>
         public static bool IsDatabaseConnected(string filename)
         {
-            if (File.Exists(@".\database\" + filename))
+            if (DataBaceList.ContainsKey(filename))
             {
                 return true;
             }
@@ -119,6 +139,16 @@ namespace SmartLibrary.Helpers
             return dt;
         }
 
+        public void ExecuteDataTableAction(string cmdText, Dictionary<string, string>? data)
+        {
+            ExecuteDataTableCompleted(ExecuteDataTable(cmdText, data));
+        }
+
+        public static void ExecuteDataTableAsync(string cmdText, Dictionary<string, string>? data)
+        {
+            Task.Run(() => ExecuteDataTableAsync(cmdText, data));
+        }
+
         /// <summary>
         /// 返回一行数据
         /// </summary>
@@ -185,39 +215,30 @@ namespace SmartLibrary.Helpers
             return cmd.ExecuteScalar();
         }
 
+        public void ExecutePagerAction(int pageIndex, int pageSize)
+        {
+            //pageIndex 页码
+            //pageSize 每页条数
+            //OFFSET 代表从第几条记录的后面开始查询
+            //LIMIT 查询多少条结果
+            //SELECT* FROM 表名 LIMIT pageSize OFFSET(pageIndex* pageSize);
+            StringBuilder sbr = new();
+            sbr.AppendLine("SELECT * FROM main LIMIT ");
+            sbr.AppendLine(pageSize.ToString());
+            sbr.AppendLine(" OFFSET ");
+            sbr.AppendLine((pageIndex * pageSize).ToString());
+            ExecutePagerCompleted(ExecuteDataTable(sbr.ToString(), null));
+        }
+
         /// <summary>
         /// 分页查询
         /// </summary>
-        /// <param name="recordCount">总记录数</param>
         /// <param name="pageIndex">页牵引</param>
         /// <param name="pageSize">页大小</param>
-        /// <param name="cmdText">Sql命令文本</param>
-        /// <param name="countText">查询总记录数的Sql文本</param>
-        /// <param name="data">命令参数</param>
         /// <returns>DataSet</returns>
-        public DataSet ExecutePager(ref int recordCount, int pageIndex, int pageSize, string cmdText, string countText, Dictionary<string, string>? data)
+        public void ExecutePager(int pageIndex, int pageSize)
         {
-            if (recordCount < 0)
-            {
-                string? command = ExecuteScalar(countText, data).ToString();
-                if (command != null)
-                {
-                    recordCount = int.Parse(command);
-                }
-                else
-                {
-                    throw new InvalidOperationException("查询总记录数的Sql文本有误");
-                }
-            }
-            var ds = new DataSet();
-            using (SQLiteConnection connection = GetSQLiteConnection())
-            {
-                var command = new SQLiteCommand();
-                PrepareCommand(command, connection, cmdText, data);
-                var da = new SQLiteDataAdapter(command);
-                da.Fill(ds, (pageIndex - 1) * pageSize, pageSize, "result");
-            }
-            return ds;
+            Task.Run(() => ExecutePagerAction(pageIndex - 1, pageSize));
         }
 
         /// <summary>
@@ -236,6 +257,16 @@ namespace SmartLibrary.Helpers
             cmd.CommandType = CommandType.Text;
             cmd.CommandTimeout = 30;
             cmd.ExecuteNonQuery();
+        }
+
+        /// <summary>
+        /// 查询总记录数
+        /// </summary>
+        public int GetRecordCount()
+        {
+            string? command = ExecuteScalar("SELECT count(shelfNumber) FROM main", null).ToString();
+            if (command != null) { return int.Parse(command); }
+            else { return 0; }
         }
     }
 }

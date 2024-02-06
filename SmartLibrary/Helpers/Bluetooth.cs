@@ -1,7 +1,6 @@
 ﻿using InTheHand.Net;
 using InTheHand.Net.Bluetooth;
 using InTheHand.Net.Sockets;
-using System.ComponentModel;
 using System.Net.NetworkInformation;
 
 namespace SmartLibrary.Helpers
@@ -12,8 +11,6 @@ namespace SmartLibrary.Helpers
         private BluetoothClient? bluetoothClient;
         private BluetoothRadio? bluetoothRadio;
 
-        //连接线程设置
-        private readonly BackgroundWorker _BGconnectWorker = new BackgroundWorker();
         public delegate void ConnectEventHandler(string info);
         public event ConnectEventHandler ConnectEvent = delegate { };
 
@@ -25,10 +22,7 @@ namespace SmartLibrary.Helpers
         {
             get
             {
-                if (_instance == null)
-                {
-                    _instance = new BluetoothHelper();
-                }
+                _instance ??= new BluetoothHelper();
                 return _instance;
             }
         }
@@ -36,14 +30,6 @@ namespace SmartLibrary.Helpers
         private BluetoothHelper()
         {
             _previousBleState = IsPlatformSupportBT();
-            _BGconnectWorker.DoWork += BGConnectWorker_DoWork;
-            _BGconnectWorker.RunWorkerCompleted += BGConnectWorker_Completed;
-        }
-
-        ~BluetoothHelper()
-        {
-            _BGconnectWorker.DoWork -= BGConnectWorker_DoWork;
-            _BGconnectWorker.RunWorkerCompleted -= BGConnectWorker_Completed;
         }
 
         //蓝牙状态改变
@@ -89,7 +75,7 @@ namespace SmartLibrary.Helpers
             return false;
         }
 
-        public bool isBleConnected()
+        public bool IsBleConnected()
         {
             if (bluetoothClient != null)
             {
@@ -100,7 +86,7 @@ namespace SmartLibrary.Helpers
 
         public void StartScan()
         {
-            BluetoothComponent bluetoothComponent = new BluetoothComponent(bluetoothClient);
+            BluetoothComponent bluetoothComponent = new(bluetoothClient);
             bluetoothComponent.DiscoverDevicesAsync(255, false, false, true, false, bluetoothComponent);
             bluetoothComponent.DiscoverDevicesProgress += BluetoothComponent_DiscoverDevice;
             bluetoothComponent.DiscoverDevicesComplete += BluetoothComponent_DiscoverComplete;
@@ -125,46 +111,38 @@ namespace SmartLibrary.Helpers
 
         public void StartConnect(string address)
         {
-            _BGconnectWorker.RunWorkerAsync(address);
+            Task.Run(() => ConnectAction(address));
         }
 
-        private void BGConnectWorker_DoWork(object? sender, DoWorkEventArgs e)
+        private void ConnectAction(string address)
         {
-            string? address = e.Argument as string;
-            if (address != null)
+            BluetoothAddress btAddress = BluetoothAddress.Parse(address);
+            BluetoothDeviceInfo bluetoothDevice = new(btAddress);
+            // 检测是否配对
+            if (!bluetoothDevice.Authenticated)
             {
-                BluetoothAddress btAddress = BluetoothAddress.Parse(address);
-                BluetoothDeviceInfo bluetoothDevice = new BluetoothDeviceInfo(btAddress);
-                // 检测是否配对
-                if (!bluetoothDevice.Authenticated)
+                System.Timers.Timer tmr = new(2500)
                 {
-                    System.Timers.Timer tmr = new System.Timers.Timer(2500);
-                    tmr.AutoReset = false;
-                    tmr.Elapsed += OnPairing;
-                    tmr.Start();
-                }
+                    AutoReset = false
+                };
+                tmr.Elapsed += OnPairing;
+                tmr.Start();
+            }
+            try
+            {
                 // "00001124-0000-1000-8000-00805f9b34fb"
                 bluetoothClient?.Connect(btAddress, BluetoothService.Handsfree);
+                ConnectEvent("连接成功");
+            }
+            catch (Exception ex)
+            {
+                ConnectEvent(ex.Message);
             }
         }
 
         private void OnPairing(object? sender, System.Timers.ElapsedEventArgs e)
         {
             ConnectEvent("正在配对");
-        }
-
-        private void BGConnectWorker_Completed(object? sender, RunWorkerCompletedEventArgs e)
-        {
-            if (e.Error == null)
-            {
-                ConnectEvent("连接成功");
-            }
-            else
-            {
-                string allMessage = e.Error.Message;
-                string[] sArray = allMessage.Split("。");
-                ConnectEvent(sArray[0]);
-            }
         }
 
         public void StartDisconnect()
