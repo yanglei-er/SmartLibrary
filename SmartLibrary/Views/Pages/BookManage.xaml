@@ -2,6 +2,7 @@
     x:Class="SmartLibrary.Views.Pages.BookManage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:SmartLibrary.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:SmartLibrary.Views.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -14,9 +15,11 @@
     ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
     ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
     Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+    ScrollViewer.CanContentScroll="False"
     mc:Ignorable="d">
 
     <Page.Resources>
+        <converters:BoolToAppearanceConverter x:Key="BoolToAppearanceConverter" />
         <Style BasedOn="{StaticResource MyButtonStyle}" TargetType="ui:Button" />
         <Style BasedOn="{StaticResource MyToggleButtonStyle}" TargetType="ToggleButton" />
         <Style BasedOn="{StaticResource MyDataGridStyle}" TargetType="ui:DataGrid" />
@@ -45,8 +48,8 @@
                     <Setter Property="Background" Value="#673AB7" />
                 </Trigger>
                 <Trigger Property="IsPressed" Value="True">
-                    <Setter Property="Background" Value="#FF5830CE" />
-                    <Setter Property="Foreground" Value="#FFBDBDBD" />
+                    <Setter Property="Background" Value="#FF5B34A2" />
+                    <Setter Property="Foreground" Value="#BDBDBD" />
                 </Trigger>
             </Style.Triggers>
         </Style>
@@ -104,7 +107,7 @@
                     <Setter Property="Background" Value="#7B5CD6" />
                 </Trigger>
                 <Trigger Property="IsPressed" Value="True">
-                    <Setter Property="Background" Value="#FF5830CE" />
+                    <Setter Property="Background" Value="#FF6A4FBB" />
                     <Setter Property="Foreground" Value="#FFBDBDBD" />
                 </Trigger>
             </Style.Triggers>
@@ -184,25 +187,31 @@
                 Grid.Column="3"
                 Margin="8,0,0,0"
                 Command="{Binding ViewModel.TopButtonClickCommand, Mode=OneWay}"
-                CommandParameter="DelBook"
-                Style="{StaticResource DelButton}"
-                ToolTip="删除所选图书" />
+                CommandParameter="AddBook"
+                Style="{StaticResource AddButton}"
+                ToolTip="添加图书" />
             <ui:Button
                 Grid.Column="4"
                 Margin="8,0,0,0"
                 Command="{Binding ViewModel.TopButtonClickCommand, Mode=OneWay}"
-                CommandParameter="AddBook"
-                Style="{StaticResource AddButton}"
-                ToolTip="添加图书" />
+                CommandParameter="DelBook"
+                Style="{StaticResource DelButton}"
+                ToolTip="删除所选图书" />
         </Grid>
         <ui:DataGrid
             Grid.Row="1"
             Margin="0,12,0,0"
-            d:ItemsSource="{d:SampleData ItemCount=8}"
+            d:ItemsSource="{d:SampleData ItemCount=15}"
             AutoGenerateColumns="False"
             CanUserAddRows="False"
+            EnableColumnVirtualization="True"
+            EnableRowVirtualization="True"
             ItemsSource="{Binding ViewModel.DataGridItems, Mode=OneWay}"
-            RowHeaderWidth="0">
+            RowHeaderWidth="0"
+            ScrollViewer.CanContentScroll="True"
+            VirtualizingPanel.IsContainerVirtualizable="True"
+            VirtualizingPanel.IsVirtualizing="True"
+            VirtualizingPanel.VirtualizationMode="Recycling">
             <DataGrid.Columns>
                 <DataGridCheckBoxColumn Width="40" CanUserResize="False">
                     <DataGridCheckBoxColumn.HeaderTemplate>
@@ -344,24 +353,22 @@
                 VerticalAlignment="Center"
                 Orientation="Horizontal">
                 <ui:Button
-                    Command="{Binding ViewModel.PageButtonClickCommand, Mode=OneWay}"
-                    CommandParameter="HomePage"
-                    Icon="{ui:SymbolIcon ArrowPrevious24}"
-                    ToolTip="首页" />
-                <ui:Button
                     Margin="4,0,12,0"
                     Command="{Binding ViewModel.PageButtonClickCommand, Mode=OneWay}"
                     CommandParameter="PageUp"
                     Icon="{ui:SymbolIcon ChevronLeft24}"
+                    IsEnabled="{Binding ViewModel.IsPageUpEnabled, Mode=OneWay}"
                     ToolTip="上一页" />
                 <ItemsControl ItemsSource="{Binding ViewModel.PageButtonList, Mode=OneWay}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Button
+                            <ui:Button
                                 Margin="4,0,0,0"
+                                Appearance="{Binding IsCurrentPage, Converter={StaticResource BoolToAppearanceConverter}}"
                                 Command="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.ViewModel.GotoPageCommand, Mode=OneWay}"
-                                CommandParameter="{Binding Name}"
-                                Content="{Binding Name}" />
+                                CommandParameter="{Binding Name, Mode=OneWay}"
+                                Content="{Binding Name, Mode=OneWay}"
+                                IsEnabled="{Binding IsEnabled, Mode=OneWay}" />
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                     <ItemsControl.ItemsPanel>
@@ -375,13 +382,8 @@
                     Command="{Binding ViewModel.PageButtonClickCommand, Mode=OneWay}"
                     CommandParameter="PageDown"
                     Icon="{ui:SymbolIcon ChevronRight24}"
+                    IsEnabled="{Binding ViewModel.IsPageDownEnabled, Mode=OneWay}"
                     ToolTip="下一页" />
-                <ui:Button
-                    Margin="4,0,0,0"
-                    Command="{Binding ViewModel.PageButtonClickCommand, Mode=OneWay}"
-                    CommandParameter="EndPage"
-                    Icon="{ui:SymbolIcon ArrowNext24}"
-                    ToolTip="尾页" />
             </StackPanel>
             <StackPanel
                 Grid.Column="2"
@@ -404,7 +406,7 @@
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     FontSize="18"
-                    Text="第" />
+                    Text="前往" />
                 <ui:TextBox
                     x:Name="textBox"
                     Height="32"

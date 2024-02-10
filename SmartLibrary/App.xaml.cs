@@ -8,9 +8,6 @@ using Wpf.Ui;
 
 namespace SmartLibrary
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
     public partial class App : Application
     {
         private static readonly IHost _host = Host.CreateDefaultBuilder()

@@ -40,7 +40,7 @@
                 <ComboBoxItem>高对比度</ComboBoxItem>
             </ComboBox>
         </ui:CardControl>
-        <ui:CardControl Margin="0,2,0,0" Icon="{ui:SymbolIcon Options24}">
+        <ui:CardControl Margin="0,4,0,0" Icon="{ui:SymbolIcon Options24}">
             <ui:CardControl.Header>
                 <StackPanel>
                     <ui:TextBlock FontTypography="Body" Text="启用托盘图标" />

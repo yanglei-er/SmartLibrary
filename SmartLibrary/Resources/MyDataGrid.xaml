@@ -3,8 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="http://schemas.lepo.co/wpfui/2022/xaml"
     xmlns:converters="clr-namespace:SmartLibrary.Converters"
-    xmlns:system="clr-namespace:System;assembly=System.Runtime"
-    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml">
+    xmlns:system="clr-namespace:System;assembly=System.Runtime">
 
     <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     <system:Double x:Key="DefaultDataGridFontSize">14</system:Double>

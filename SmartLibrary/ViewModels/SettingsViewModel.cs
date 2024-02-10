@@ -6,11 +6,10 @@ namespace SmartLibrary.ViewModels
     public partial class SettingsViewModel : ObservableObject
     {
         [ObservableProperty]
-        private ApplicationTheme _currentApplicationTheme = ApplicationTheme.Unknown;
+        private ApplicationTheme _currentApplicationTheme = ApplicationThemeManager.GetAppTheme();
 
         public SettingsViewModel()
         {
-            CurrentApplicationTheme = ApplicationThemeManager.GetAppTheme();
             ApplicationThemeManager.Changed += OnThemeChanged;
         }
 
@@ -19,9 +18,9 @@ namespace SmartLibrary.ViewModels
             ApplicationThemeManager.Changed -= OnThemeChanged;
         }
 
-        partial void OnCurrentApplicationThemeChanged(ApplicationTheme oldValue, ApplicationTheme newValue)
+        partial void OnCurrentApplicationThemeChanged(ApplicationTheme value)
         {
-            ApplicationThemeManager.Apply(newValue);
+            ApplicationThemeManager.Apply(value);
         }
 
         private void OnThemeChanged(ApplicationTheme currentApplicationTheme, Color systemAccent)

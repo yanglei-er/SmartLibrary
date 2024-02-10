@@ -1,4 +1,5 @@
 ﻿using SmartLibrary.Helpers;
+using System.Collections.ObjectModel;
 using System.Data;
 using Wpf.Ui;
 
@@ -7,13 +8,11 @@ namespace SmartLibrary.ViewModels
     public partial class BookManageViewModel : ObservableObject
     {
         private readonly IContentDialogService _contentDialogService;
-        private readonly SQLiteHelper booksDb = SQLiteHelper.GetDatabase("books.smartlibrary");
-        private int totalPageCount;
+        private readonly SQLiteHelper BooksDb = SQLiteHelper.GetDatabase("books.smartlibrary");
+        private int TotalPageCount;
 
-        //[ObservableProperty]
-        //private readonly List<int> PageCountList = [20, 30, 50, 80];
         [ObservableProperty]
-        private List<int> _pageCountList = [1, 2, 3, 20];
+        private List<int> _pageCountList = [20, 30, 50, 80];
 
         [ObservableProperty]
         //private ObservableCollection<BookInfo> _dataGridItems = [];
@@ -26,13 +25,19 @@ namespace SmartLibrary.ViewModels
         private int _currentIndex = 0;
 
         [ObservableProperty]
-        private List<PageButton> _pageButtonList = [];
+        private ObservableCollection<PageButton> _pageButtonList = [];
 
         [ObservableProperty]
         private int _currentPage = 1;
 
         [ObservableProperty]
         private int _targetPage = 1;
+
+        [ObservableProperty]
+        private bool _isPageUpEnabled = false;
+
+        [ObservableProperty]
+        private bool _isPageDownEnabled = false;
 
         [ObservableProperty]
         private bool _isFlyoutOpen = false;
@@ -45,11 +50,12 @@ namespace SmartLibrary.ViewModels
             _contentDialogService = contentDialogService;
             if (SQLiteHelper.IsDatabaseConnected("books.smartlibrary"))
             {
-                booksDb.ExecutePagerCompleted += ExecutePagerCompleted;
-                booksDb.ExecuteDataTableCompleted += ExecuteDataTableCompleted;
+                BooksDb.ExecutePagerCompleted += ExecutePagerCompleted;
+                BooksDb.ExecuteDataTableCompleted += ExecuteDataTableCompleted;
 
-                TotalCount = booksDb.GetRecordCount();
-                totalPageCount = TotalCount / PageCountList[CurrentIndex] + ((TotalCount % PageCountList[CurrentIndex]) == 0 ? 0 : 1);
+                TotalCount = BooksDb.GetRecordCount();
+                TotalPageCount = TotalCount / PageCountList[CurrentIndex] + ((TotalCount % PageCountList[CurrentIndex]) == 0 ? 0 : 1);
+                if (TotalPageCount > 1) IsPageDownEnabled = true;
 
                 Refresh();
                 ComputeButton();
@@ -62,45 +68,67 @@ namespace SmartLibrary.ViewModels
 
         ~BookManageViewModel()
         {
-            booksDb.ExecutePagerCompleted -= ExecutePagerCompleted;
-            booksDb.ExecuteDataTableCompleted -= ExecuteDataTableCompleted;
+            BooksDb.ExecutePagerCompleted -= ExecutePagerCompleted;
+            BooksDb.ExecuteDataTableCompleted -= ExecuteDataTableCompleted;
         }
 
         private void Refresh()
         {
-            booksDb.ExecutePager(CurrentPage, PageCountList[CurrentIndex]);
+            BooksDb.ExecutePager(CurrentPage, PageCountList[CurrentIndex]);
         }
 
         private void ComputeButton()
         {
             PageButtonList.Clear();
-
-            // 若页数<=7，那就全显示
-            if (totalPageCount <= 7)
+            if (TotalPageCount <= 7)
             {
-                for (int i = 1; i <= totalPageCount; i++)
+                for (int i = 1; i <= TotalPageCount; i++)
                 {
-                    PageButtonList.Add(new PageButton() { Name = i.ToString() });
+                    PageButtonList.Add(new PageButton() { Name = i.ToString(), IsCurrentPage = CurrentPage == i });
                 }
             }
-            else if (totalPageCount > 7)
+            else
             {
-                PageButtonList.Add(new PageButton() { Name = "1" });
-                PageButtonList.Add(new PageButton() { Name = "2" });
-                PageButtonList.Add(new PageButton() { Name = "3" });
-                PageButtonList.Add(new PageButton() { Name = "..." });
-                PageButtonList.Add(new PageButton() { Name = (totalPageCount - 2).ToString() });
-                PageButtonList.Add(new PageButton() { Name = (totalPageCount - 1).ToString() });
-                PageButtonList.Add(new PageButton() { Name = totalPageCount.ToString() });
+                if (CurrentPage <= 4)
+                {
+                    for (int i = 1; i <= 5; i++)
+                    {
+                        PageButtonList.Add(new PageButton() { Name = i.ToString(), IsCurrentPage = CurrentPage == i });
+                    }
+                    PageButtonList.Add(new PageButton() { Name = "...", IsEnabled = false });
+                    PageButtonList.Add(new PageButton() { Name = TotalPageCount.ToString() });
+                }
+                else if (CurrentPage >= TotalPageCount - 3)
+                {
+                    PageButtonList.Add(new PageButton() { Name = "1" });
+                    PageButtonList.Add(new PageButton() { Name = "...", IsEnabled = false });
+                    PageButtonList.Add(new PageButton() { Name = (TotalPageCount - 4).ToString(), IsCurrentPage = CurrentPage == TotalPageCount - 4 });
+                    PageButtonList.Add(new PageButton() { Name = (TotalPageCount - 3).ToString(), IsCurrentPage = CurrentPage == TotalPageCount - 3 });
+                    PageButtonList.Add(new PageButton() { Name = (TotalPageCount - 2).ToString(), IsCurrentPage = CurrentPage == TotalPageCount - 2 });
+                    PageButtonList.Add(new PageButton() { Name = (TotalPageCount - 1).ToString(), IsCurrentPage = CurrentPage == TotalPageCount - 1 });
+                    PageButtonList.Add(new PageButton() { Name = TotalPageCount.ToString(), IsCurrentPage = CurrentPage == TotalPageCount });
+                }
+                else
+                {
+                    PageButtonList.Add(new PageButton() { Name = "1" });
+                    PageButtonList.Add(new PageButton() { Name = "...", IsEnabled = false });
+                    PageButtonList.Add(new PageButton() { Name = (CurrentPage - 1).ToString() });
+                    PageButtonList.Add(new PageButton() { Name = CurrentPage.ToString(), IsCurrentPage = true });
+                    PageButtonList.Add(new PageButton() { Name = (CurrentPage + 1).ToString() });
+                    PageButtonList.Add(new PageButton() { Name = "...", IsEnabled = false });
+                    PageButtonList.Add(new PageButton() { Name = TotalPageCount.ToString() });
+                }
             }
         }
 
         partial void OnCurrentIndexChanged(int value)
         {
-            totalPageCount = TotalCount / PageCountList[value] + ((TotalCount % PageCountList[value]) == 0 ? 0 : 1);
+            TotalPageCount = TotalCount / PageCountList[value] + ((TotalCount % PageCountList[value]) == 0 ? 0 : 1);
             if (CurrentPage == 1) Refresh();
             CurrentPage = 1;
             ComputeButton();
+            if (TotalPageCount == 1) { IsPageUpEnabled = false; IsPageDownEnabled = false; }
+            else { IsPageDownEnabled = true; }
         }
 
         [RelayCommand]
@@ -127,27 +155,21 @@ namespace SmartLibrary.ViewModels
         [RelayCommand]
         private void OnPageButtonClick(string parameter)
         {
-            if (parameter == "HomePage")
-            {
-                CurrentPage = 1;
-            }
-            else if (parameter == "PageUp")
+            if (parameter == "PageUp")
             {
                 if (CurrentPage > 1)
                 {
                     CurrentPage--;
+                    if (!IsPageDownEnabled) IsPageDownEnabled = true;
                 }
             }
-            else if (parameter == "PageDown")
+            else
             {
-                if (CurrentPage < totalPageCount)
+                if (CurrentPage < TotalPageCount)
                 {
                     CurrentPage++;
+                    if (!IsPageUpEnabled) IsPageUpEnabled = true;
                 }
-            }
-            else if (parameter == "EndPage")
-            {
-                CurrentPage = totalPageCount;
             }
         }
 
@@ -155,21 +177,25 @@ namespace SmartLibrary.ViewModels
         {
             TargetPage = value;
             Refresh();
+            ComputeButton();
+            if (CurrentPage == 1) IsPageUpEnabled = false;
+            else if (CurrentPage == TotalPageCount) IsPageDownEnabled = false;
         }
 
         [RelayCommand]
         private void GotoPage(string page)
         {
-            PageButtonList.Remove(PageButtonList[0]);
-            MessageBox.Show(PageButtonList.Count().ToString());
+            CurrentPage = int.Parse(page);
+            if (CurrentPage > 1) IsPageUpEnabled = true;
+            if (CurrentPage < TotalPageCount) IsPageDownEnabled = true;
         }
 
         [RelayCommand]
         partial void OnTargetPageChanged(int value)
         {
-            if (value > totalPageCount)
+            if (value > TotalPageCount)
             {
-                TargetPage = totalPageCount;
+                TargetPage = TotalPageCount;
                 FlyoutText = "输入页码超过最大页码！";
                 IsFlyoutOpen = true;
             }
@@ -199,6 +225,8 @@ namespace SmartLibrary.ViewModels
             else
             {
                 CurrentPage = TargetPage;
+                if (CurrentPage > 1) IsPageUpEnabled = true;
+                if (CurrentPage < TotalPageCount) IsPageDownEnabled = true;
             }
             if (IsFlyoutOpen)
             {
@@ -221,5 +249,11 @@ namespace SmartLibrary.ViewModels
     {
         [ObservableProperty]
         public string _name = string.Empty;
+
+        [ObservableProperty]
+        public bool _isCurrentPage = false;
+
+        [ObservableProperty]
+        private bool _isEnabled = true;
     }
 }

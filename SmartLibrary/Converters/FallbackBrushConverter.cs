@@ -13,9 +13,9 @@ namespace SmartLibrary.Converters
                 return brush;
             }
 
-            if (value is Color)
+            if (value is Color color)
             {
-                return new SolidColorBrush((Color)value);
+                return new SolidColorBrush(color);
             }
 
             // We draw red to visibly see an invalid bind in the UI.
