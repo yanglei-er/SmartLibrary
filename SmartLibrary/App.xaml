@@ -13,8 +13,6 @@
                 <ui:ThemesDictionary Theme="Dark" />
                 <ui:ControlsDictionary />
                 <ResourceDictionary Source="pack://application:,,,/Resources/MyButton.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/Resources/MyToggleButton.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/Resources/MyDataGrid.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <converters:StringToImageSourceConverter x:Key="StringToImageSourceConverter" />
         </ResourceDictionary>

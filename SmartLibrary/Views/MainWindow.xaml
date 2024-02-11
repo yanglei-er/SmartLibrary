@@ -38,7 +38,6 @@
                     Source="pack://application:,,,/Assets/applicationIcon-512.png" />
             </ui:TitleBar.Icon>
         </ui:TitleBar>
-        <ContentPresenter x:Name="RootContentDialog" Grid.Row="0" />
         <ui:NavigationView
             x:Name="RootNavigation"
             Grid.Row="1"
@@ -51,5 +50,6 @@
                 </Grid>
             </ui:NavigationView.ContentOverlay>
         </ui:NavigationView>
+        <ContentPresenter x:Name="RootContentDialog" Grid.Row="1" />
     </Grid>
 </ui:FluentWindow>

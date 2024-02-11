@@ -20,9 +20,16 @@
 
     <Page.Resources>
         <converters:BoolToAppearanceConverter x:Key="BoolToAppearanceConverter" />
+        <Style x:Key="CenterAlignmentStyle" TargetType="TextBlock">
+            <Setter Property="TextAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style x:Key="LeftAlignmentStyle" TargetType="TextBlock">
+            <Setter Property="TextAlignment" Value="Left" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Margin" Value="4,0,4,0" />
+        </Style>
         <Style BasedOn="{StaticResource MyButtonStyle}" TargetType="ui:Button" />
-        <Style BasedOn="{StaticResource MyToggleButtonStyle}" TargetType="ToggleButton" />
-        <Style BasedOn="{StaticResource MyDataGridStyle}" TargetType="ui:DataGrid" />
         <Style x:Key="EditButton" TargetType="ui:Button">
             <Setter Property="Background" Value="{x:Null}" />
             <Setter Property="BorderBrush" Value="{x:Null}" />
@@ -141,6 +148,10 @@
                     <Setter Property="Background" Value="#FFBF2E23" />
                     <Setter Property="Foreground" Value="#FFBDBDBD" />
                 </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background" Value="#FF6B140D" />
+                    <Setter Property="Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
+                </Trigger>
             </Style.Triggers>
         </Style>
     </Page.Resources>
@@ -184,21 +195,25 @@
                 FontSize="18"
                 ToolTip="导出数据库" />
             <ui:Button
+                x:Name="AddButton"
                 Grid.Column="3"
                 Margin="8,0,0,0"
-                Command="{Binding ViewModel.TopButtonClickCommand, Mode=OneWay}"
+                Command="{Binding ViewModel.TopButtonClickCommand, Mode=OneTime}"
                 CommandParameter="AddBook"
                 Style="{StaticResource AddButton}"
                 ToolTip="添加图书" />
             <ui:Button
+                x:Name="DelButton"
                 Grid.Column="4"
                 Margin="8,0,0,0"
-                Command="{Binding ViewModel.TopButtonClickCommand, Mode=OneWay}"
-                CommandParameter="DelBook"
+                Command="{Binding ViewModel.DelBooksCommand, Mode=OneWay}"
+                CommandParameter="{Binding ElementName=DataGrid, Path=SelectedItems}"
+                IsEnabled="{Binding ViewModel.IsDelButtonEnabled, Mode=TwoWay}"
                 Style="{StaticResource DelButton}"
                 ToolTip="删除所选图书" />
         </Grid>
         <ui:DataGrid
+            x:Name="DataGrid"
             Grid.Row="1"
             Margin="0,12,0,0"
             d:ItemsSource="{d:SampleData ItemCount=15}"
@@ -206,77 +221,59 @@
             CanUserAddRows="False"
             EnableColumnVirtualization="True"
             EnableRowVirtualization="True"
-            ItemsSource="{Binding ViewModel.DataGridItems, Mode=OneWay}"
+            ItemsSource="{Binding ViewModel.DataGridItems, Mode=TwoWay}"
             RowHeaderWidth="0"
             ScrollViewer.CanContentScroll="True"
+            SelectionChanged="DataGrid_SelectionChanged"
+            SelectionUnit="FullRow"
             VirtualizingPanel.IsContainerVirtualizable="True"
             VirtualizingPanel.IsVirtualizing="True"
             VirtualizingPanel.VirtualizationMode="Recycling">
-            <DataGrid.Columns>
-                <DataGridCheckBoxColumn Width="40" CanUserResize="False">
-                    <DataGridCheckBoxColumn.HeaderTemplate>
-                        <DataTemplate>
-                            <CheckBox HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </DataTemplate>
-                    </DataGridCheckBoxColumn.HeaderTemplate>
-                </DataGridCheckBoxColumn>
-                <DataGridTemplateColumn
+            <ui:DataGrid.ColumnHeaderStyle>
+                <Style BasedOn="{StaticResource DefaultDataGridColumnHeaderStyle}" TargetType="DataGridColumnHeader">
+                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                </Style>
+            </ui:DataGrid.ColumnHeaderStyle>
+            <ui:DataGrid.RowStyle>
+                <Style BasedOn="{StaticResource DefaultDataGridRowStyle}" TargetType="DataGridRow">
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Foreground" Value="#FFB9E1FF" />
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Foreground" Value="{StaticResource AccentTextFillColorTertiaryBrush}" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </ui:DataGrid.RowStyle>
+            <ui:DataGrid.Columns>
+                <DataGridTextColumn
                     Width="130"
+                    Binding="{Binding isbn, Mode=OneWay}"
                     CanUserResize="False"
-                    Header="ISBN">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <TextBlock
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Text="{Binding isbn}" />
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                <DataGridTemplateColumn
+                    CanUserSort="False"
+                    ElementStyle="{StaticResource CenterAlignmentStyle}"
+                    Header="ISBN"
+                    IsReadOnly="True" />
+                <DataGridTextColumn
                     Width="2*"
-                    CanUserResize="False"
-                    Header="书名">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <TextBlock
-                                Margin="4,0,4,0"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Center"
-                                Text="{Binding bookName}" />
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                <DataGridTemplateColumn
+                    Binding="{Binding bookName, Mode=TwoWay}"
+                    ElementStyle="{StaticResource LeftAlignmentStyle}"
+                    Header="书名" />
+                <DataGridTextColumn
                     Width="*"
-                    CanUserResize="False"
-                    Header="作者">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <TextBlock
-                                Margin="4,0,4,0"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Center"
-                                Text="{Binding author}" />
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                <DataGridTemplateColumn
+                    Binding="{Binding author, Mode=TwoWay}"
+                    ElementStyle="{StaticResource LeftAlignmentStyle}"
+                    Header="作者" />
+                <DataGridTextColumn
                     Width="60"
+                    Binding="{Binding shelfNumber, Mode=TwoWay}"
                     CanUserResize="False"
-                    Header="书架号">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <TextBlock
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Text="{Binding shelfNumber}" />
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
+                    ElementStyle="{StaticResource CenterAlignmentStyle}"
+                    Header="书架号" />
                 <DataGridCheckBoxColumn
                     Width="70"
-                    Binding="{Binding isBorrowed}"
+                    Binding="{Binding isBorrowed, Mode=TwoWay}"
                     CanUserResize="False"
                     Header="是否借出" />
                 <DataGridTemplateColumn
@@ -298,7 +295,7 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-            </DataGrid.Columns>
+            </ui:DataGrid.Columns>
         </ui:DataGrid>
         <Grid Grid.Row="2" Margin="0,12,0,0">
             <Grid.ColumnDefinitions>

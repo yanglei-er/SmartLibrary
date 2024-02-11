@@ -141,7 +141,7 @@ namespace SmartLibrary.Helpers
 
         public void ExecuteDataTableAction(string cmdText, Dictionary<string, string>? data)
         {
-            ExecuteDataTableCompleted(ExecuteDataTable(cmdText, data));
+            ExecuteDataTableCompleted.Invoke(ExecuteDataTable(cmdText, data));
         }
 
         public static void ExecuteDataTableAsync(string cmdText, Dictionary<string, string>? data)
@@ -227,7 +227,7 @@ namespace SmartLibrary.Helpers
             sbr.AppendLine(pageSize.ToString());
             sbr.AppendLine(" OFFSET ");
             sbr.AppendLine((pageIndex * pageSize).ToString());
-            ExecutePagerCompleted(ExecuteDataTable(sbr.ToString(), null));
+            ExecutePagerCompleted.Invoke(ExecuteDataTable(sbr.ToString(), null));
         }
 
         /// <summary>
@@ -267,6 +267,35 @@ namespace SmartLibrary.Helpers
             string? command = ExecuteScalar("SELECT count(shelfNumber) FROM main", null).ToString();
             if (command != null) { return int.Parse(command); }
             else { return 0; }
+        }
+
+        /// <summary>
+        /// 更新数据库
+        /// </summary>
+        public void UpdateDatabase(DataTable table)
+        {
+            SQLiteConnection conn = GetSQLiteConnection();
+            if (conn.State != ConnectionState.Open)
+                conn.Open();
+            SQLiteDataAdapter SD = new()
+            {
+                SelectCommand = new SQLiteCommand("select * from main", conn)
+            };
+            SQLiteCommandBuilder SC = new(SD);
+            SD.UpdateCommand = SC.GetUpdateCommand();
+            SD.Update(table); //更新数据源与UI
+            conn.Close(); //关闭数据库连接
+        }
+
+        /// <summary>
+        /// 删除书籍
+        /// </summary>
+        public void DelBook(string isbn)
+        {
+            StringBuilder sbr = new();
+            sbr.Append("DELETE FROM main WHERE isbn =  ");
+            sbr.Append(isbn);
+            ExecuteNonQuery(sbr.ToString(), null);
         }
     }
 }

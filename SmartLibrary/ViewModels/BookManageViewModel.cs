@@ -1,21 +1,27 @@
 ﻿using SmartLibrary.Helpers;
+using System.Collections;
 using System.Collections.ObjectModel;
 using System.Data;
 using Wpf.Ui;
+using Wpf.Ui.Controls;
+using Wpf.Ui.Extensions;
 
 namespace SmartLibrary.ViewModels
 {
     public partial class BookManageViewModel : ObservableObject
     {
+        private readonly ISnackbarService _snackbarService;
         private readonly IContentDialogService _contentDialogService;
         private readonly SQLiteHelper BooksDb = SQLiteHelper.GetDatabase("books.smartlibrary");
         private int TotalPageCount;
 
         [ObservableProperty]
+        private bool _isDelButtonEnabled = false;
+
+        [ObservableProperty]
         private List<int> _pageCountList = [20, 30, 50, 80];
 
         [ObservableProperty]
-        //private ObservableCollection<BookInfo> _dataGridItems = [];
         private DataView _dataGridItems = new();
 
         [ObservableProperty]
@@ -45,20 +51,15 @@ namespace SmartLibrary.ViewModels
         [ObservableProperty]
         private string _flyoutText = string.Empty;
 
-        public BookManageViewModel(IContentDialogService contentDialogService)
+        public BookManageViewModel(ISnackbarService snackbarService, IContentDialogService contentDialogService)
         {
+            _snackbarService = snackbarService;
             _contentDialogService = contentDialogService;
             if (SQLiteHelper.IsDatabaseConnected("books.smartlibrary"))
             {
                 BooksDb.ExecutePagerCompleted += ExecutePagerCompleted;
-                BooksDb.ExecuteDataTableCompleted += ExecuteDataTableCompleted;
-
-                TotalCount = BooksDb.GetRecordCount();
-                TotalPageCount = TotalCount / PageCountList[CurrentIndex] + ((TotalCount % PageCountList[CurrentIndex]) == 0 ? 0 : 1);
-                if (TotalPageCount > 1) IsPageDownEnabled = true;
-
                 Refresh();
-                ComputeButton();
+                Pager();
             }
             else
             {
@@ -69,16 +70,22 @@ namespace SmartLibrary.ViewModels
         ~BookManageViewModel()
         {
             BooksDb.ExecutePagerCompleted -= ExecutePagerCompleted;
-            BooksDb.ExecuteDataTableCompleted -= ExecuteDataTableCompleted;
         }
 
         private void Refresh()
         {
-            BooksDb.ExecutePager(CurrentPage, PageCountList[CurrentIndex]);
+            TotalCount = BooksDb.GetRecordCount();
+            TotalPageCount = TotalCount / PageCountList[CurrentIndex] + ((TotalCount % PageCountList[CurrentIndex]) == 0 ? 0 : 1);
+            if (TotalPageCount == 1) { IsPageUpEnabled = false; IsPageDownEnabled = false; return; }
+            if (CurrentPage != 1) { IsPageUpEnabled = true; }
+            if (CurrentPage != TotalPageCount) { IsPageDownEnabled = true; }
         }
 
-        private void ComputeButton()
+        private void Pager()
         {
+            IsDelButtonEnabled = false;
+            BooksDb.ExecutePager(CurrentPage, PageCountList[CurrentIndex]);
+
             PageButtonList.Clear();
             if (TotalPageCount <= 7)
             {
@@ -123,12 +130,9 @@ namespace SmartLibrary.ViewModels
 
         partial void OnCurrentIndexChanged(int value)
         {
-            TotalPageCount = TotalCount / PageCountList[value] + ((TotalCount % PageCountList[value]) == 0 ? 0 : 1);
-            if (CurrentPage == 1) Refresh();
+            Refresh();
+            if (CurrentPage == 1) Pager();
             CurrentPage = 1;
-            ComputeButton();
-            if (TotalPageCount == 1) { IsPageUpEnabled = false; IsPageDownEnabled = false; }
-            else { IsPageDownEnabled = true; }
         }
 
         [RelayCommand]
@@ -146,9 +150,36 @@ namespace SmartLibrary.ViewModels
             {
 
             }
-            else if (parameter == "DelBook")
-            {
+        }
 
+        [RelayCommand]
+        private async Task DelBooks(object selectedItems)
+        {
+            if (selectedItems is IList SelectedItems)
+            {
+                ContentDialogResult result = await _contentDialogService.ShowSimpleDialogAsync(new SimpleContentDialogCreateOptions()
+                {
+                    Title = "删除图书",
+                    Content = $"是否删除你选择的 {SelectedItems.Count} 本图书",
+                    PrimaryButtonText = "是",
+                    CloseButtonText = "否",
+                });
+
+                if (result == ContentDialogResult.Primary)
+                {
+                    _snackbarService.Show("删除图书", $"已删除你选择的 {SelectedItems.Count} 本图书", ControlAppearance.Info, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
+
+                    foreach (DataRowView item in SelectedItems)
+                    {
+                        string? isbn = item[0].ToString();
+                        if (isbn != null)
+                        {
+                            BooksDb.DelBook(isbn);
+                        }
+                    }
+                    Refresh();
+                    Pager();
+                }
             }
         }
 
@@ -176,8 +207,7 @@ namespace SmartLibrary.ViewModels
         partial void OnCurrentPageChanged(int value)
         {
             TargetPage = value;
-            Refresh();
-            ComputeButton();
+            Pager();
             if (CurrentPage == 1) IsPageUpEnabled = false;
             else if (CurrentPage == TotalPageCount) IsPageDownEnabled = false;
         }
@@ -239,9 +269,9 @@ namespace SmartLibrary.ViewModels
             DataGridItems = datatable.DefaultView;
         }
 
-        private void ExecuteDataTableCompleted(DataTable datatable)
+        private void Ds_Rowchanged(object sender, DataRowChangeEventArgs e)
         {
-
+            BooksDb.UpdateDatabase(e.Row.Table);
         }
     }
 
