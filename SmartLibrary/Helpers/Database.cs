@@ -81,22 +81,24 @@ namespace SmartLibrary.Helpers
         /// </summary>
         /// <param name="cmd">SQLiteCommand</param>
         /// <param name="conn">SQLiteConnection</param>
-        /// <param name="cmdText">Sql命令文本</param>
-        /// <param name="data">参数数组</param>
-        private static void PrepareCommand(SQLiteCommand cmd, SQLiteConnection conn, string cmdText, Dictionary<String, String>? data)
+        /// <param name="sqlStr">Sql命令文本</param>
+        /// <param name="p">参数数组</param>
+        private static void PrepareCommand(SQLiteCommand cmd, SQLiteConnection conn, string sqlStr, params SQLiteParameter[]? p)
         {
             if (conn.State != ConnectionState.Open)
+            {
                 conn.Open();
+            }
             cmd.Parameters.Clear();
             cmd.Connection = conn;
-            cmd.CommandText = cmdText;
+            cmd.CommandText = sqlStr;
             cmd.CommandType = CommandType.Text;
             cmd.CommandTimeout = 30;
-            if (data != null && data.Count >= 1)
+            if (p != null && p.Length >= 1)
             {
-                foreach (KeyValuePair<String, String> val in data)
+                foreach (SQLiteParameter parm in p)
                 {
-                    cmd.Parameters.AddWithValue(val.Key, val.Value);
+                    cmd.Parameters.AddWithValue(parm.ParameterName, parm.Value);
                 }
             }
         }
@@ -107,7 +109,7 @@ namespace SmartLibrary.Helpers
         /// <param name="cmdText">Sql命令文本</param>
         /// <param name="data">参数数组</param>
         /// <returns>DataSet</returns>
-        public DataSet ExecuteDataset(string cmdText, Dictionary<string, string>? data)
+        public DataSet ExecuteDataset(string cmdText, params SQLiteParameter[]? data)
         {
             var ds = new DataSet();
             using (SQLiteConnection connection = GetSQLiteConnection())
@@ -126,7 +128,7 @@ namespace SmartLibrary.Helpers
         /// <param name="cmdText">Sql命令文本</param>
         /// <param name="data">参数数组</param>
         /// <returns>DataTable</returns>
-        public DataTable ExecuteDataTable(string cmdText, Dictionary<string, string>? data)
+        public DataTable ExecuteDataTable(string cmdText, params SQLiteParameter[]? data)
         {
             var dt = new DataTable();
             using (SQLiteConnection connection = GetSQLiteConnection())
@@ -139,12 +141,12 @@ namespace SmartLibrary.Helpers
             return dt;
         }
 
-        private void ExecuteDataTableAction(string cmdText, Dictionary<string, string>? data)
+        private void ExecuteDataTableAction(string cmdText, params SQLiteParameter[]? data)
         {
             ExecuteDataTableCompleted.Invoke(ExecuteDataTable(cmdText, data));
         }
 
-        public void ExecuteDataTableAsync(string cmdText, Dictionary<string, string>? data)
+        public void ExecuteDataTableAsync(string cmdText, params SQLiteParameter[]? data)
         {
             Task.Run(() => ExecuteDataTableAction(cmdText, data));
         }
@@ -155,7 +157,7 @@ namespace SmartLibrary.Helpers
         /// <param name="cmdText">Sql命令文本</param>
         /// <param name="data">参数数组</param>
         /// <returns>DataRow</returns>
-        public DataRow? ExecuteDataRow(string cmdText, Dictionary<string, string>? data)
+        public DataRow? ExecuteDataRow(string cmdText, params SQLiteParameter[]? data)
         {
             DataSet ds = ExecuteDataset(cmdText, data);
             if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
@@ -169,7 +171,7 @@ namespace SmartLibrary.Helpers
         /// <param name="cmdText">Sql命令文本</param>
         /// <param name="data">传入的参数</param>
         /// <returns>返回受影响的行数</returns>
-        public int ExecuteNonQuery(string cmdText, Dictionary<string, string>? data)
+        public int ExecuteNonQuery(string cmdText, params SQLiteParameter[]? data)
         {
             using SQLiteConnection connection = GetSQLiteConnection();
             var command = new SQLiteCommand();
@@ -183,10 +185,10 @@ namespace SmartLibrary.Helpers
         /// <param name="cmdText">Sql命令文本</param>
         /// <param name="data">传入的参数</param>
         /// <returns>SQLiteDataReader</returns>
-        public SQLiteDataReader ExecuteReader(string cmdText, Dictionary<string, string>? data)
+        public SQLiteDataReader ExecuteReader(string cmdText, params SQLiteParameter[]? data)
         {
             var command = new SQLiteCommand();
-            SQLiteConnection connection = GetSQLiteConnection();
+            using SQLiteConnection connection = GetSQLiteConnection();
             try
             {
                 PrepareCommand(command, connection, cmdText, data);
@@ -207,7 +209,7 @@ namespace SmartLibrary.Helpers
         /// <param name="cmdText">Sql命令文本</param>
         /// <param name="data">传入的参数</param>
         /// <returns>object</returns>
-        public object ExecuteScalar(string cmdText, Dictionary<string, string>? data)
+        public object ExecuteScalar(string cmdText, params SQLiteParameter[]? data)
         {
             using SQLiteConnection connection = GetSQLiteConnection();
             var cmd = new SQLiteCommand();
@@ -270,24 +272,6 @@ namespace SmartLibrary.Helpers
         }
 
         /// <summary>
-        /// 更新数据库
-        /// </summary>
-        public void UpdateDatabase(DataTable table)
-        {
-            SQLiteConnection conn = GetSQLiteConnection();
-            if (conn.State != ConnectionState.Open)
-                conn.Open();
-            SQLiteDataAdapter SD = new()
-            {
-                SelectCommand = new SQLiteCommand("select * from main", conn)
-            };
-            SQLiteCommandBuilder SC = new(SD);
-            SD.UpdateCommand = SC.GetUpdateCommand();
-            SD.Update(table); //更新数据源与UI
-            conn.Close(); //关闭数据库连接
-        }
-
-        /// <summary>
         /// 删除书籍
         /// </summary>
         public void DelBook(string isbn)
@@ -303,7 +287,7 @@ namespace SmartLibrary.Helpers
         /// </summary>
         public bool Exists(string isbn)
         {
-            if (ExecuteReader($"SELECT * FROM main WHERE isbn = {isbn}", null).HasRows)
+            if ((Int64)ExecuteScalar($"SELECT COUNT(*) FROM main WHERE isbn = {isbn}", null) > 0)
             {
                 return true;
             }
@@ -314,12 +298,34 @@ namespace SmartLibrary.Helpers
         }
 
         /// <summary>
+        /// 简单更新数据库
+        /// </summary>
+        public void UpdateSimple(string isbn, string bookName, string? author, Int64 shelfNumber, bool isBorrowed)
+        {
+            string sql = "UPDATE main SET bookName = @name, author = @author, shelfNumber = @shelfNumber, isBorrowed = @isBorrowed WHERE isbn = @isbn";
+            SQLiteParameter[] parameters = [
+                new SQLiteParameter("@name", bookName),
+                new SQLiteParameter("@author", author),
+                new SQLiteParameter("@shelfNumber", shelfNumber),
+                new SQLiteParameter("@isBorrowed", isBorrowed),
+                new SQLiteParameter("@isbn", isbn)
+            ];
+            ExecuteNonQuery(sql, parameters);
+        }
+
+        /// <summary>
         /// 合并数据库
         /// </summary>
         public int[] MergeDatabase(string newDbPath)
         {
             int mergedCount = 0;
             int repeatedCount = 0;
+
+            SQLiteConnection oldDbConnection = GetSQLiteConnection();
+            if (oldDbConnection.State != ConnectionState.Open)
+            {
+                oldDbConnection.Open();
+            }
 
             SQLiteConnection newDbConnection = new()
             {
@@ -330,30 +336,25 @@ namespace SmartLibrary.Helpers
             SQLiteCommand selectCommand = new("SELECT * FROM main", newDbConnection);
             SQLiteDataReader reader = selectCommand.ExecuteReader();
 
+            SQLiteCommand command = new();
+            SQLiteTransaction transaction = oldDbConnection.BeginTransaction();
+
             while (reader.Read())
             {
                 string isbn = reader.GetString(0);
                 if (!Exists(isbn))
                 {
-                    //string cmdText = "INSERT INTO main VALUES (@isbn,@bookName,@author,@press,@pressDate,@pressPlace,@price,@clcName,@bookDesc,@pages,@words,@shelfNumber,@isBorrowed,@picture)";
-                    //Dictionary<string, string> data = new()
-                    //{
-                    //    { "@isbn", isbn },
-                    //    { "@bookName", reader.GetString(1) },
-                    //    { "@author", reader.GetString(2) },
-                    //    { "@press", reader.GetString(3) },
-                    //    { "@pressDate", reader.GetString(4) },
-                    //    { "@pressPlace", reader.GetString(5) },
-                    //    { "@price", reader.GetValue(6).ToString() },
-                    //    { "@clcName", reader.GetString(7) },
-                    //    { "@bookDesc", reader.GetString(8) },
-                    //    { "@pages", reader.GetString(9) },
-                    //    { "@words", reader.GetString(10) },
-                    //    { "@shelfNumber", reader.GetInt64(11).ToString() },
-                    //    { "@isBorrowed", reader.GetInt64(12).ToString() },
-                    //    { "@picture", reader.GetValue(13).ToString() }
-                    //};
-                    //ExecuteNonQuery(cmdText, data);
+                    //string sqlStr = "INSERT INTO main VALUES (\"@isbn\",\"@bookName\",\"@author\",\"@press\",\"@pressDate\",\"@pressPlace\",@price,\"@clcName\",\"@bookDesc\",\"@pages\",\"@words\",@shelfNumber,@isBorrowed,\"@picture\")";
+                    string sqlStr = $"INSERT INTO main VALUES (\"{isbn}\",\"{reader.GetString(1)}\",\"{reader.GetString(2)}\",\"{reader.GetString(3)}\",\"{reader.GetString(4)}\",\"{reader.GetString(5)}\",@price,\"{reader.GetString(7)}\",\"{reader.GetString(8)}\",\"{reader.GetString(9)}\",\"{reader.GetString(10)}\",@shelfNumber,@isBorrowed,\"{reader.GetValue(13)}\")";
+
+                    SQLiteParameter[] parameters = [
+                        new SQLiteParameter("@price", reader.GetDouble(6)),
+                        new SQLiteParameter("@shelfNumber", reader.GetInt64(11)),
+                        new SQLiteParameter("@isBorrowed", Convert.ToBoolean(reader.GetInt64(12))),
+                    ];
+                    PrepareCommand(command, oldDbConnection, sqlStr, parameters);
+                    command.Transaction = transaction;
+                    command.ExecuteNonQuery();
                     mergedCount++;
                 }
                 else
@@ -361,7 +362,10 @@ namespace SmartLibrary.Helpers
                     repeatedCount++;
                 }
             }
+            transaction.Commit();
+            command.Dispose();
             reader.Dispose();
+            oldDbConnection.Dispose();
             newDbConnection.Dispose();
             return [mergedCount, repeatedCount];
         }

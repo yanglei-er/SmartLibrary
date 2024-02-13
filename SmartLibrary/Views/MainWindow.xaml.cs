@@ -48,7 +48,7 @@ namespace SmartLibrary.Views
         {
             WindowInteropHelper helper = new(this);
             HwndSource hwndSource = HwndSource.FromHwnd(helper.Handle);
-            hwndSource.AddHook(new HwndSourceHook(BluetoothHelper.Instance.HwndHandler));  //挂钩
+            //hwndSource.AddHook(new HwndSourceHook(BluetoothHelper.Instance.HwndHandler));  //挂钩
         }
 
         void OnBleStateChanged(bool state)

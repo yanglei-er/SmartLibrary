@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Win32;
 using SmartLibrary.Helpers;
+using SmartLibrary.Models;
 using SmartLibrary.Views.Pages;
 using System.Collections;
 using System.Collections.ObjectModel;
@@ -326,9 +327,9 @@ namespace SmartLibrary.ViewModels
             DataGridItems = datatable.DefaultView;
         }
 
-        private void Ds_Rowchanged(object sender, DataRowChangeEventArgs e)
+        public void Update(BookInfoSimple bookInfo)
         {
-            BooksDb.UpdateDatabase(e.Row.Table);
+            BooksDb.UpdateSimple(bookInfo.Isbn, bookInfo.BookName, bookInfo.Author, bookInfo.ShelfNumber, bookInfo.IsBorrowed);
         }
     }
 

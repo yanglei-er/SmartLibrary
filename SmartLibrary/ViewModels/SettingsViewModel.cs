@@ -1,4 +1,5 @@
-﻿using System.Windows.Media;
+﻿using System.Reflection;
+using System.Windows.Media;
 using Wpf.Ui.Appearance;
 
 namespace SmartLibrary.ViewModels
@@ -8,8 +9,12 @@ namespace SmartLibrary.ViewModels
         [ObservableProperty]
         private ApplicationTheme _currentApplicationTheme = ApplicationThemeManager.GetAppTheme();
 
+        [ObservableProperty]
+        private string _appVersion = string.Empty;
+
         public SettingsViewModel()
         {
+            AppVersion = Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? string.Empty;
             ApplicationThemeManager.Changed += OnThemeChanged;
         }
 

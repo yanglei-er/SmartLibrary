@@ -62,13 +62,26 @@
                     Width="32"
                     Height="32"
                     Margin="-4,0,0,0"
+                    RenderOptions.BitmapScalingMode="HighQuality"
                     Source="pack://application:,,,/Assets/applicationIcon-512.png" />
             </ui:CardExpander.Icon>
             <ui:CardExpander.Header>
-                <StackPanel Margin="-6,0,0,0">
-                    <ui:TextBlock FontTypography="Body" Text="智慧图书馆" />
-                    <ui:TextBlock FontTypography="Caption" Text="©2024 赵杨磊.All Rights Reserved." />
-                </StackPanel>
+                <Grid Margin="-6,0,12,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0">
+                        <ui:TextBlock FontTypography="Body" Text="智慧图书馆" />
+                        <ui:TextBlock FontTypography="Caption" Text="©2024 赵杨磊.All Rights Reserved." />
+                    </StackPanel>
+                    <ui:TextBlock
+                        Grid.Column="1"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        FontTypography="Body"
+                        Text="{Binding ViewModel.AppVersion, Mode=OneWay}" />
+                </Grid>
             </ui:CardExpander.Header>
             <StackPanel>
                 <Grid Margin="16">
@@ -93,6 +106,7 @@
                                 Grid.Column="1"
                                 Width="42"
                                 Height="17"
+                                RenderOptions.BitmapScalingMode="HighQuality"
                                 Source="pack://application:,,,/Assets/gplv3-127x51.png" />
                         </WrapPanel>
                     </ui:Anchor>
@@ -115,6 +129,7 @@
                                 <ui:ImageIcon
                                     Width="20"
                                     Height="20"
+                                    RenderOptions.BitmapScalingMode="HighQuality"
                                     Source="pack://application:,,,/Assets/.net-48x48.png" />
                             </ui:Anchor.Icon>
                         </ui:Anchor>
@@ -133,6 +148,7 @@
                                 <ui:ImageIcon
                                     Width="24"
                                     Height="24"
+                                    RenderOptions.BitmapScalingMode="HighQuality"
                                     Source="pack://application:,,,/Assets/wpfui-48x48.png" />
                             </ui:Anchor.Icon>
                         </ui:Anchor>

@@ -6,13 +6,19 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
-    <ApplicationIcon>applicationIcon.ico</ApplicationIcon>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
+    <PropertyGroup>
+	    <ApplicationIcon>applicationIcon.ico</ApplicationIcon>
+		<Description>Smart library</Description>
+		<Version>0.1.6.0</Version>
+		<Copyright>©2024 赵杨磊.All Rights Reserved.</Copyright>
+	</PropertyGroup>
+
     <ItemGroup>
-		<Content Include="applicationIcon.ico" />
-	</ItemGroup>
+	    <Content Include="applicationIcon.ico" />
+    </ItemGroup>
 
   <ItemGroup>
     <None Remove="Assets\.net-48x48.png" />
@@ -25,24 +31,15 @@
     <None Remove="Assets\borrowbook-512x512.png" />
     <None Remove="Assets\database.png" />
     <None Remove="Assets\findbook-512x512.png" />
-    <None Remove="Assets\flush.gif" />
     <None Remove="Assets\gplv3-127x51.png" />
     <None Remove="Assets\homeBluetooth.png" />
     <None Remove="Assets\homeSetting.png" />
-    <None Remove="Assets\pic\cross.png" />
-    <None Remove="Assets\pic\green.png" />
-    <None Remove="Assets\pic\red.png" />
-    <None Remove="Assets\pic\right.png" />
-    <None Remove="Assets\pic\tick.png" />
-    <None Remove="Assets\pic\wrong.png" />
-    <None Remove="Assets\pic\yellow.png" />
     <None Remove="Assets\wpfui-48x48.png" />
   </ItemGroup>
 
   <ItemGroup>
     <Resource Include="Assets\bluetooth-disabled.png" />
     <Resource Include="Assets\database.png" />
-    <Resource Include="Assets\flush.gif" />
     <Resource Include="Assets\.net-48x48.png" />
     <Resource Include="Assets\applicationIcon-512.png" />
     <Resource Include="Assets\background.jpg" />
@@ -54,13 +51,6 @@
     <Resource Include="Assets\gplv3-127x51.png" />
     <Resource Include="Assets\homeBluetooth.png" />
     <Resource Include="Assets\homeSetting.png" />
-    <Resource Include="Assets\pic\cross.png" />
-    <Resource Include="Assets\pic\green.png" />
-    <Resource Include="Assets\pic\red.png" />
-    <Resource Include="Assets\pic\right.png" />
-    <Resource Include="Assets\pic\tick.png" />
-    <Resource Include="Assets\pic\wrong.png" />
-    <Resource Include="Assets\pic\yellow.png" />
     <Resource Include="Assets\wpfui-48x48.png" />
   </ItemGroup>
 

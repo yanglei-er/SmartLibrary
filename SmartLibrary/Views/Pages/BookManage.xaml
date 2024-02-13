@@ -217,10 +217,13 @@
             Margin="0,12,0,0"
             d:ItemsSource="{d:SampleData ItemCount=15}"
             AutoGenerateColumns="False"
+            BeginningEdit="DataGrid_BeginningEdit"
             CanUserAddRows="False"
             EnableColumnVirtualization="True"
             EnableRowVirtualization="True"
+            HorizontalScrollBarVisibility="Hidden"
             ItemsSource="{Binding ViewModel.DataGridItems, Mode=TwoWay}"
+            RowEditEnding="DataGrid_RowEditEnding"
             RowHeaderWidth="0"
             ScrollViewer.CanContentScroll="True"
             SelectionChanged="DataGrid_SelectionChanged"
@@ -256,25 +259,33 @@
                     IsReadOnly="True" />
                 <DataGridTextColumn
                     Width="2*"
-                    Binding="{Binding bookName, Mode=TwoWay}"
+                    Binding="{Binding bookName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                     ElementStyle="{StaticResource LeftAlignmentStyle}"
                     Header="书名" />
                 <DataGridTextColumn
                     Width="*"
-                    Binding="{Binding author, Mode=TwoWay}"
+                    Binding="{Binding author, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                     ElementStyle="{StaticResource LeftAlignmentStyle}"
                     Header="作者" />
                 <DataGridTextColumn
                     Width="60"
-                    Binding="{Binding shelfNumber, Mode=TwoWay}"
+                    Binding="{Binding shelfNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                     CanUserResize="False"
                     ElementStyle="{StaticResource CenterAlignmentStyle}"
                     Header="书架号" />
-                <DataGridCheckBoxColumn
+                <DataGridTemplateColumn
                     Width="70"
-                    Binding="{Binding isBorrowed, Mode=TwoWay}"
                     CanUserResize="False"
-                    Header="是否借出" />
+                    Header="是否借出">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <CheckBox
+                                HorizontalAlignment="Center"
+                                Click="CheckBox_Click"
+                                IsChecked="{Binding isBorrowed, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
                 <DataGridTemplateColumn
                     Width="58"
                     CanUserResize="False"

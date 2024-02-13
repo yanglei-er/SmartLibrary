@@ -34,7 +34,6 @@
                     Width="26"
                     Height="26"
                     Margin="6,-6,0,-6"
-                    RenderOptions.BitmapScalingMode="HighQuality"
                     Source="pack://application:,,,/Assets/applicationIcon-512.png" />
             </ui:TitleBar.Icon>
         </ui:TitleBar>
