@@ -3,10 +3,11 @@ using Wpf.Ui.Controls;
 
 namespace SmartLibrary.Views.Pages
 {
-    public partial class Settings : INavigableView<SettingsViewModel>
+    public partial class EditBook : INavigableView<EditBookViewModel>
     {
-        public SettingsViewModel ViewModel { get; }
-        public Settings(SettingsViewModel viewModel)
+        public EditBookViewModel ViewModel { get; }
+
+        public EditBook(EditBookViewModel viewModel)
         {
             ViewModel = viewModel;
             DataContext = this;

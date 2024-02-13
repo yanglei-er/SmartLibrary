@@ -5,10 +5,6 @@ using System.Text;
 
 namespace SmartLibrary.Helpers
 {
-    /// <summary>
-    /// 构造函数
-    /// </summary>
-    /// <param name="filename">数据库文件名</param>
     public class SQLiteHelper
     {
         private static readonly Dictionary<string, SQLiteHelper> DataBaceList = [];
@@ -18,6 +14,10 @@ namespace SmartLibrary.Helpers
         public event ExecuteCompletedEventHandler ExecutePagerCompleted = delegate { };
         public event ExecuteCompletedEventHandler ExecuteDataTableCompleted = delegate { };
 
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        /// <param name="filename">数据库文件名</param>
         private SQLiteHelper(string filename)
         {
             DataSource = @".\database\" + filename;
@@ -139,14 +139,14 @@ namespace SmartLibrary.Helpers
             return dt;
         }
 
-        public void ExecuteDataTableAction(string cmdText, Dictionary<string, string>? data)
+        private void ExecuteDataTableAction(string cmdText, Dictionary<string, string>? data)
         {
             ExecuteDataTableCompleted.Invoke(ExecuteDataTable(cmdText, data));
         }
 
-        public static void ExecuteDataTableAsync(string cmdText, Dictionary<string, string>? data)
+        public void ExecuteDataTableAsync(string cmdText, Dictionary<string, string>? data)
         {
-            Task.Run(() => ExecuteDataTableAsync(cmdText, data));
+            Task.Run(() => ExecuteDataTableAction(cmdText, data));
         }
 
         /// <summary>
@@ -215,7 +215,7 @@ namespace SmartLibrary.Helpers
             return cmd.ExecuteScalar();
         }
 
-        public void ExecutePagerAction(int pageIndex, int pageSize)
+        private void ExecutePagerAction(int pageIndex, int pageSize)
         {
             //pageIndex 页码
             //pageSize 每页条数
@@ -296,6 +296,74 @@ namespace SmartLibrary.Helpers
             sbr.Append("DELETE FROM main WHERE isbn =  ");
             sbr.Append(isbn);
             ExecuteNonQuery(sbr.ToString(), null);
+        }
+
+        /// <summary>
+        /// 书籍是否存在
+        /// </summary>
+        public bool Exists(string isbn)
+        {
+            if (ExecuteReader($"SELECT * FROM main WHERE isbn = {isbn}", null).HasRows)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// 合并数据库
+        /// </summary>
+        public int[] MergeDatabase(string newDbPath)
+        {
+            int mergedCount = 0;
+            int repeatedCount = 0;
+
+            SQLiteConnection newDbConnection = new()
+            {
+                ConnectionString = "Data Source=" + newDbPath
+            };
+            newDbConnection.Open();
+
+            SQLiteCommand selectCommand = new("SELECT * FROM main", newDbConnection);
+            SQLiteDataReader reader = selectCommand.ExecuteReader();
+
+            while (reader.Read())
+            {
+                string isbn = reader.GetString(0);
+                if (!Exists(isbn))
+                {
+                    //string cmdText = "INSERT INTO main VALUES (@isbn,@bookName,@author,@press,@pressDate,@pressPlace,@price,@clcName,@bookDesc,@pages,@words,@shelfNumber,@isBorrowed,@picture)";
+                    //Dictionary<string, string> data = new()
+                    //{
+                    //    { "@isbn", isbn },
+                    //    { "@bookName", reader.GetString(1) },
+                    //    { "@author", reader.GetString(2) },
+                    //    { "@press", reader.GetString(3) },
+                    //    { "@pressDate", reader.GetString(4) },
+                    //    { "@pressPlace", reader.GetString(5) },
+                    //    { "@price", reader.GetValue(6).ToString() },
+                    //    { "@clcName", reader.GetString(7) },
+                    //    { "@bookDesc", reader.GetString(8) },
+                    //    { "@pages", reader.GetString(9) },
+                    //    { "@words", reader.GetString(10) },
+                    //    { "@shelfNumber", reader.GetInt64(11).ToString() },
+                    //    { "@isBorrowed", reader.GetInt64(12).ToString() },
+                    //    { "@picture", reader.GetValue(13).ToString() }
+                    //};
+                    //ExecuteNonQuery(cmdText, data);
+                    mergedCount++;
+                }
+                else
+                {
+                    repeatedCount++;
+                }
+            }
+            reader.Dispose();
+            newDbConnection.Dispose();
+            return [mergedCount, repeatedCount];
         }
     }
 }

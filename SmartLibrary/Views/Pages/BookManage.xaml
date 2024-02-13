@@ -198,8 +198,7 @@
                 x:Name="AddButton"
                 Grid.Column="3"
                 Margin="8,0,0,0"
-                Command="{Binding ViewModel.TopButtonClickCommand, Mode=OneTime}"
-                CommandParameter="AddBook"
+                Command="{Binding ViewModel.AddBookCommand, Mode=OneWay}"
                 Style="{StaticResource AddButton}"
                 ToolTip="添加图书" />
             <ui:Button
@@ -285,10 +284,14 @@
                             <StackPanel Orientation="Horizontal">
                                 <ui:Button
                                     Margin="2,0,0,0"
+                                    Command="{Binding ElementName=DataGrid, Path=DataContext.ViewModel.EditBookCommand, Mode=OneWay}"
+                                    CommandParameter="{Binding ElementName=DataGrid, Path=SelectedItem}"
                                     Style="{StaticResource EditButton}"
                                     ToolTip="编辑图书信息" />
                                 <ui:Button
                                     Margin="2,0,2,0"
+                                    Command="{Binding ElementName=DataGrid, Path=DataContext.ViewModel.DelOneBookCommand, Mode=OneWay}"
+                                    CommandParameter="{Binding ElementName=DataGrid, Path=SelectedItem}"
                                     Style="{StaticResource RemoveButton}"
                                     ToolTip="删除图书" />
                             </StackPanel>
@@ -362,7 +365,7 @@
                             <ui:Button
                                 Margin="4,0,0,0"
                                 Appearance="{Binding IsCurrentPage, Converter={StaticResource BoolToAppearanceConverter}}"
-                                Command="{Binding RelativeSource={RelativeSource AncestorType=ItemsControl}, Path=DataContext.ViewModel.GotoPageCommand, Mode=OneWay}"
+                                Command="{Binding ElementName=DataGrid, Path=DataContext.ViewModel.GotoPageCommand, Mode=OneWay}"
                                 CommandParameter="{Binding Name, Mode=OneWay}"
                                 Content="{Binding Name, Mode=OneWay}"
                                 IsEnabled="{Binding IsEnabled, Mode=OneWay}" />

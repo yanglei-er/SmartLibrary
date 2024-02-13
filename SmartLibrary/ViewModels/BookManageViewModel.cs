@@ -1,4 +1,7 @@
-﻿using SmartLibrary.Helpers;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Win32;
+using SmartLibrary.Helpers;
+using SmartLibrary.Views.Pages;
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.Data;
@@ -10,6 +13,7 @@ namespace SmartLibrary.ViewModels
 {
     public partial class BookManageViewModel : ObservableObject
     {
+        private readonly INavigationService _navigationService;
         private readonly ISnackbarService _snackbarService;
         private readonly IContentDialogService _contentDialogService;
         private readonly SQLiteHelper BooksDb = SQLiteHelper.GetDatabase("books.smartlibrary");
@@ -51,8 +55,9 @@ namespace SmartLibrary.ViewModels
         [ObservableProperty]
         private string _flyoutText = string.Empty;
 
-        public BookManageViewModel(ISnackbarService snackbarService, IContentDialogService contentDialogService)
+        public BookManageViewModel(INavigationService navigationService, ISnackbarService snackbarService, IContentDialogService contentDialogService)
         {
+            _navigationService = navigationService;
             _snackbarService = snackbarService;
             _contentDialogService = contentDialogService;
             if (SQLiteHelper.IsDatabaseConnected("books.smartlibrary"))
@@ -72,10 +77,28 @@ namespace SmartLibrary.ViewModels
             BooksDb.ExecutePagerCompleted -= ExecutePagerCompleted;
         }
 
+        [RelayCommand]
+        private void AddBook()
+        {
+            _navigationService.NavigateWithHierarchy(typeof(AddBook));
+        }
+
+        [RelayCommand]
+        private void EditBook(DataRowView selectedItem)
+        {
+            _navigationService.NavigateWithHierarchy(typeof(EditBook));
+            string? isbn = selectedItem[0].ToString();
+            if (isbn != null)
+            {
+                WeakReferenceMessenger.Default.Send(isbn);
+            }
+        }
+
         private void Refresh()
         {
             TotalCount = BooksDb.GetRecordCount();
             TotalPageCount = TotalCount / PageCountList[CurrentIndex] + ((TotalCount % PageCountList[CurrentIndex]) == 0 ? 0 : 1);
+            if (CurrentPage > TotalPageCount) CurrentPage = TotalPageCount;
             if (TotalPageCount == 1) { IsPageUpEnabled = false; IsPageDownEnabled = false; return; }
             if (CurrentPage != 1) { IsPageUpEnabled = true; }
             if (CurrentPage != TotalPageCount) { IsPageDownEnabled = true; }
@@ -91,7 +114,7 @@ namespace SmartLibrary.ViewModels
             {
                 for (int i = 1; i <= TotalPageCount; i++)
                 {
-                    PageButtonList.Add(new PageButton() { Name = i.ToString(), IsCurrentPage = CurrentPage == i });
+                    PageButtonList.Add(new PageButton(i.ToString(), CurrentPage == i));
                 }
             }
             else
@@ -100,30 +123,30 @@ namespace SmartLibrary.ViewModels
                 {
                     for (int i = 1; i <= 5; i++)
                     {
-                        PageButtonList.Add(new PageButton() { Name = i.ToString(), IsCurrentPage = CurrentPage == i });
+                        PageButtonList.Add(new PageButton(i.ToString(), CurrentPage == i));
                     }
-                    PageButtonList.Add(new PageButton() { Name = "...", IsEnabled = false });
-                    PageButtonList.Add(new PageButton() { Name = TotalPageCount.ToString() });
+                    PageButtonList.Add(new PageButton("...", false, false));
+                    PageButtonList.Add(new PageButton(TotalPageCount.ToString()));
                 }
                 else if (CurrentPage >= TotalPageCount - 3)
                 {
-                    PageButtonList.Add(new PageButton() { Name = "1" });
-                    PageButtonList.Add(new PageButton() { Name = "...", IsEnabled = false });
-                    PageButtonList.Add(new PageButton() { Name = (TotalPageCount - 4).ToString(), IsCurrentPage = CurrentPage == TotalPageCount - 4 });
-                    PageButtonList.Add(new PageButton() { Name = (TotalPageCount - 3).ToString(), IsCurrentPage = CurrentPage == TotalPageCount - 3 });
-                    PageButtonList.Add(new PageButton() { Name = (TotalPageCount - 2).ToString(), IsCurrentPage = CurrentPage == TotalPageCount - 2 });
-                    PageButtonList.Add(new PageButton() { Name = (TotalPageCount - 1).ToString(), IsCurrentPage = CurrentPage == TotalPageCount - 1 });
-                    PageButtonList.Add(new PageButton() { Name = TotalPageCount.ToString(), IsCurrentPage = CurrentPage == TotalPageCount });
+                    PageButtonList.Add(new PageButton("1"));
+                    PageButtonList.Add(new PageButton("...", false, false));
+                    PageButtonList.Add(new PageButton((TotalPageCount - 4).ToString(), CurrentPage == TotalPageCount - 4));
+                    PageButtonList.Add(new PageButton((TotalPageCount - 3).ToString(), CurrentPage == TotalPageCount - 3));
+                    PageButtonList.Add(new PageButton((TotalPageCount - 2).ToString(), CurrentPage == TotalPageCount - 2));
+                    PageButtonList.Add(new PageButton((TotalPageCount - 1).ToString(), CurrentPage == TotalPageCount - 1));
+                    PageButtonList.Add(new PageButton(TotalPageCount.ToString(), CurrentPage == TotalPageCount));
                 }
                 else
                 {
-                    PageButtonList.Add(new PageButton() { Name = "1" });
-                    PageButtonList.Add(new PageButton() { Name = "...", IsEnabled = false });
-                    PageButtonList.Add(new PageButton() { Name = (CurrentPage - 1).ToString() });
-                    PageButtonList.Add(new PageButton() { Name = CurrentPage.ToString(), IsCurrentPage = true });
-                    PageButtonList.Add(new PageButton() { Name = (CurrentPage + 1).ToString() });
-                    PageButtonList.Add(new PageButton() { Name = "...", IsEnabled = false });
-                    PageButtonList.Add(new PageButton() { Name = TotalPageCount.ToString() });
+                    PageButtonList.Add(new PageButton("1"));
+                    PageButtonList.Add(new PageButton("...", false, false));
+                    PageButtonList.Add(new PageButton((CurrentPage - 1).ToString()));
+                    PageButtonList.Add(new PageButton(CurrentPage.ToString(), true));
+                    PageButtonList.Add(new PageButton((CurrentPage + 1).ToString()));
+                    PageButtonList.Add(new PageButton("...", false, false));
+                    PageButtonList.Add(new PageButton(TotalPageCount.ToString()));
                 }
             }
         }
@@ -140,47 +163,81 @@ namespace SmartLibrary.ViewModels
         {
             if (parameter == "Import")
             {
-
+                OpenFileDialog openFileDialog = new()
+                {
+                    Title = "导入数据库",
+                    Filter = "SmartLibrary数据库 (*.smartlibrary)|*.smartlibrary",
+                    InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+                    Multiselect = true,
+                };
+                if (openFileDialog.ShowDialog() == true)
+                {
+                    int[] mergedResult = [0, 0];
+                    string[] fileNames = openFileDialog.FileNames;
+                    foreach (string fileName in fileNames)
+                    {
+                        int[] _mergedResult = BooksDb.MergeDatabase(fileName);
+                        mergedResult[0] += _mergedResult[0];
+                        mergedResult[1] += _mergedResult[1];
+                    }
+                    Refresh();
+                    Pager();
+                    _snackbarService.Show("导入数据库", $"{fileNames.Length} 个数据库已导入，共 {mergedResult[0] + mergedResult[1]} 条数据，导入 {mergedResult[0]} 条，重复 {mergedResult[1]} 条。", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
+                }
             }
             else if (parameter == "Export")
             {
-
-            }
-            else if (parameter == "AddBook")
-            {
-
+                SaveFileDialog saveFileDialog = new()
+                {
+                    Title = "导出数据库",
+                    Filter = "SmartLibrary数据库 (*.smartlibrary)|*.smartlibrary",
+                    InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop)
+                };
+                if (saveFileDialog.ShowDialog() == true)
+                {
+                    System.IO.File.Copy(@".\database\books.smartlibrary", saveFileDialog.FileName, true);
+                    _snackbarService.Show("导出数据库", $"{System.IO.Path.GetFileName(saveFileDialog.FileName)} 已导出至 {System.IO.Path.GetDirectoryName(saveFileDialog.FileName)} 下", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
+                }
             }
         }
 
         [RelayCommand]
-        private async Task DelBooks(object selectedItems)
+        private async Task DelBooks(IList selectedItems)
         {
-            if (selectedItems is IList SelectedItems)
+            ContentDialogResult result = await _contentDialogService.ShowSimpleDialogAsync(new SimpleContentDialogCreateOptions()
             {
-                ContentDialogResult result = await _contentDialogService.ShowSimpleDialogAsync(new SimpleContentDialogCreateOptions()
-                {
-                    Title = "删除图书",
-                    Content = $"是否删除你选择的 {SelectedItems.Count} 本图书",
-                    PrimaryButtonText = "是",
-                    CloseButtonText = "否",
-                });
+                Title = "删除图书",
+                Content = $"是否删除你选择的 {selectedItems.Count} 本图书，此操作不可撤销！",
+                PrimaryButtonText = "是",
+                CloseButtonText = "否",
+            });
 
-                if (result == ContentDialogResult.Primary)
+            if (result == ContentDialogResult.Primary)
+            {
+                foreach (DataRowView item in selectedItems)
                 {
-                    _snackbarService.Show("删除图书", $"已删除你选择的 {SelectedItems.Count} 本图书", ControlAppearance.Info, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
-
-                    foreach (DataRowView item in SelectedItems)
+                    string? isbn = item[0].ToString();
+                    if (isbn != null)
                     {
-                        string? isbn = item[0].ToString();
-                        if (isbn != null)
-                        {
-                            BooksDb.DelBook(isbn);
-                        }
+                        BooksDb.DelBook(isbn);
                     }
-                    Refresh();
-                    Pager();
                 }
+                Refresh();
+                Pager();
+                _snackbarService.Show("删除图书", $"已删除你选择的 {selectedItems.Count} 本图书", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
             }
+        }
+
+        [RelayCommand]
+        private void DelOneBook(DataRowView selectedItem)
+        {
+            string? isbn = selectedItem[0].ToString();
+            if (isbn != null)
+            {
+                BooksDb.DelBook(isbn);
+            }
+            Refresh();
+            Pager();
         }
 
         [RelayCommand]
@@ -275,15 +332,17 @@ namespace SmartLibrary.ViewModels
         }
     }
 
-    public partial class PageButton : ObservableObject
+    public record class PageButton
     {
-        [ObservableProperty]
-        public string _name = string.Empty;
+        public string Name { get; init; }
+        public bool IsCurrentPage { get; init; }
+        public bool IsEnabled { get; init; }
 
-        [ObservableProperty]
-        public bool _isCurrentPage = false;
-
-        [ObservableProperty]
-        private bool _isEnabled = true;
+        public PageButton(string name, bool isCurrentPage = false, bool isEnabled = true)
+        {
+            Name = name;
+            IsCurrentPage = isCurrentPage;
+            IsEnabled = isEnabled;
+        }
     }
 }

@@ -33,7 +33,7 @@
             <ComboBox
                 x:Name="Theme_ComboBox"
                 Width="Auto"
-                MinWidth="100"
+                MinWidth="120"
                 SelectedIndex="{Binding ViewModel.CurrentApplicationTheme, Converter={StaticResource ThemeToIndexConverter}, Mode=TwoWay}">
                 <ComboBoxItem>浅色</ComboBoxItem>
                 <ComboBoxItem>深色</ComboBoxItem>

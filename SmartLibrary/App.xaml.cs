@@ -24,9 +24,6 @@ namespace SmartLibrary
                     // Page resolver service
                     services.AddSingleton<IPageService, PageService>();
 
-                    // Theme manipulation
-                    services.AddSingleton<IThemeService, ThemeService>();
-
                     // ContentDialog manipulation
                     services.AddSingleton<IContentDialogService, ContentDialogService>();
 
@@ -56,6 +53,11 @@ namespace SmartLibrary
                     services.AddSingleton<Views.Pages.Settings>();
                     services.AddSingleton<ViewModels.SettingsViewModel>();
 
+                    services.AddTransient<Views.Pages.AddBook>();
+                    services.AddTransient<ViewModels.AddBookViewModel>();
+                    services.AddTransient<Views.Pages.EditBook>();
+                    services.AddTransient<ViewModels.EditBookViewModel>();
+
                     // Configuration
                     services.Configure<AppConfig>(context.Configuration.GetSection(nameof(AppConfig)));
                 }
@@ -75,7 +77,6 @@ namespace SmartLibrary
         private async void OnExit(object sender, ExitEventArgs e)
         {
             await _host.StopAsync();
-
             _host.Dispose();
         }
 

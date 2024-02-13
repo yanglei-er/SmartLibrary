@@ -30,11 +30,6 @@ namespace SmartLibrary.Views
             BluetoothHelper.Instance.BleStateChangedEvent += OnBleStateChanged;
         }
 
-        ~MainWindow()
-        {
-            BluetoothHelper.Instance.BleStateChangedEvent -= OnBleStateChanged;
-        }
-
         #region INavigationWindow methods
 
         public INavigationView GetNavigation() => RootNavigation;
@@ -51,31 +46,13 @@ namespace SmartLibrary.Views
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            WindowInteropHelper helper = new WindowInteropHelper(this);
+            WindowInteropHelper helper = new(this);
             HwndSource hwndSource = HwndSource.FromHwnd(helper.Handle);
             hwndSource.AddHook(new HwndSourceHook(BluetoothHelper.Instance.HwndHandler));  //挂钩
         }
 
         void OnBleStateChanged(bool state)
         {
-            //系统toast通知失败
-            //ToastContentBuilder toast = new ToastContentBuilder();
-            //toast.AddArgument("action", "viewConversation");
-            //toast.AddArgument("conversationId", 9813);
-            //if (state)
-            //{
-            //    toast.AddText("系统蓝牙已开启！", hintMaxLines: 1);
-            //    toast.AddText("您可以执行下一步操作");
-            //    toast.AddAppLogoOverride(new Uri("pack://application:,,,/Assets/bluetooth.png"));
-            //}
-            //else
-            //{
-            //    toast.AddText("系统蓝牙已关闭！", hintMaxLines: 1);
-            //    toast.AddText("为正常使用程序全部功能，请开启系统蓝牙");
-            //    toast.AddButton(new ToastButton().SetContent("转到蓝牙设置").AddArgument("action", "toBleSettings"));
-            //    toast.AddAppLogoOverride(new Uri("pack://application:,,,/Assets/bluetooth-disabled.png"));
-            //}
-            //toast.Show();
             System.Media.SystemSounds.Asterisk.Play();
             if (state)
             {
@@ -89,6 +66,7 @@ namespace SmartLibrary.Views
 
         protected override void OnClosed(EventArgs e)
         {
+            BluetoothHelper.Instance.BleStateChangedEvent -= OnBleStateChanged;
             base.OnClosed(e);
             Application.Current.Shutdown();
         }

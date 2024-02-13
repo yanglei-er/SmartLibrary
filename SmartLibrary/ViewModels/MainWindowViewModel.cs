@@ -6,7 +6,6 @@ namespace SmartLibrary.ViewModels
 {
     public partial class MainWindowViewModel : ObservableObject
     {
-
         [ObservableProperty]
         private ObservableCollection<object> _navigationItems = [];
 
@@ -15,14 +14,14 @@ namespace SmartLibrary.ViewModels
 
         public MainWindowViewModel(INavigationService navigationService)
         {
-            NavigationItems = new ObservableCollection<object>
-                {
+            NavigationItems =
+                [
                     new NavigationViewItem()
                     {
                         Content = "主页",
                         Icon = new SymbolIcon { Symbol = SymbolRegular.Home24 },
                         TargetPageType = typeof(Views.Pages.Home),
-                        NavigationCacheMode=NavigationCacheMode.Enabled
+                        NavigationCacheMode = NavigationCacheMode.Enabled
                     },
                     new NavigationViewItem()
                     {
@@ -42,15 +41,15 @@ namespace SmartLibrary.ViewModels
                         Icon = new SymbolIcon { Symbol = SymbolRegular.BookInformation24 },
                         TargetPageType = typeof(Views.Pages.BookInfo)
                     }
-                };
+                ];
 
-            NavigationFooter = new ObservableCollection<object>
-                {
+            NavigationFooter =
+                [
                     new NavigationViewItem()
                     {
                         Content = "管理",
-                        Icon = new SymbolIcon{ Symbol = SymbolRegular.AddSubtractCircle24 },
-                        TargetPageType= typeof(Views.Pages.BookManage)
+                        Icon = new SymbolIcon { Symbol = SymbolRegular.Apps24 },
+                        TargetPageType = typeof(Views.Pages.BookManage)
                     },
                     new NavigationViewItem()
                     {
@@ -64,7 +63,7 @@ namespace SmartLibrary.ViewModels
                         Icon = new SymbolIcon { Symbol = SymbolRegular.Settings24 },
                         TargetPageType = typeof(Views.Pages.Settings)
                     }
-                };
+                ];
         }
     }
 }
