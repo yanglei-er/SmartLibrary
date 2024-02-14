@@ -17,8 +17,17 @@ namespace SmartLibrary.ViewModels
         private readonly INavigationService _navigationService;
         private readonly ISnackbarService _snackbarService;
         private readonly IContentDialogService _contentDialogService;
-        private readonly SQLiteHelper BooksDb = SQLiteHelper.GetDatabase("books.smartlibrary");
+        private SQLiteHelper BooksDb = SQLiteHelper.GetDatabase("books.smartlibrary");
         private int TotalPageCount;
+
+        [ObservableProperty]
+        private bool _missingDatabase = false;
+        [ObservableProperty]
+        private bool _databaseEmpty = false;
+        [ObservableProperty]
+        private bool _isDBEnabled = true;
+        [ObservableProperty]
+        private bool _isTextboxEnabled = true;
 
         [ObservableProperty]
         private bool _isDelButtonEnabled = false;
@@ -69,13 +78,40 @@ namespace SmartLibrary.ViewModels
             }
             else
             {
-
+                MissingDatabase = true;
+                IsDBEnabled = false;
+                IsTextboxEnabled = false;
             }
         }
 
         ~BookManageViewModel()
         {
             BooksDb.ExecutePagerCompleted -= ExecutePagerCompleted;
+        }
+
+        [RelayCommand]
+        private void RefreshDatabase()
+        {
+            BooksDb = SQLiteHelper.GetDatabase("books.smartlibrary");
+            if (SQLiteHelper.IsDatabaseConnected("books.smartlibrary"))
+            {
+                MissingDatabase = false;
+                IsDBEnabled = true;
+                BooksDb.ExecutePagerCompleted += ExecutePagerCompleted;
+                Refresh();
+                Pager();
+            }
+        }
+
+        [RelayCommand]
+        private void CreateDatabase()
+        {
+            BooksDb.CreateDataBase();
+            BooksDb = SQLiteHelper.GetDatabase("books.smartlibrary");
+            MissingDatabase = false;
+            IsDBEnabled = true;
+            BooksDb.ExecutePagerCompleted += ExecutePagerCompleted;
+            Refresh();
         }
 
         [RelayCommand]
@@ -98,6 +134,18 @@ namespace SmartLibrary.ViewModels
         private void Refresh()
         {
             TotalCount = BooksDb.GetRecordCount();
+            if (TotalCount == 0)
+            {
+                DatabaseEmpty = true;
+                IsTextboxEnabled = false;
+                TotalPageCount = 0;
+                return;
+            }
+            else
+            {
+                DatabaseEmpty = false;
+                IsTextboxEnabled = true;
+            }
             TotalPageCount = TotalCount / PageCountList[CurrentIndex] + ((TotalCount % PageCountList[CurrentIndex]) == 0 ? 0 : 1);
             if (CurrentPage > TotalPageCount) CurrentPage = TotalPageCount;
             if (TotalPageCount == 1) { IsPageUpEnabled = false; IsPageDownEnabled = false; return; }
@@ -173,6 +221,10 @@ namespace SmartLibrary.ViewModels
                 };
                 if (openFileDialog.ShowDialog() == true)
                 {
+                    if (!SQLiteHelper.IsDatabaseConnected("books.smartlibrary"))
+                    {
+                        CreateDatabase();
+                    }
                     int[] mergedResult = [0, 0];
                     string[] fileNames = openFileDialog.FileNames;
                     foreach (string fileName in fileNames)
@@ -283,17 +335,17 @@ namespace SmartLibrary.ViewModels
         {
             if (value > TotalPageCount)
             {
-                TargetPage = TotalPageCount;
-                FlyoutText = "输入页码超过最大页码！";
+                FlyoutText = $"输入页码超过最大页码！";
                 IsFlyoutOpen = true;
+                TargetPage = TotalPageCount;
             }
             else if (value == 0)
             {
-                TargetPage = 1;
                 FlyoutText = "最小页码为 1 ";
                 IsFlyoutOpen = true;
+                TargetPage = 1;
             }
-            else
+            else if (value > 0 && value < TotalPageCount)
             {
                 if (IsFlyoutOpen)
                 {

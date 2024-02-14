@@ -117,6 +117,10 @@
                     <Setter Property="Background" Value="#FF6A4FBB" />
                     <Setter Property="Foreground" Value="#FFBDBDBD" />
                 </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background" Value="#FF3B1B98" />
+                    <Setter Property="Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
+                </Trigger>
             </Style.Triggers>
         </Style>
         <Style
@@ -173,11 +177,12 @@
             <ui:AutoSuggestBox
                 Grid.Column="0"
                 VerticalAlignment="Center"
+                IsEnabled="{Binding ViewModel.IsDBEnabled, Mode=OneWay}"
                 PlaceholderText="快速查找" />
             <ui:Button
                 Grid.Column="1"
                 Height="35"
-                Margin="8,0,0,0"
+                Margin="10,0,0,0"
                 VerticalAlignment="Center"
                 Command="{Binding ViewModel.TopButtonClickCommand, Mode=OneWay}"
                 CommandParameter="Import"
@@ -187,18 +192,20 @@
             <ui:Button
                 Grid.Column="2"
                 Height="35"
-                Margin="8,0,0,0"
+                Margin="10,0,0,0"
                 VerticalAlignment="Center"
                 Command="{Binding ViewModel.TopButtonClickCommand, Mode=OneWay}"
                 CommandParameter="Export"
                 Content="导出"
                 FontSize="18"
+                IsEnabled="{Binding ViewModel.IsDBEnabled, Mode=OneWay}"
                 ToolTip="导出数据库" />
             <ui:Button
                 x:Name="AddButton"
                 Grid.Column="3"
                 Margin="8,0,0,0"
                 Command="{Binding ViewModel.AddBookCommand, Mode=OneWay}"
+                IsEnabled="{Binding ViewModel.IsDBEnabled, Mode=OneWay}"
                 Style="{StaticResource AddButton}"
                 ToolTip="添加图书" />
             <ui:Button
@@ -311,6 +318,63 @@
                 </DataGridTemplateColumn>
             </ui:DataGrid.Columns>
         </ui:DataGrid>
+        <Grid Grid.Row="1" Visibility="{Binding ViewModel.MissingDatabase, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <StackPanel
+                Margin="0,0,0,20"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center">
+                <ui:Image
+                    Grid.Row="0"
+                    Width="168"
+                    Height="168"
+                    RenderOptions.BitmapScalingMode="HighQuality"
+                    Source="pack://application:,,,/Assets/warning.png" />
+                <ui:TextBlock
+                    Grid.Row="1"
+                    HorizontalAlignment="Center"
+                    FontSize="36"
+                    FontTypography="Title"
+                    Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                    Text="糟糕！数据库找不到了w(ﾟДﾟ)w" />
+                <StackPanel
+                    Margin="0,16,0,0"
+                    HorizontalAlignment="Center"
+                    Orientation="Horizontal">
+                    <ui:Button
+                        MinWidth="180"
+                        Margin="0,0,8,0"
+                        Command="{Binding ViewModel.RefreshDatabaseCommand, Mode=OneWay}"
+                        Content="刷新"
+                        FontSize="24" />
+                    <ui:Button
+                        MinWidth="180"
+                        Margin="8,0,0,0"
+                        Command="{Binding ViewModel.CreateDatabaseCommand, Mode=OneWay}"
+                        Content="新建"
+                        FontSize="24" />
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+        <Grid Grid.Row="1" Visibility="{Binding ViewModel.DatabaseEmpty, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <StackPanel
+                Margin="0,0,0,8"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center">
+                <ui:Image
+                    Grid.Row="0"
+                    Width="148"
+                    Height="148"
+                    RenderOptions.BitmapScalingMode="HighQuality"
+                    Source="pack://application:,,,/Assets/databaseEmpty.png" />
+                <ui:TextBlock
+                    Grid.Row="1"
+                    Margin="0,12,0,0"
+                    FontSize="36"
+                    FontTypography="Title"
+                    Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                    Text="什么都没有┑(￣Д ￣)┍" />
+            </StackPanel>
+        </Grid>
         <Grid Grid.Row="2" Margin="0,12,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
@@ -349,6 +413,7 @@
                     Margin="4,0,4,0"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
+                    IsEnabled="{Binding ViewModel.IsTextboxEnabled, Mode=OneWay}"
                     ItemsSource="{Binding ViewModel.PageCountList, Mode=OneTime}"
                     SelectedIndex="{Binding ViewModel.CurrentIndex, Mode=TwoWay}" />
                 <ui:TextBlock
@@ -423,6 +488,7 @@
                     Height="32"
                     Margin="4,0,4,0"
                     InputMethod.IsInputMethodEnabled="False"
+                    IsEnabled="{Binding ViewModel.IsTextboxEnabled, Mode=OneWay}"
                     PreviewKeyDown="TextBox_PreviewKeyDown"
                     PreviewTextInput="Text_PreviewTextInput"
                     Text="{Binding ViewModel.TargetPage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />

@@ -61,8 +61,32 @@ namespace SmartLibrary.Helpers
         public void CreateDataBase()
         {
             string? path = Path.GetDirectoryName(DataSource);
-            if ((!string.IsNullOrWhiteSpace(path)) && (!Directory.Exists(path))) Directory.CreateDirectory(path);
-            if (!File.Exists(DataSource)) SQLiteConnection.CreateFile(DataSource);
+            if ((!string.IsNullOrWhiteSpace(path)) && (!Directory.Exists(path)))
+            {
+                Directory.CreateDirectory(path);
+            }
+            if (!File.Exists(DataSource))
+            {
+                SQLiteConnection.CreateFile(DataSource);
+                StringBuilder sbr = new();
+                sbr.AppendLine("CREATE TABLE IF NOT EXISTS 'main' (");
+                sbr.AppendLine("'isbn' TEXT PRIMARY KEY NOT NULL,");
+                sbr.AppendLine("'bookName' TEXT NOT NULL,");
+                sbr.AppendLine("'author' TEXT,");
+                sbr.AppendLine("'press' TEXT,");
+                sbr.AppendLine("'pressDate' TEXT,");
+                sbr.AppendLine("'pressPlace' TEXT,");
+                sbr.AppendLine("'price' INTEGER,");
+                sbr.AppendLine("'clcName' TEXT,");
+                sbr.AppendLine("'bookDesc' TEXT,");
+                sbr.AppendLine("'pages' TEXT,");
+                sbr.AppendLine("'words' TEXT,");
+                sbr.AppendLine("'shelfNumber' INTEGER NOT NULL,");
+                sbr.AppendLine("'isBorrowed' INTEGER NOT NULL DEFAULT 0,");
+                sbr.AppendLine("'picture' TEXT");
+                sbr.AppendLine(");");
+                ExecuteNonQuery(sbr.ToString());
+            }
         }
 
         /// <summary>
@@ -345,7 +369,7 @@ namespace SmartLibrary.Helpers
                 if (!Exists(isbn))
                 {
                     //string sqlStr = "INSERT INTO main VALUES (\"@isbn\",\"@bookName\",\"@author\",\"@press\",\"@pressDate\",\"@pressPlace\",@price,\"@clcName\",\"@bookDesc\",\"@pages\",\"@words\",@shelfNumber,@isBorrowed,\"@picture\")";
-                    string sqlStr = $"INSERT INTO main VALUES (\"{isbn}\",\"{reader.GetString(1)}\",\"{reader.GetString(2)}\",\"{reader.GetString(3)}\",\"{reader.GetString(4)}\",\"{reader.GetString(5)}\",@price,\"{reader.GetString(7)}\",\"{reader.GetString(8)}\",\"{reader.GetString(9)}\",\"{reader.GetString(10)}\",@shelfNumber,@isBorrowed,\"{reader.GetValue(13)}\")";
+                    string sqlStr = $"INSERT INTO main VALUES ('{isbn}','{reader.GetString(1)}','{reader.GetString(2)}','{reader.GetString(3)}','{reader.GetString(4)}','{reader.GetString(5)}',@price,'{reader.GetString(7)}','{reader.GetString(8)}','{reader.GetString(9)}','{reader.GetString(10)}',@shelfNumber,@isBorrowed,'{reader.GetValue(13)}')";
 
                     SQLiteParameter[] parameters = [
                         new SQLiteParameter("@price", reader.GetDouble(6)),

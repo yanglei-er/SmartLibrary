@@ -5,8 +5,9 @@
   Smart Library
 </h1>
 <p align="center">
-  一个基于Qt6和Arduino的智慧图书管理系统
+  一个基于WPF和Arduino的智慧图书管理系统
 </p>
+
 
 
 ## 简介
@@ -43,6 +44,10 @@
 <a href="https://www.flaticon.com/free-icons/refresh-data" title="refresh data icons">Refresh data icons created by Freepik - Flaticon</a>
 
 <a href="https://www.flaticon.com/free-icons/borrow" title="borrow icons">Borrow icons created by max.icons - Flaticon</a>
+
+<a href="https://www.flaticon.com/free-icons/database" title="database icons">Database icons created by Freepik - Flaticon</a>
+
+<a href="https://www.flaticon.com/free-icons/warning" title="warning icons">Warning icons created by Freepik - Flaticon</a>
 
 <a href="https://www.flaticon.com/free-icons/database" title="database icons">Database icons created by Freepik - Flaticon</a>
 
