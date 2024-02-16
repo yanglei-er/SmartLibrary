@@ -11,8 +11,7 @@ namespace SmartLibrary.Views.Pages
     {
         [GeneratedRegex("[^0-9]+")]
         private static partial Regex MyRegex();
-
-        private BookInfoSimple bookInfo = new("", "", "", 0, false);
+        private readonly BookInfoSimple bookInfo = new("", "", "", 0, false);
 
         public BookManageViewModel ViewModel { get; }
         public BookManage(BookManageViewModel viewModel)
@@ -22,12 +21,12 @@ namespace SmartLibrary.Views.Pages
             InitializeComponent();
         }
 
-        private void Text_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
+        private void Text_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
             e.Handled = MyRegex().IsMatch(e.Text);
         }
 
-        private void TextBox_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        private void TextBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
@@ -49,7 +48,7 @@ namespace SmartLibrary.Views.Pages
                 bookInfo.Isbn = (string)dataRowView[0];
                 bookInfo.BookName = (string)dataRowView[1];
                 bookInfo.Author = dataRowView[2].ToString();
-                bookInfo.ShelfNumber = (Int64)dataRowView[11];
+                bookInfo.ShelfNumber = (long)dataRowView[11];
                 bookInfo.IsBorrowed = Convert.ToBoolean(dataRowView[12]);
             }
         }
@@ -69,9 +68,9 @@ namespace SmartLibrary.Views.Pages
                         bookInfo.Isbn = (string)dataRowView[0];
                         bookInfo.BookName = (string)dataRowView[1];
                         bookInfo.Author = dataRowView[2].ToString();
-                        bookInfo.ShelfNumber = (Int64)dataRowView[11];
+                        bookInfo.ShelfNumber = (long)dataRowView[11];
                         bookInfo.IsBorrowed = Convert.ToBoolean(dataRowView[12]);
-                        ViewModel.Update(bookInfo);
+                        ViewModel.UpdateSimple(bookInfo);
                     }
                 }
             }
@@ -81,13 +80,15 @@ namespace SmartLibrary.Views.Pages
         {
             if (DataGrid.SelectedItem is DataRowView dataRowView)
             {
-                bookInfo.Isbn = (string)dataRowView[0];
-                bookInfo.BookName = (string)dataRowView[1];
-                bookInfo.Author = dataRowView[2].ToString();
-                bookInfo.ShelfNumber = (Int64)dataRowView[11];
-                bookInfo.IsBorrowed = Convert.ToBoolean(dataRowView[12]);
-                ViewModel.Update(bookInfo);
+                string isbn = (string)dataRowView[0];
+                bool isBorrowed = Convert.ToBoolean(dataRowView[12]);
+                ViewModel.CheckBox_Click(isbn, isBorrowed);
             }
+        }
+
+        private void AutoSuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+        {
+            ViewModel.AutoSuggest(args.Text);
         }
     }
 }

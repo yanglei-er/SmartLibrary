@@ -175,10 +175,12 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <ui:AutoSuggestBox
+                x:Name="AutoSuggestBox"
                 Grid.Column="0"
                 VerticalAlignment="Center"
-                IsEnabled="{Binding ViewModel.IsDBEnabled, Mode=OneWay}"
-                PlaceholderText="快速查找" />
+                IsEnabled="{Binding ViewModel.IsTopbarEnabled, Mode=OneWay}"
+                PlaceholderText="快速查找ISBN、书名、作者、书架号"
+                TextChanged="AutoSuggestBox_TextChanged" />
             <ui:Button
                 Grid.Column="1"
                 Height="35"
@@ -198,14 +200,14 @@
                 CommandParameter="Export"
                 Content="导出"
                 FontSize="18"
-                IsEnabled="{Binding ViewModel.IsDBEnabled, Mode=OneWay}"
+                IsEnabled="{Binding ViewModel.IsTopbarEnabled, Mode=OneWay}"
                 ToolTip="导出数据库" />
             <ui:Button
                 x:Name="AddButton"
                 Grid.Column="3"
                 Margin="8,0,0,0"
                 Command="{Binding ViewModel.AddBookCommand, Mode=OneWay}"
-                IsEnabled="{Binding ViewModel.IsDBEnabled, Mode=OneWay}"
+                IsEnabled="{Binding ViewModel.IsTopbarEnabled, Mode=OneWay}"
                 Style="{StaticResource AddButton}"
                 ToolTip="添加图书" />
             <ui:Button
@@ -324,13 +326,11 @@
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center">
                 <ui:Image
-                    Grid.Row="0"
                     Width="168"
                     Height="168"
                     RenderOptions.BitmapScalingMode="HighQuality"
                     Source="pack://application:,,,/Assets/warning.png" />
                 <ui:TextBlock
-                    Grid.Row="1"
                     HorizontalAlignment="Center"
                     FontSize="36"
                     FontTypography="Title"
@@ -361,18 +361,16 @@
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center">
                 <ui:Image
-                    Grid.Row="0"
                     Width="148"
                     Height="148"
                     RenderOptions.BitmapScalingMode="HighQuality"
                     Source="pack://application:,,,/Assets/databaseEmpty.png" />
                 <ui:TextBlock
-                    Grid.Row="1"
                     Margin="0,12,0,0"
                     FontSize="36"
                     FontTypography="Title"
                     Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                    Text="什么都没有┑(￣Д ￣)┍" />
+                    Text="什么都没有 ┑(￣Д ￣)┍" />
             </StackPanel>
         </Grid>
         <Grid Grid.Row="2" Margin="0,12,0,0">
@@ -413,7 +411,7 @@
                     Margin="4,0,4,0"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
-                    IsEnabled="{Binding ViewModel.IsTextboxEnabled, Mode=OneWay}"
+                    IsEnabled="{Binding ViewModel.IsBottombarEnabled, Mode=OneWay}"
                     ItemsSource="{Binding ViewModel.PageCountList, Mode=OneTime}"
                     SelectedIndex="{Binding ViewModel.CurrentIndex, Mode=TwoWay}" />
                 <ui:TextBlock
@@ -427,6 +425,7 @@
                 Margin="8,0,8,0"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
+                IsEnabled="{Binding ViewModel.IsBottombarEnabled, Mode=OneWay}"
                 Orientation="Horizontal">
                 <ui:Button
                     Margin="4,0,12,0"
@@ -488,7 +487,7 @@
                     Height="32"
                     Margin="4,0,4,0"
                     InputMethod.IsInputMethodEnabled="False"
-                    IsEnabled="{Binding ViewModel.IsTextboxEnabled, Mode=OneWay}"
+                    IsEnabled="{Binding ViewModel.IsBottombarEnabled, Mode=OneWay}"
                     PreviewKeyDown="TextBox_PreviewKeyDown"
                     PreviewTextInput="Text_PreviewTextInput"
                     Text="{Binding ViewModel.TargetPage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />

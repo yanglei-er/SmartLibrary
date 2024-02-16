@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using SmartLibrary.Models;
+using System.Data;
 using System.Data.SQLite;
 using System.IO;
 using System.Text;
@@ -311,7 +312,7 @@ namespace SmartLibrary.Helpers
         /// </summary>
         public bool Exists(string isbn)
         {
-            if ((Int64)ExecuteScalar($"SELECT COUNT(*) FROM main WHERE isbn = {isbn}", null) > 0)
+            if ((long)ExecuteScalar($"SELECT COUNT(*) FROM main WHERE isbn = {isbn}", null) > 0)
             {
                 return true;
             }
@@ -324,16 +325,12 @@ namespace SmartLibrary.Helpers
         /// <summary>
         /// 简单更新数据库
         /// </summary>
-        public void UpdateSimple(string isbn, string bookName, string? author, Int64 shelfNumber, bool isBorrowed)
+        public void UpdateSimple(string isbn, string bookName, string? author, long shelfNumber, bool isBorrowed)
         {
-            string sql = "UPDATE main SET bookName = @name, author = @author, shelfNumber = @shelfNumber, isBorrowed = @isBorrowed WHERE isbn = @isbn";
+            string sql = $"UPDATE main SET bookName = '{bookName}', author = '{author}', shelfNumber = @shelfNumber, isBorrowed = @isBorrowed WHERE isbn = '{isbn}'";
             SQLiteParameter[] parameters = [
-                new SQLiteParameter("@name", bookName),
-                new SQLiteParameter("@author", author),
                 new SQLiteParameter("@shelfNumber", shelfNumber),
-                new SQLiteParameter("@isBorrowed", isBorrowed),
-                new SQLiteParameter("@isbn", isbn)
-            ];
+                new SQLiteParameter("@isBorrowed", isBorrowed)];
             ExecuteNonQuery(sql, parameters);
         }
 
@@ -372,9 +369,9 @@ namespace SmartLibrary.Helpers
                     string sqlStr = $"INSERT INTO main VALUES ('{isbn}','{reader.GetString(1)}','{reader.GetString(2)}','{reader.GetString(3)}','{reader.GetString(4)}','{reader.GetString(5)}',@price,'{reader.GetString(7)}','{reader.GetString(8)}','{reader.GetString(9)}','{reader.GetString(10)}',@shelfNumber,@isBorrowed,'{reader.GetValue(13)}')";
 
                     SQLiteParameter[] parameters = [
-                        new SQLiteParameter("@price", reader.GetDouble(6)),
+                        new SQLiteParameter("@price", reader.GetFloat(6)),
                         new SQLiteParameter("@shelfNumber", reader.GetInt64(11)),
-                        new SQLiteParameter("@isBorrowed", Convert.ToBoolean(reader.GetInt64(12))),
+                        new SQLiteParameter("@isBorrowed", reader.GetInt64(12)),
                     ];
                     PrepareCommand(command, oldDbConnection, sqlStr, parameters);
                     command.Transaction = transaction;
@@ -392,6 +389,162 @@ namespace SmartLibrary.Helpers
             oldDbConnection.Dispose();
             newDbConnection.Dispose();
             return [mergedCount, repeatedCount];
+        }
+
+        /// <summary>
+        /// 查询一本图书数据
+        /// </summary>
+        public BookInfo GetOneBookInfo(string isbn)
+        {
+            BookInfo book = new();
+            string sql = $"SELECT * FROM main WHERE isbn = '{isbn}'";
+            using SQLiteDataReader reader = ExecuteReader(sql);
+            if (reader.Read())
+            {
+                book.Isbn = reader.GetString(0);
+                book.BookName = reader.GetString(1);
+                book.Author = reader.GetString(2);
+                book.Press = reader.GetString(3);
+                book.PressDate = reader.GetString(4);
+                book.PressPlace = reader.GetString(5);
+                book.Price = reader.GetFloat(6);
+                book.ClcName = reader.GetString(7);
+                book.BookDesc = reader.GetString(8);
+                book.Pages = reader.GetString(9);
+                book.Words = reader.GetString(10);
+                book.ShelfNumber = reader.GetInt64(11);
+                book.IsBorrowed = Convert.ToBoolean(reader.GetInt64(12));
+                book.Picture = reader.GetString(13);
+            }
+            return book;
+        }
+
+        //public List<BookInfo> GetBookInfos(object value)
+        //{
+        //    List<BookInfo> books = [];
+        //    string sql = string.Empty ;
+        //    SQLiteParameter[] parameters = [];
+        //    if (value is string s)
+        //    {
+        //        sql = $"SELECT * FROM main WHERE bookName LIKE '{s}' OR author LIKE '{s}'";
+        //    }
+        //    else if (value is int i)
+        //    {
+        //        sql = $"SELECT * FROM main WHERE isbn LIKE @value OR shelfNumber like @value";
+        //        parameters = [new SQLiteParameter("@value", i)];
+        //    }
+        //    using SQLiteDataReader reader = ExecuteReader(sql, parameters);
+        //    while (reader.Read())
+        //    {
+        //        BookInfo book = new()
+        //        {
+        //            Isbn = reader.GetString(0),
+        //            BookName = reader.GetString(1),
+        //            Author = reader.GetString(2),
+        //            Press = reader.GetString(3),
+        //            PressDate = reader.GetString(4),
+        //            PressPlace = reader.GetString(5),
+        //            Price = reader.GetFloat(6),
+        //            ClcName = reader.GetString(7),
+        //            BookDesc = reader.GetString(8),
+        //            Pages = reader.GetString(9),
+        //            Words = reader.GetString(10),
+        //            ShelfNumber = reader.GetInt64(11),
+        //            IsBorrowed = Convert.ToBoolean(reader.GetInt64(12)),
+        //            Picture = reader.GetString(13)
+        //        };
+        //        books.Add(book);
+        //    }
+        //    return books;
+        //}
+
+        /// <summary>
+        /// 查询多本图书数据
+        /// </summary>
+        //public ObservableCollection<string> GetBookInfos(string value)
+        //{
+        //    ObservableCollection<string> books = [];
+        //    string sql = $"SELECT * FROM main WHERE bookName LIKE '{value}' OR author LIKE '{value}'";
+        //    using SQLiteDataReader reader = ExecuteReader(sql);
+        //    while (reader.Read())
+        //    {
+        //        BookInfo book = new()
+        //        {
+        //            Isbn = reader.GetString(0),
+        //            BookName = reader.GetString(1),
+        //            Author = reader.GetString(2),
+        //            Press = reader.GetString(3),
+        //            PressDate = reader.GetString(4),
+        //            PressPlace = reader.GetString(5),
+        //            Price = reader.GetFloat(6),
+        //            ClcName = reader.GetString(7),
+        //            BookDesc = reader.GetString(8),
+        //            Pages = reader.GetString(9),
+        //            Words = reader.GetString(10),
+        //            ShelfNumber = reader.GetInt64(11),
+        //            IsBorrowed = Convert.ToBoolean(reader.GetInt64(12)),
+        //            Picture = reader.GetString(13)
+        //        };
+        //        books.Add(book);
+        //    }
+        //    return books;
+        //}
+
+        /// <summary>
+        /// 查询多本图书数据
+        /// </summary>
+        //public List<BookInfo> GetBookInfos(int value)
+        //{
+        //    List<BookInfo> books = [];
+        //    string sql = $"SELECT * FROM main WHERE isbn LIKE @value OR shelfNumber like @value";
+        //    SQLiteParameter[] parameters = [new SQLiteParameter("@value", value)];
+        //    using SQLiteDataReader reader = ExecuteReader(sql, parameters);
+        //    while (reader.Read())
+        //    {
+        //        BookInfo book = new()
+        //        {
+        //            Isbn = reader.GetString(0),
+        //            BookName = reader.GetString(1),
+        //            Author = reader.GetString(2),
+        //            Press = reader.GetString(3),
+        //            PressDate = reader.GetString(4),
+        //            PressPlace = reader.GetString(5),
+        //            Price = reader.GetFloat(6),
+        //            ClcName = reader.GetString(7),
+        //            BookDesc = reader.GetString(8),
+        //            Pages = reader.GetString(9),
+        //            Words = reader.GetString(10),
+        //            ShelfNumber = reader.GetInt64(11),
+        //            IsBorrowed = Convert.ToBoolean(reader.GetInt64(12)),
+        //            Picture = reader.GetString(13)
+        //        };
+        //        books.Add(book);
+        //    }
+        //    return books;
+        //}
+
+        public DataTable AutoSuggestByString(string str)
+        {
+            string sql = $"SELECT * FROM main WHERE bookName LIKE '%{str}%' OR author LIKE '%{str}%'";
+            return ExecuteDataTable(sql);
+        }
+
+        public DataTable AutoSuggestByNum(int num)
+        {
+            string sql = $"SELECT * FROM main WHERE isbn = @value OR shelfNumber = @value";
+            SQLiteParameter[] parameters = [new SQLiteParameter("@value", num)];
+            return ExecuteDataTable(sql, parameters);
+        }
+
+        public void BorrowBook(string isbn)
+        {
+            string sql = $"UPDATE main SET isBorrowed = 1 WHERE isbn = '{isbn}'";
+            ExecuteNonQuery(sql);
+        }
+        public void ReturnBook(string isbn)
+        {
+            string sql = $"UPDATE main SET isBorrowed = 0 WHERE isbn = '{isbn}'";
+            ExecuteNonQuery(sql);
         }
     }
 }

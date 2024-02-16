@@ -25,9 +25,9 @@ namespace SmartLibrary.ViewModels
         [ObservableProperty]
         private bool _databaseEmpty = false;
         [ObservableProperty]
-        private bool _isDBEnabled = true;
+        private bool _isTopbarEnabled = true;
         [ObservableProperty]
-        private bool _isTextboxEnabled = true;
+        private bool _isBottombarEnabled = true;
 
         [ObservableProperty]
         private bool _isDelButtonEnabled = false;
@@ -79,8 +79,8 @@ namespace SmartLibrary.ViewModels
             else
             {
                 MissingDatabase = true;
-                IsDBEnabled = false;
-                IsTextboxEnabled = false;
+                IsTopbarEnabled = false;
+                IsBottombarEnabled = false;
             }
         }
 
@@ -96,7 +96,7 @@ namespace SmartLibrary.ViewModels
             if (SQLiteHelper.IsDatabaseConnected("books.smartlibrary"))
             {
                 MissingDatabase = false;
-                IsDBEnabled = true;
+                IsTopbarEnabled = true;
                 BooksDb.ExecutePagerCompleted += ExecutePagerCompleted;
                 Refresh();
                 Pager();
@@ -109,7 +109,7 @@ namespace SmartLibrary.ViewModels
             BooksDb.CreateDataBase();
             BooksDb = SQLiteHelper.GetDatabase("books.smartlibrary");
             MissingDatabase = false;
-            IsDBEnabled = true;
+            IsTopbarEnabled = true;
             BooksDb.ExecutePagerCompleted += ExecutePagerCompleted;
             Refresh();
         }
@@ -124,11 +124,8 @@ namespace SmartLibrary.ViewModels
         private void EditBook(DataRowView selectedItem)
         {
             _navigationService.NavigateWithHierarchy(typeof(EditBook));
-            string? isbn = selectedItem[0].ToString();
-            if (isbn != null)
-            {
-                WeakReferenceMessenger.Default.Send(isbn);
-            }
+            string isbn = (string)selectedItem[0];
+            WeakReferenceMessenger.Default.Send(isbn);
         }
 
         private void Refresh()
@@ -137,14 +134,14 @@ namespace SmartLibrary.ViewModels
             if (TotalCount == 0)
             {
                 DatabaseEmpty = true;
-                IsTextboxEnabled = false;
+                IsBottombarEnabled = false;
                 TotalPageCount = 0;
                 return;
             }
             else
             {
                 DatabaseEmpty = false;
-                IsTextboxEnabled = true;
+                IsBottombarEnabled = true;
             }
             TotalPageCount = TotalCount / PageCountList[CurrentIndex] + ((TotalCount % PageCountList[CurrentIndex]) == 0 ? 0 : 1);
             if (CurrentPage > TotalPageCount) CurrentPage = TotalPageCount;
@@ -267,30 +264,69 @@ namespace SmartLibrary.ViewModels
 
             if (result == ContentDialogResult.Primary)
             {
-                foreach (DataRowView item in selectedItems)
+                List<int> indexs = [];
+                if (DataGridItems.Table != null)
                 {
-                    string? isbn = item[0].ToString();
-                    if (isbn != null)
+                    foreach (DataRowView item in selectedItems)
                     {
+                        string isbn = (string)item[0];
                         BooksDb.DelBook(isbn);
+                        if (!IsBottombarEnabled)
+                        {
+                            indexs.Add(DataGridItems.Table.Rows.IndexOf(item.Row));
+                        }
                     }
                 }
-                Refresh();
-                Pager();
+
                 _snackbarService.Show("删除图书", $"已删除你选择的 {selectedItems.Count} 本图书", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
+
+                if (IsBottombarEnabled)
+                {
+                    Refresh();
+                    Pager();
+                }
+                else
+                {
+                    if (DataGridItems.Table != null)
+                    {
+                        foreach (int index in indexs)
+                        {
+                            DataGridItems.Table.Rows.RemoveAt(index);
+                        }
+                        DataGridItems.Table.AcceptChanges();
+                    }
+                    if (DataGridItems.Count == 0)
+                    {
+                        DatabaseEmpty = true;
+                    }
+                    TotalCount = DataGridItems.Count;
+                }
             }
         }
 
         [RelayCommand]
         private void DelOneBook(DataRowView selectedItem)
         {
-            string? isbn = selectedItem[0].ToString();
-            if (isbn != null)
+            string isbn = (string)selectedItem[0];
+            BooksDb.DelBook(isbn);
+            if (IsBottombarEnabled)
             {
-                BooksDb.DelBook(isbn);
+                Refresh();
+                Pager();
             }
-            Refresh();
-            Pager();
+            else
+            {
+                if (DataGridItems.Table != null)
+                {
+                    DataGridItems.Table.Rows.Remove(selectedItem.Row);
+                    DataGridItems.Table.AcceptChanges();
+                }
+                if (DataGridItems.Count == 0)
+                {
+                    DatabaseEmpty = true;
+                }
+                TotalCount--;
+            }
         }
 
         [RelayCommand]
@@ -379,9 +415,51 @@ namespace SmartLibrary.ViewModels
             DataGridItems = datatable.DefaultView;
         }
 
-        public void Update(BookInfoSimple bookInfo)
+        public void UpdateSimple(BookInfoSimple bookInfo)
         {
             BooksDb.UpdateSimple(bookInfo.Isbn, bookInfo.BookName, bookInfo.Author, bookInfo.ShelfNumber, bookInfo.IsBorrowed);
+        }
+
+        public void CheckBox_Click(string isbn, bool value)
+        {
+            if (value)
+            {
+                BooksDb.BorrowBook(isbn);
+            }
+            else
+            {
+                BooksDb.ReturnBook(isbn);
+            }
+        }
+
+        public void AutoSuggest(string? str)
+        {
+            if (!string.IsNullOrEmpty(str))
+            {
+                IsBottombarEnabled = false;
+                if (int.TryParse(str, out int num))
+                {
+                    DataGridItems = BooksDb.AutoSuggestByNum(num).DefaultView;
+                }
+                else
+                {
+                    DataGridItems = BooksDb.AutoSuggestByString(str).DefaultView;
+                }
+                if (DataGridItems.Count > 0)
+                {
+                    DatabaseEmpty = false;
+                }
+                else
+                {
+                    DatabaseEmpty = true;
+                }
+                TotalCount = DataGridItems.Count;
+            }
+            else
+            {
+                Refresh();
+                Pager();
+            }
         }
     }
 

@@ -28,7 +28,10 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <ui:TitleBar Title="智慧图书馆" Grid.Row="0">
+        <ui:TitleBar
+            Title="智慧图书馆"
+            Grid.Row="0"
+            CloseWindowByDoubleClickOnIcon="True">
             <ui:TitleBar.Icon>
                 <ui:ImageIcon
                     Width="26"

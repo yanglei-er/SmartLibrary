@@ -2,22 +2,24 @@
 {
     public record class BookInfo
     {
-        public string Isbn { get; set; }
-        public string BookName { get; set; }
-        public uint ShelfNumber { get; set; }
-        public bool IsBorrowed { get; set; }
-        public string Author { get; set; }
-        public string Press { get; set; }
-        public string PressDate { get; set; }
-        public string PressPlace { get; set; }
-        public string PressText { get; set; }
+        public string? Isbn { get; set; }
+        public string? BookName { get; set; }
+        public string? Author { get; set; }
+        public string? Press { get; set; }
+        public string? PressDate { get; set; }
+        public string? PressPlace { get; set; }
+        public string? ClcName { get; set; }
         public float Price { get; set; }
-        public string BookDesc { get; set; }
-        public string Pages { get; set; }
-        public string Words { get; set; }
-        public Uri Picture { get; set; }
+        public string? BookDesc { get; set; }
+        public string? Pages { get; set; }
+        public string? Words { get; set; }
+        public long ShelfNumber { get; set; }
+        public bool IsBorrowed { get; set; }
+        public string? Picture { get; set; }
 
-        public BookInfo(string isbn, string bookName, uint shelfNumber, bool isBorrowed, string author, string press, string pressDate, string pressPlace, string pressText, float price, string bookDesc, string pages, string words, Uri picture)
+        public BookInfo() { }
+
+        public BookInfo(string isbn, string bookName, string author, string press, string pressDate, string pressPlace, float price, string clcName, string bookDesc, string pages, string words, long shelfNumber, bool isBorrowed, string picture)
         {
             Isbn = isbn;
             BookName = bookName;
@@ -27,7 +29,7 @@
             Press = press;
             PressDate = pressDate;
             PressPlace = pressPlace;
-            PressText = pressText;
+            ClcName = clcName;
             Price = price;
             BookDesc = bookDesc;
             Pages = pages;
