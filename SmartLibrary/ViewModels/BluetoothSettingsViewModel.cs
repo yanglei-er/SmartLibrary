@@ -74,7 +74,7 @@ namespace SmartLibrary.ViewModels
             }
             else
             {
-                if (!ble.IsBleConnected())
+                if (!ble.IsBleConnected)
                 {
                     StateText = "蓝牙未连接";
                     ScanButtonText = "扫描设备";
@@ -136,7 +136,7 @@ namespace SmartLibrary.ViewModels
             if (ListviewSelectedIndex != -1)
             {
                 ConnectButtonEnabled = true;
-                if (ble.IsBleConnected())
+                if (ble.IsBleConnected)
                 {
                     if (ListViewItems[ListviewSelectedIndex].Name == _connectedName)
                     {
@@ -153,7 +153,7 @@ namespace SmartLibrary.ViewModels
         [RelayCommand]
         private void OnConnectButtonClick()
         {
-            if (!ble.IsBleConnected())
+            if (!ble.IsBleConnected)
             {
                 StateText = "正在连接 " + ListViewItems[ListviewSelectedIndex].Name;
                 ScanButtonEnabled = ConnectButtonEnabled = false;

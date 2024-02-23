@@ -121,7 +121,7 @@
                         <ui:Anchor
                             Background="{x:Null}"
                             BorderBrush="{x:Null}"
-                            Content=".Net 8.0.1"
+                            Content="{Binding ViewModel.DotNetVersion, Mode=OneWay}"
                             Cursor="Hand"
                             NavigateUri="https://dotnet.microsoft.com/zh-cn/"
                             ToolTipService.ToolTip=".NET is the free, open-source, cross-platform framework for building modern apps and powerful cloud services.">

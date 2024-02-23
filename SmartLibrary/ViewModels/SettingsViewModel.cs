@@ -12,9 +12,13 @@ namespace SmartLibrary.ViewModels
         [ObservableProperty]
         private string _appVersion = string.Empty;
 
+        [ObservableProperty]
+        private string _dotNetVersion = string.Empty;
+
         public SettingsViewModel()
         {
             AppVersion = Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? string.Empty;
+            DotNetVersion = ".Net " + Environment.Version.ToString();
             ApplicationThemeManager.Changed += OnThemeChanged;
         }
 

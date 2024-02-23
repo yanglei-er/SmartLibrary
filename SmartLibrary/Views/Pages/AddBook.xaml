@@ -12,11 +12,59 @@
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
-    <Grid Margin="8">
-        <ui:Button
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            Command="{Binding ViewModel.NavigateBackCommand}"
-            Content="返回" />
+
+    <Page.Resources>
+        <Style BasedOn="{StaticResource MyButtonStyle}" TargetType="ui:Button" />
+    </Page.Resources>
+
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <ui:TextBox
+                Grid.Column="0"
+                Height="37"
+                MaxLength="13"
+                PlaceholderText="{Binding ViewModel.IsbnBoxPlaceholderText, Mode=OneWay}"
+                Text="{Binding ViewModel.IsbnBoxText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <ui:Image
+                Grid.Column="1"
+                Width="40"
+                Height="40"
+                Margin="6,0,0,0"
+                RenderOptions.BitmapScalingMode="HighQuality"
+                Source="{Binding ViewModel.IsbnAttitudeImage, Converter={StaticResource StringToImageSourceConverter}, Mode=OneWay}"
+                Visibility="{Binding ViewModel.IsbnAttitudeVisible, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}" />
+            <ui:Button
+                Grid.Column="2"
+                MinWidth="100"
+                Margin="8,0,0,0"
+                Content="扫描"
+                FontSize="20"
+                IsEnabled="{Binding ViewModel.IsScanButtonEnabled, Mode=OneWay}" />
+            <ui:Button
+                Grid.Column="3"
+                MinWidth="100"
+                Margin="8,0,0,0"
+                Content="查询"
+                FontSize="20"
+                IsEnabled="{Binding ViewModel.IsSearchButtonEnabled, Mode=OneWay}" />
+        </Grid>
+        <Grid Grid.Row="1" Margin="0,8,0,0">
+            <Grid.RowDefinitions />
+            <ui:Button
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Command="{Binding ViewModel.NavigateBackCommand}"
+                Content="返回" />
+        </Grid>
     </Grid>
 </Page>

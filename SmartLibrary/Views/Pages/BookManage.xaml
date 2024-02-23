@@ -92,7 +92,7 @@
             x:Key="AddButton"
             BasedOn="{StaticResource EditButton}"
             TargetType="ui:Button">
-            <Setter Property="Background" Value="#6741D9" />
+            <Setter Property="Background" Value="#FF7047ED" />
             <Setter Property="Height" Value="37" />
             <Setter Property="Width" Value="50" />
             <Setter Property="Template">
@@ -114,11 +114,11 @@
                     <Setter Property="Background" Value="#7B5CD6" />
                 </Trigger>
                 <Trigger Property="IsPressed" Value="True">
-                    <Setter Property="Background" Value="#FF6A4FBB" />
+                    <Setter Property="Background" Value="#FF6045B4" />
                     <Setter Property="Foreground" Value="#FFBDBDBD" />
                 </Trigger>
                 <Trigger Property="IsEnabled" Value="False">
-                    <Setter Property="Background" Value="#FF3B1B98" />
+                    <Setter Property="Background" Value="#FF4415CB" />
                     <Setter Property="Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
                 </Trigger>
             </Style.Triggers>
@@ -127,7 +127,7 @@
             x:Key="DelButton"
             BasedOn="{StaticResource EditButton}"
             TargetType="ui:Button">
-            <Setter Property="Background" Value="#D32F2F" />
+            <Setter Property="Background" Value="#FFDD3232" />
             <Setter Property="Height" Value="37" />
             <Setter Property="Width" Value="50" />
             <Setter Property="Template">
@@ -153,7 +153,7 @@
                     <Setter Property="Foreground" Value="#FFBDBDBD" />
                 </Trigger>
                 <Trigger Property="IsEnabled" Value="False">
-                    <Setter Property="Background" Value="#FF6B140D" />
+                    <Setter Property="Background" Value="#FF87150C" />
                     <Setter Property="Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
                 </Trigger>
             </Style.Triggers>
@@ -177,7 +177,6 @@
             <ui:AutoSuggestBox
                 x:Name="AutoSuggestBox"
                 Grid.Column="0"
-                VerticalAlignment="Center"
                 IsEnabled="{Binding ViewModel.IsTopbarEnabled, Mode=OneWay}"
                 PlaceholderText="快速查找ISBN、书名、作者、书架号"
                 TextChanged="AutoSuggestBox_TextChanged" />
@@ -185,7 +184,6 @@
                 Grid.Column="1"
                 Height="35"
                 Margin="10,0,0,0"
-                VerticalAlignment="Center"
                 Command="{Binding ViewModel.TopButtonClickCommand, Mode=OneWay}"
                 CommandParameter="Import"
                 Content="导入"
@@ -195,7 +193,6 @@
                 Grid.Column="2"
                 Height="35"
                 Margin="10,0,0,0"
-                VerticalAlignment="Center"
                 Command="{Binding ViewModel.TopButtonClickCommand, Mode=OneWay}"
                 CommandParameter="Export"
                 Content="导出"

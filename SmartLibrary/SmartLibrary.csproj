@@ -12,7 +12,7 @@
     <PropertyGroup>
 	    <ApplicationIcon>applicationIcon.ico</ApplicationIcon>
 		<Description>Smart library</Description>
-		<Version>0.1.6.0</Version>
+		<Version>0.1.7.0</Version>
 		<Copyright>©2024 赵杨磊.All Rights Reserved.</Copyright>
 	</PropertyGroup>
 
@@ -36,6 +36,8 @@
     <None Remove="Assets\homeBluetooth.png" />
     <None Remove="Assets\homeSetting.png" />
     <None Remove="Assets\loading.gif" />
+    <None Remove="Assets\pic\right.png" />
+    <None Remove="Assets\pic\wrong.png" />
     <None Remove="Assets\warning.png" />
     <None Remove="Assets\wpfui-48x48.png" />
   </ItemGroup>
@@ -56,6 +58,8 @@
     <Resource Include="Assets\gplv3-127x51.png" />
     <Resource Include="Assets\homeBluetooth.png" />
     <Resource Include="Assets\homeSetting.png" />
+    <Resource Include="Assets\pic\right.png" />
+    <Resource Include="Assets\pic\wrong.png" />
     <Resource Include="Assets\warning.png" />
     <Resource Include="Assets\wpfui-48x48.png" />
   </ItemGroup>

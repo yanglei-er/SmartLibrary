@@ -15,8 +15,6 @@ namespace SmartLibrary.Views
             ViewModel = viewModel;
             DataContext = this;
 
-            Wpf.Ui.Appearance.SystemThemeWatcher.Watch(this);
-
             InitializeComponent();
 
             SetPageService(pageService);
@@ -52,7 +50,7 @@ namespace SmartLibrary.Views
             hwndSource.AddHook(new HwndSourceHook(BluetoothHelper.Instance.HwndHandler));  //挂钩
         }
 
-        void OnBleStateChanged(bool state)
+        private void OnBleStateChanged(bool state)
         {
             System.Media.SystemSounds.Asterisk.Play();
             if (state)

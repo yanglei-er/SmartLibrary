@@ -75,13 +75,16 @@ namespace SmartLibrary.Helpers
             return false;
         }
 
-        public bool IsBleConnected()
+        public bool IsBleConnected
         {
-            if (bluetoothClient != null)
+            get
             {
-                return bluetoothClient.Connected;
+                if (bluetoothClient != null)
+                {
+                    return bluetoothClient.Connected;
+                }
+                return false;
             }
-            return false;
         }
 
         public void StartScan()
