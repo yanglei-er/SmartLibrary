@@ -2,8 +2,8 @@
 {
     public record class BookInfo
     {
-        public string? Isbn { get; set; }
-        public string? BookName { get; set; }
+        public string Isbn { get; set; }
+        public string BookName { get; set; }
         public string? Author { get; set; }
         public string? Press { get; set; }
         public string? PressDate { get; set; }
@@ -17,7 +17,11 @@
         public bool IsBorrowed { get; set; }
         public string? Picture { get; set; }
 
-        public BookInfo() { }
+        public BookInfo()
+        {
+            Isbn = "";
+            BookName = "";
+        }
 
         public BookInfo(string isbn, string bookName, string author, string press, string pressDate, string pressPlace, float price, string clcName, string bookDesc, string pages, string words, long shelfNumber, bool isBorrowed, string picture)
         {

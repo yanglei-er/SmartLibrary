@@ -6,6 +6,7 @@ using SmartLibrary.Views.Pages;
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.IO;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
 using Wpf.Ui.Extensions;
@@ -213,7 +214,6 @@ namespace SmartLibrary.ViewModels
                 {
                     Title = "导入数据库",
                     Filter = "SmartLibrary数据库 (*.smartlibrary)|*.smartlibrary",
-                    InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
                     Multiselect = true,
                 };
                 if (openFileDialog.ShowDialog() == true)
@@ -223,16 +223,30 @@ namespace SmartLibrary.ViewModels
                         CreateDatabase();
                     }
                     int[] mergedResult = [0, 0];
-                    string[] fileNames = openFileDialog.FileNames;
+                    List<string> fileNames = new(openFileDialog.FileNames);
+                    List<string> repeatFileNames = [];
                     foreach (string fileName in fileNames)
                     {
+                        if (fileName == Path.GetFullPath(@".\database\books.smartlibrary")) //避免重复
+                        {
+                            repeatFileNames.Add(fileName);
+                            continue;
+                        }
                         int[] _mergedResult = BooksDb.MergeDatabase(fileName);
                         mergedResult[0] += _mergedResult[0];
                         mergedResult[1] += _mergedResult[1];
                     }
-                    Refresh();
-                    Pager();
-                    _snackbarService.Show("导入数据库", $"{fileNames.Length} 个数据库已导入，共 {mergedResult[0] + mergedResult[1]} 条数据，导入 {mergedResult[0]} 条，重复 {mergedResult[1]} 条。", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
+                    foreach (string fileName in repeatFileNames)
+                    {
+                        fileNames.Remove(fileName);
+                        mergedResult[1] += 1;
+                    }
+                    if (mergedResult[0] != 0)
+                    {
+                        Refresh();
+                        Pager();
+                    }
+                    _snackbarService.Show("导入数据库", $"{fileNames.Count} 个数据库已导入，共 {mergedResult[0] + mergedResult[1]} 条数据，导入 {mergedResult[0]} 条，重复 {mergedResult[1]} 条。", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
                 }
             }
             else if (parameter == "Export")

@@ -1,4 +1,8 @@
-﻿using SmartLibrary.Helpers;
+﻿using Microsoft.Win32;
+using SmartLibrary.Helpers;
+using SmartLibrary.Models;
+using System.IO;
+using System.Text;
 using Wpf.Ui;
 
 namespace SmartLibrary.ViewModels
@@ -6,11 +10,10 @@ namespace SmartLibrary.ViewModels
     public partial class AddBookViewModel : ObservableObject
     {
         private readonly INavigationService _navigationService;
+        private readonly SQLiteHelper BooksDb = SQLiteHelper.GetDatabase("books.smartlibrary");
 
         [ObservableProperty]
         private string _isbnBoxPlaceholderText = "请输入13位ISBN码";
-        [ObservableProperty]
-        private string _isbnBoxText = string.Empty;
         [ObservableProperty]
         private bool _isbnAttitudeVisible = false;
         [ObservableProperty]
@@ -20,16 +23,119 @@ namespace SmartLibrary.ViewModels
         [ObservableProperty]
         private bool _isSearchButtonEnabled = false;
 
+        [ObservableProperty]
+        private bool _isBookExisted = false;
+        [ObservableProperty]
+        private bool _isAddButtonEnabled = false;
+
+        [ObservableProperty]
+        private string _isbnText = string.Empty;
+        [ObservableProperty]
+        private string _picture = string.Empty;
+        [ObservableProperty]
+        private string _bookName = string.Empty;
+        [ObservableProperty]
+        private string _author = string.Empty;
+        [ObservableProperty]
+        private string _press = string.Empty;
+        [ObservableProperty]
+        private string _pressDate = string.Empty;
+        [ObservableProperty]
+        private string _pressPlace = string.Empty;
+        [ObservableProperty]
+        private string _price = string.Empty;
+        [ObservableProperty]
+        private string _pages = string.Empty;
+        [ObservableProperty]
+        private string _words = string.Empty;
+        [ObservableProperty]
+        private string _clcName = string.Empty;
+        [ObservableProperty]
+        private string _bookDesc = string.Empty;
+        [ObservableProperty]
+        private string _shelfNum = string.Empty;
+        [ObservableProperty]
+        private bool _isBorrowed = false;
+
         public AddBookViewModel(INavigationService navigationService)
         {
             _navigationService = navigationService;
             if (BluetoothHelper.Instance.IsBleConnected)
             {
-                IsbnBoxText = "请扫描或输入13位ISBN码";
+                IsbnBoxPlaceholderText = "请扫描或输入13位ISBN码";
+                IsScanButtonEnabled = true;
             }
         }
 
-        partial void OnIsbnBoxTextChanged(string value)
+        [RelayCommand]
+        private void OnScanButtonClick()
+        {
+
+        }
+
+        [RelayCommand]
+        public void OnSearchButtonClick(string parameter)
+        {
+            if (BooksDb.Exists(parameter))
+            {
+                System.Media.SystemSounds.Asterisk.Play();
+
+                IsBookExisted = true;
+                IsSearchButtonEnabled = false;
+                IsAddButtonEnabled = false;
+
+                BookName = string.Empty;
+                Author = string.Empty;
+                Press = string.Empty;
+                PressDate = string.Empty;
+                PressPlace = string.Empty;
+                Price = string.Empty;
+                ClcName = string.Empty;
+                Words = string.Empty;
+                Pages = string.Empty;
+                BookDesc = string.Empty;
+                ShelfNum = string.Empty;
+                IsBorrowed = false;
+                Picture = string.Empty;
+
+                BookInfo bookInfo = BooksDb.GetOneBookInfo(parameter);
+                BookName = bookInfo.BookName;
+                Author = bookInfo.Author ?? string.Empty;
+                Press = bookInfo.Press ?? string.Empty;
+                PressDate = bookInfo.PressDate ?? string.Empty;
+                PressPlace = bookInfo.PressPlace ?? string.Empty;
+                Price = bookInfo.Price.ToString();
+                ClcName = bookInfo.ClcName ?? string.Empty;
+                Words = bookInfo.Words ?? string.Empty;
+                Pages = bookInfo.Pages ?? string.Empty;
+                BookDesc = bookInfo.BookDesc ?? string.Empty;
+                ShelfNum = bookInfo.ShelfNumber.ToString();
+                IsBorrowed = bookInfo.IsBorrowed;
+                Picture = bookInfo.Picture ?? string.Empty;
+            }
+            else
+            {
+                IsBookExisted = false;
+                IsSearchButtonEnabled = false;
+
+                BookName = string.Empty;
+                Author = string.Empty;
+                Press = string.Empty;
+                PressDate = string.Empty;
+                PressPlace = string.Empty;
+                Price = string.Empty;
+                ClcName = string.Empty;
+                Words = string.Empty;
+                Pages = string.Empty;
+                BookDesc = string.Empty;
+                ShelfNum = string.Empty;
+                IsBorrowed = false;
+                Picture = string.Empty;
+
+            }
+        }
+
+        partial void OnIsbnTextChanged(string value)
         {
             if (string.IsNullOrEmpty(value))
             {
@@ -41,11 +147,70 @@ namespace SmartLibrary.ViewModels
             {
                 IsbnAttitudeImage = "pack://application:,,,/Assets/pic/right.png";
                 IsSearchButtonEnabled = true;
+                IsAddButtonEnabled = true;
             }
             else
             {
                 IsbnAttitudeImage = "pack://application:,,,/Assets/pic/wrong.png";
                 IsSearchButtonEnabled = false;
+                IsAddButtonEnabled = false;
+            }
+        }
+
+        [RelayCommand]
+        private void OnSelectPictureButtonClick()
+        {
+            OpenFileDialog openFileDialog = new()
+            {
+                Title = "选择图书封面图片",
+                Filter = "图像文件|*.jpg;*.png;*.jpeg;*.bmp|所有文件|*.*",
+            };
+            if (openFileDialog.ShowDialog() == true)
+            {
+                if (File.Exists(openFileDialog.FileName))
+                {
+                    Picture = openFileDialog.FileName;
+                }
+            }
+        }
+
+        partial void OnPriceChanged(string value)
+        {
+
+        }
+
+        [RelayCommand]
+        private void OnBorrowedButtonClick()
+        {
+            IsBorrowed = !IsBorrowed;
+        }
+
+        [RelayCommand]
+        private async Task OnAddBookButtonClick()
+        {
+            StringBuilder tip = new();
+            if (string.IsNullOrEmpty(BookName))
+            {
+                tip.AppendLine("书名不能为空！");
+            }
+            if (string.IsNullOrEmpty(ShelfNum))
+            {
+                tip.AppendLine("书架号不能为空！");
+            }
+            if (string.IsNullOrEmpty(tip.ToString()))
+            {
+
+            }
+            else
+            {
+                string content = "您必须完善以下书籍信息， 才能将书籍添加到数据库中。\n" + tip.ToString();
+                System.Media.SystemSounds.Asterisk.Play();
+                Wpf.Ui.Controls.MessageBox msg = new()
+                {
+                    Title = "添加书籍 - 警告",
+                    Content = content
+                };
+                await msg.ShowDialogAsync();
             }
         }
 

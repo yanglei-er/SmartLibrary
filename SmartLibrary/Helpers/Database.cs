@@ -398,10 +398,17 @@ namespace SmartLibrary.Helpers
         {
             BookInfo book = new();
             string sql = $"SELECT * FROM main WHERE isbn = '{isbn}'";
-            using SQLiteDataReader reader = ExecuteReader(sql);
+
+            SQLiteConnection oldDbConnection = GetSQLiteConnection();
+            if (oldDbConnection.State != ConnectionState.Open)
+            {
+                oldDbConnection.Open();
+            }
+            SQLiteCommand selectCommand = new(sql, oldDbConnection);
+            SQLiteDataReader reader = selectCommand.ExecuteReader();
             if (reader.Read())
             {
-                book.Isbn = reader.GetString(0);
+                book.Isbn = isbn;
                 book.BookName = reader.GetString(1);
                 book.Author = reader.GetString(2);
                 book.Press = reader.GetString(3);
@@ -416,6 +423,9 @@ namespace SmartLibrary.Helpers
                 book.IsBorrowed = Convert.ToBoolean(reader.GetInt64(12));
                 book.Picture = reader.GetString(13);
             }
+            selectCommand.Dispose();
+            reader.Dispose();
+            oldDbConnection.Dispose();
             return book;
         }
 

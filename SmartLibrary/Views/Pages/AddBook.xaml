@@ -2,41 +2,62 @@
     x:Class="SmartLibrary.Views.Pages.AddBook"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:SmartLibrary.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:extensions="clr-namespace:SmartLibrary.Extensions"
     xmlns:local="clr-namespace:SmartLibrary.Views.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     Title="AddBook"
     d:DataContext="{d:DesignInstance local:AddBook,
                                      IsDesignTimeCreatable=False}"
-    d:DesignHeight="450"
+    d:DesignHeight="650"
     d:DesignWidth="800"
+    ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
+    ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+    Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+    ScrollViewer.CanContentScroll="False"
     mc:Ignorable="d">
 
     <Page.Resources>
         <Style BasedOn="{StaticResource MyButtonStyle}" TargetType="ui:Button" />
+        <converters:BoolToImageSourceConverter x:Key="BoolToImageSourceConverter" />
     </Page.Resources>
 
     <Grid Margin="16">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
+        <TextBox Name="XuNiBox" Width="0" />
         <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <ui:TextBox
+            <ui:Button
                 Grid.Column="0"
-                Height="37"
+                MinWidth="130"
+                Appearance="Success"
+                Command="{Binding ViewModel.ScanButtonClickCommand, Mode=OneWay}"
+                Content="扫描"
+                FontSize="20"
+                IsEnabled="{Binding ViewModel.IsScanButtonEnabled, Mode=OneWay}" />
+            <ui:TextBox
+                Name="IsbnBox"
+                Grid.Column="1"
+                Margin="8,0,0,0"
+                extensions:TextBoxAttachedProperties.IsOnlyNumber="True"
+                FontSize="20"
                 MaxLength="13"
                 PlaceholderText="{Binding ViewModel.IsbnBoxPlaceholderText, Mode=OneWay}"
-                Text="{Binding ViewModel.IsbnBoxText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                PreviewKeyDown="IsbnBox_PreviewKeyDown"
+                Text="{Binding ViewModel.IsbnText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <ui:Image
-                Grid.Column="1"
+                Grid.Column="2"
                 Width="40"
                 Height="40"
                 Margin="6,0,0,0"
@@ -44,27 +65,373 @@
                 Source="{Binding ViewModel.IsbnAttitudeImage, Converter={StaticResource StringToImageSourceConverter}, Mode=OneWay}"
                 Visibility="{Binding ViewModel.IsbnAttitudeVisible, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}" />
             <ui:Button
-                Grid.Column="2"
-                MinWidth="100"
-                Margin="8,0,0,0"
-                Content="扫描"
-                FontSize="20"
-                IsEnabled="{Binding ViewModel.IsScanButtonEnabled, Mode=OneWay}" />
-            <ui:Button
                 Grid.Column="3"
-                MinWidth="100"
+                MinWidth="130"
                 Margin="8,0,0,0"
-                Content="查询"
+                Command="{Binding ViewModel.SearchButtonClickCommand, Mode=OneWay}"
+                CommandParameter="{Binding ElementName=IsbnBox, Path=Text}"
+                Content="查询(Enter)"
                 FontSize="20"
                 IsEnabled="{Binding ViewModel.IsSearchButtonEnabled, Mode=OneWay}" />
         </Grid>
-        <Grid Grid.Row="1" Margin="0,8,0,0">
-            <Grid.RowDefinitions />
-            <ui:Button
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                Command="{Binding ViewModel.NavigateBackCommand}"
-                Content="返回" />
+        <Grid
+            Grid.Row="1"
+            Margin="0,12,0,0"
+            Visibility="{Binding ViewModel.IsBookExisted, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <ui:InfoBar
+                Title="提示"
+                FontSize="16"
+                IsOpen="True"
+                Message="本书已在数据库中!"
+                Severity="Warning" />
+        </Grid>
+        <Grid Grid.Row="2" Margin="0,12,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.5*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Border
+                Grid.Column="0"
+                Background="{ui:ThemeResource ControlFillColorDefaultBrush}"
+                CornerRadius="4">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0" Margin="0,16,0,0">
+                        <ui:TextBlock
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            FontSize="16"
+                            Text="书籍图片" />
+                        <ui:Image
+                            Width="180"
+                            Height="260"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            RenderOptions.BitmapScalingMode="HighQuality"
+                            Source="{Binding ViewModel.Picture, Converter={StaticResource StringToImageSourceConverter}, Mode=OneWay}"
+                            Stretch="UniformToFill" />
+                        <ui:Button
+                            Width="180"
+                            Height="260"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Background="Transparent"
+                            Command="{Binding ViewModel.SelectPictureButtonClickCommand, Mode=OneWay}"
+                            Cursor="Hand" />
+                    </Grid>
+                    <ScrollViewer
+                        Grid.Row="1"
+                        extensions:ScrollAnimationBehavior.IsEnabled="True"
+                        extensions:ScrollAnimationBehavior.PointsToScroll="16"
+                        extensions:ScrollAnimationBehavior.TimeDuration="00:00:00.20">
+                        <Grid>
+                            <StackPanel Grid.Row="0" Margin="48,32,48,0">
+                                <ui:TextBox
+                                    MaxWidth="400"
+                                    HorizontalContentAlignment="Center"
+                                    BorderThickness="0"
+                                    FontSize="24"
+                                    PlaceholderText="书名"
+                                    PreviewKeyDown="TextBox_PreviewKeyDown"
+                                    Text="{Binding ViewModel.BookName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    TextWrapping="Wrap" />
+                                <ui:TextBox
+                                    MaxWidth="400"
+                                    Margin="0,8,0,0"
+                                    HorizontalContentAlignment="Center"
+                                    BorderThickness="0"
+                                    FontSize="24"
+                                    PlaceholderText="作者"
+                                    PreviewKeyDown="TextBox_PreviewKeyDown"
+                                    Text="{Binding ViewModel.Author, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    TextWrapping="Wrap" />
+                                <ui:TextBox
+                                    MaxWidth="400"
+                                    Margin="0,8,0,0"
+                                    HorizontalContentAlignment="Center"
+                                    BorderThickness="0"
+                                    FontSize="24"
+                                    PlaceholderText="出版社"
+                                    PreviewKeyDown="TextBox_PreviewKeyDown"
+                                    Text="{Binding ViewModel.Press, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    TextWrapping="Wrap" />
+                            </StackPanel>
+                        </Grid>
+                    </ScrollViewer>
+                    <Grid
+                        Grid.Row="2"
+                        Margin="16"
+                        VerticalAlignment="Bottom">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <ui:Button
+                            Grid.Column="0"
+                            Margin="0,0,8,0"
+                            HorizontalAlignment="Stretch"
+                            Appearance="Primary"
+                            Command="{Binding ViewModel.AddBookButtonClickCommand, Mode=OneWay}"
+                            Content="添加"
+                            FontSize="24"
+                            IsEnabled="{Binding ViewModel.IsAddButtonEnabled, Mode=OneWay}" />
+                        <ui:Button
+                            Grid.Column="1"
+                            Margin="8,0,0,0"
+                            HorizontalAlignment="Stretch"
+                            Command="{Binding ViewModel.NavigateBackCommand, Mode=OneWay}"
+                            Content="返回"
+                            FontSize="24" />
+                    </Grid>
+                </Grid>
+            </Border>
+            <ScrollViewer
+                Grid.Column="1"
+                Margin="12,0,0,0"
+                extensions:ScrollAnimationBehavior.IsEnabled="True"
+                extensions:ScrollAnimationBehavior.PointsToScroll="16"
+                extensions:ScrollAnimationBehavior.TimeDuration="00:00:00.20">
+                <StackPanel Margin="0,0,12,0">
+                    <ui:CardExpander IsExpanded="True">
+                        <ui:CardExpander.Header>
+                            <ui:TextBlock FontSize="24" Text="登记信息" />
+                        </ui:CardExpander.Header>
+                        <ui:CardExpander.Content>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0">
+                                    <ui:TextBlock FontSize="24" Text="书架号：" />
+                                    <ui:TextBox
+                                        MinWidth="170"
+                                        MinHeight="150"
+                                        Margin="0,6,0,0"
+                                        HorizontalAlignment="Left"
+                                        HorizontalContentAlignment="Center"
+                                        VerticalContentAlignment="Center"
+                                        extensions:TextBoxAttachedProperties.IsOnlyNumber="True"
+                                        BorderThickness="0"
+                                        ClearButtonEnabled="False"
+                                        FontSize="80"
+                                        MaxLength="2"
+                                        PreviewKeyDown="TextBox_PreviewKeyDown"
+                                        Text="{Binding ViewModel.ShelfNum, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                </StackPanel>
+                                <Grid Grid.Column="1">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="*" />
+                                    </Grid.RowDefinitions>
+                                    <ui:TextBlock
+                                        Grid.Row="0"
+                                        FontSize="24"
+                                        Text="状态：" />
+                                    <Grid
+                                        Grid.Row="1"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center">
+                                        <ui:Image
+                                            Width="168"
+                                            Height="72"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            RenderOptions.BitmapScalingMode="HighQuality"
+                                            Source="{Binding ViewModel.IsBorrowed, Mode=OneWay, Converter={StaticResource BoolToImageSourceConverter}}"
+                                            Stretch="UniformToFill" />
+                                        <ui:Button
+                                            Width="168"
+                                            Height="72"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Background="Transparent"
+                                            BorderBrush="Transparent"
+                                            Command="{Binding ViewModel.BorrowedButtonClickCommand, Mode=OneWay}"
+                                            Cursor="Hand" />
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                        </ui:CardExpander.Content>
+                    </ui:CardExpander>
+                    <ui:CardExpander Margin="0,12,0,0" IsExpanded="True">
+                        <ui:CardExpander.Header>
+                            <ui:TextBlock FontSize="24" Text="出版信息" />
+                        </ui:CardExpander.Header>
+                        <ui:CardExpander.Content>
+                            <StackPanel>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <ui:TextBlock
+                                        Grid.Column="0"
+                                        FontSize="24"
+                                        Text="出版社：" />
+                                    <ui:TextBox
+                                        Grid.Column="1"
+                                        Height="36"
+                                        Margin="24,0,0,0"
+                                        BorderThickness="0"
+                                        FontSize="18"
+                                        PreviewKeyDown="TextBox_PreviewKeyDown"
+                                        Text="{Binding ViewModel.Press, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        TextWrapping="Wrap" />
+                                </Grid>
+                                <Grid Margin="0,6,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <ui:TextBlock
+                                        Grid.Column="0"
+                                        FontSize="24"
+                                        Text="出版时间：" />
+                                    <ui:TextBox
+                                        Grid.Column="1"
+                                        Height="36"
+                                        BorderThickness="0"
+                                        FontSize="18"
+                                        PreviewKeyDown="TextBox_PreviewKeyDown"
+                                        Text="{Binding ViewModel.PressDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        TextWrapping="Wrap" />
+                                </Grid>
+                                <Grid Margin="0,6,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <ui:TextBlock
+                                        Grid.Column="0"
+                                        FontSize="24"
+                                        Text="出版地：" />
+                                    <ui:TextBox
+                                        Grid.Column="1"
+                                        Height="36"
+                                        Margin="24,0,0,0"
+                                        BorderThickness="0"
+                                        FontSize="18"
+                                        PreviewKeyDown="TextBox_PreviewKeyDown"
+                                        Text="{Binding ViewModel.PressPlace, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        TextWrapping="Wrap" />
+                                </Grid>
+                            </StackPanel>
+                        </ui:CardExpander.Content>
+                    </ui:CardExpander>
+                    <ui:CardExpander Margin="0,12,0,0" IsExpanded="True">
+                        <ui:CardExpander.Header>
+                            <ui:TextBlock FontSize="24" Text="图书信息" />
+                        </ui:CardExpander.Header>
+                        <ui:CardExpander.Content>
+                            <StackPanel>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <ui:TextBlock
+                                        Grid.Column="0"
+                                        FontSize="24"
+                                        Text="价格：" />
+                                    <ui:TextBox
+                                        Grid.Column="1"
+                                        Height="36"
+                                        extensions:TextBoxAttachedProperties.IsOnlyNumber="True"
+                                        BorderThickness="0"
+                                        FontSize="18"
+                                        PreviewKeyDown="TextBox_PreviewKeyDown"
+                                        Text="{Binding ViewModel.Price, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                    <ui:TextBlock
+                                        Grid.Column="2"
+                                        Margin="4,0,0,0"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        FontSize="24"
+                                        Text="元" />
+                                </Grid>
+                                <Grid Margin="0,6,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <ui:TextBlock
+                                        Grid.Column="0"
+                                        FontSize="24"
+                                        Text="页数：" />
+                                    <ui:TextBox
+                                        Grid.Column="1"
+                                        Height="36"
+                                        BorderThickness="0"
+                                        FontSize="18"
+                                        PreviewKeyDown="TextBox_PreviewKeyDown"
+                                        Text="{Binding ViewModel.Pages, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                </Grid>
+                                <Grid Margin="0,6,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <ui:TextBlock
+                                        Grid.Column="0"
+                                        FontSize="24"
+                                        Text="字数：" />
+                                    <ui:TextBox
+                                        Grid.Column="1"
+                                        Height="36"
+                                        BorderThickness="0"
+                                        FontSize="18"
+                                        Text="{Binding ViewModel.Words, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                </Grid>
+                            </StackPanel>
+                        </ui:CardExpander.Content>
+                    </ui:CardExpander>
+                    <ui:CardExpander Margin="0,12,0,0" IsExpanded="True">
+                        <ui:CardExpander.Header>
+                            <ui:TextBlock FontSize="24" Text="图书描述" />
+                        </ui:CardExpander.Header>
+                        <ui:CardExpander.Content>
+                            <StackPanel>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <ui:TextBlock
+                                        Grid.Column="0"
+                                        FontSize="24"
+                                        Text="分类：" />
+                                    <ui:TextBox
+                                        Grid.Column="1"
+                                        Height="36"
+                                        BorderThickness="0"
+                                        FontSize="18"
+                                        PreviewKeyDown="TextBox_PreviewKeyDown"
+                                        Text="{Binding ViewModel.ClcName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                </Grid>
+                                <ui:TextBlock
+                                    Grid.Column="0"
+                                    Margin="0,6,0,0"
+                                    FontSize="24"
+                                    Text="图书介绍：" />
+                                <ui:TextBox
+                                    MinHeight="36"
+                                    Margin="0,6,0,0"
+                                    AcceptsReturn="True"
+                                    BorderThickness="0"
+                                    FontSize="18"
+                                    Text="{Binding ViewModel.BookDesc, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    TextWrapping="Wrap" />
+                            </StackPanel>
+                        </ui:CardExpander.Content>
+                    </ui:CardExpander>
+                </StackPanel>
+            </ScrollViewer>
         </Grid>
     </Grid>
 </Page>

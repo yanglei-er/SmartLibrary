@@ -9,6 +9,8 @@
     Title="智慧图书馆"
     Width="1100"
     Height="650"
+    MinWidth="1100"
+    MinHeight="650"
     d:DataContext="{d:DesignInstance local:MainWindow,
                                      IsDesignTimeCreatable=False}"
     d:DesignHeight="450"

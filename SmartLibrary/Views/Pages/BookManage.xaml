@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:converters="clr-namespace:SmartLibrary.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:extensions="clr-namespace:SmartLibrary.Extensions"
     xmlns:local="clr-namespace:SmartLibrary.Views.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
@@ -483,10 +484,9 @@
                     x:Name="textBox"
                     Height="32"
                     Margin="4,0,4,0"
-                    InputMethod.IsInputMethodEnabled="False"
+                    extensions:TextBoxAttachedProperties.IsOnlyNumber="True"
                     IsEnabled="{Binding ViewModel.IsBottombarEnabled, Mode=OneWay}"
                     PreviewKeyDown="TextBox_PreviewKeyDown"
-                    PreviewTextInput="Text_PreviewTextInput"
                     Text="{Binding ViewModel.TargetPage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 <ui:TextBlock
                     HorizontalAlignment="Center"

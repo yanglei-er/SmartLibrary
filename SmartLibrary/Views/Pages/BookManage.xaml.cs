@@ -1,7 +1,6 @@
 ﻿using SmartLibrary.Models;
 using SmartLibrary.ViewModels;
 using System.Data;
-using System.Text.RegularExpressions;
 using System.Windows.Input;
 using Wpf.Ui.Controls;
 
@@ -9,8 +8,6 @@ namespace SmartLibrary.Views.Pages
 {
     public partial class BookManage : INavigableView<BookManageViewModel>
     {
-        [GeneratedRegex("[^0-9]+")]
-        private static partial Regex MyRegex();
         private readonly BookInfoSimple bookInfo = new("", "", "", 0, false);
 
         public BookManageViewModel ViewModel { get; }
@@ -19,11 +16,6 @@ namespace SmartLibrary.Views.Pages
             ViewModel = viewModel;
             DataContext = this;
             InitializeComponent();
-        }
-
-        private void Text_PreviewTextInput(object sender, TextCompositionEventArgs e)
-        {
-            e.Handled = MyRegex().IsMatch(e.Text);
         }
 
         private void TextBox_PreviewKeyDown(object sender, KeyEventArgs e)
