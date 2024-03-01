@@ -13,7 +13,7 @@ using Wpf.Ui.Extensions;
 
 namespace SmartLibrary.ViewModels
 {
-    public partial class BookManageViewModel : ObservableObject
+    public partial class BookManageViewModel : ObservableObject, INavigationAware
     {
         private readonly INavigationService _navigationService;
         private readonly ISnackbarService _snackbarService;
@@ -74,8 +74,6 @@ namespace SmartLibrary.ViewModels
             if (SQLiteHelper.IsDatabaseConnected("books.smartlibrary"))
             {
                 BooksDb.ExecutePagerCompleted += ExecutePagerCompleted;
-                Refresh();
-                Pager();
             }
             else
             {
@@ -87,7 +85,24 @@ namespace SmartLibrary.ViewModels
 
         ~BookManageViewModel()
         {
-            BooksDb.ExecutePagerCompleted -= ExecutePagerCompleted;
+            if (SQLiteHelper.IsDatabaseConnected("books.smartlibrary"))
+            {
+                BooksDb.ExecutePagerCompleted -= ExecutePagerCompleted;
+            }
+        }
+
+        public void OnNavigatedTo()
+        {
+            if (SQLiteHelper.IsDatabaseConnected("books.smartlibrary"))
+            {
+                Refresh();
+                Pager();
+            }
+        }
+
+        public void OnNavigatedFrom()
+        {
+            
         }
 
         [RelayCommand]

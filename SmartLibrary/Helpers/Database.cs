@@ -73,11 +73,11 @@ namespace SmartLibrary.Helpers
                 sbr.AppendLine("CREATE TABLE IF NOT EXISTS 'main' (");
                 sbr.AppendLine("'isbn' TEXT PRIMARY KEY NOT NULL,");
                 sbr.AppendLine("'bookName' TEXT NOT NULL,");
-                sbr.AppendLine("'author' TEXT,");
+                sbr.AppendLine("'author' TEXT NOT NULL,");
                 sbr.AppendLine("'press' TEXT,");
                 sbr.AppendLine("'pressDate' TEXT,");
                 sbr.AppendLine("'pressPlace' TEXT,");
-                sbr.AppendLine("'price' INTEGER,");
+                sbr.AppendLine("'price' TEXT,");
                 sbr.AppendLine("'clcName' TEXT,");
                 sbr.AppendLine("'bookDesc' TEXT,");
                 sbr.AppendLine("'pages' TEXT,");
@@ -301,10 +301,7 @@ namespace SmartLibrary.Helpers
         /// </summary>
         public void DelBook(string isbn)
         {
-            StringBuilder sbr = new();
-            sbr.Append("DELETE FROM main WHERE isbn =  ");
-            sbr.Append(isbn);
-            ExecuteNonQuery(sbr.ToString(), null);
+            ExecuteNonQuery($"DELETE FROM main WHERE isbn = {isbn}", null);
         }
 
         /// <summary>
@@ -366,10 +363,9 @@ namespace SmartLibrary.Helpers
                 if (!Exists(isbn))
                 {
                     //string sqlStr = "INSERT INTO main VALUES (\"@isbn\",\"@bookName\",\"@author\",\"@press\",\"@pressDate\",\"@pressPlace\",@price,\"@clcName\",\"@bookDesc\",\"@pages\",\"@words\",@shelfNumber,@isBorrowed,\"@picture\")";
-                    string sqlStr = $"INSERT INTO main VALUES ('{isbn}','{reader.GetString(1)}','{reader.GetString(2)}','{reader.GetString(3)}','{reader.GetString(4)}','{reader.GetString(5)}',@price,'{reader.GetString(7)}','{reader.GetString(8)}','{reader.GetString(9)}','{reader.GetString(10)}',@shelfNumber,@isBorrowed,'{reader.GetValue(13)}')";
+                    string sqlStr = $"INSERT INTO main VALUES ('{isbn}','{reader.GetString(1)}','{reader.GetString(2)}','{reader.GetString(3)}','{reader.GetString(4)}','{reader.GetString(5)}','{reader.GetString(6)}','{reader.GetString(7)}','{reader.GetString(8)}','{reader.GetString(9)}','{reader.GetString(10)}',@shelfNumber,@isBorrowed,'{reader.GetValue(13)}')";
 
                     SQLiteParameter[] parameters = [
-                        new SQLiteParameter("@price", reader.GetFloat(6)),
                         new SQLiteParameter("@shelfNumber", reader.GetInt64(11)),
                         new SQLiteParameter("@isBorrowed", reader.GetInt64(12)),
                     ];
@@ -391,13 +387,10 @@ namespace SmartLibrary.Helpers
             return [mergedCount, repeatedCount];
         }
 
-        /// <summary>
-        /// 查询一本图书数据
-        /// </summary>
         public BookInfo GetOneBookInfo(string isbn)
         {
             BookInfo book = new();
-            string sql = $"SELECT * FROM main WHERE isbn = '{isbn}'";
+            string sql = $"SELECT * FROM main WHERE isbn = {isbn}";
 
             SQLiteConnection oldDbConnection = GetSQLiteConnection();
             if (oldDbConnection.State != ConnectionState.Open)
@@ -414,7 +407,7 @@ namespace SmartLibrary.Helpers
                 book.Press = reader.GetString(3);
                 book.PressDate = reader.GetString(4);
                 book.PressPlace = reader.GetString(5);
-                book.Price = reader.GetFloat(6);
+                book.Price = reader.GetString(6);
                 book.ClcName = reader.GetString(7);
                 book.BookDesc = reader.GetString(8);
                 book.Pages = reader.GetString(9);
@@ -427,6 +420,16 @@ namespace SmartLibrary.Helpers
             reader.Dispose();
             oldDbConnection.Dispose();
             return book;
+        }
+
+        public void AddBook(BookInfo book)
+        {
+            string sqlStr = $"INSERT INTO main VALUES ('{book.Isbn}','{book.BookName}','{book.Author}','{book.Press}','{book.PressDate}','{book.PressPlace}','{book.Price}','{book.ClcName}','{book.BookDesc}','{book.Pages}','{book.Words}',@shelfNumber,@isBorrowed,'{book.Picture}')";
+            SQLiteParameter[] parameters = [
+                        new SQLiteParameter("@shelfNumber", book.ShelfNumber),
+                        new SQLiteParameter("@isBorrowed", book.IsBorrowed),
+                    ];
+            ExecuteNonQuery(sqlStr, parameters);
         }
 
         //public List<BookInfo> GetBookInfos(object value)
@@ -468,9 +471,6 @@ namespace SmartLibrary.Helpers
         //    return books;
         //}
 
-        /// <summary>
-        /// 查询多本图书数据
-        /// </summary>
         //public ObservableCollection<string> GetBookInfos(string value)
         //{
         //    ObservableCollection<string> books = [];
@@ -500,9 +500,6 @@ namespace SmartLibrary.Helpers
         //    return books;
         //}
 
-        /// <summary>
-        /// 查询多本图书数据
-        /// </summary>
         //public List<BookInfo> GetBookInfos(int value)
         //{
         //    List<BookInfo> books = [];
@@ -538,7 +535,6 @@ namespace SmartLibrary.Helpers
             string sql = $"SELECT * FROM main WHERE bookName LIKE '%{str}%' OR author LIKE '%{str}%'";
             return ExecuteDataTable(sql);
         }
-
         public DataTable AutoSuggestByNum(int num)
         {
             string sql = $"SELECT * FROM main WHERE isbn = @value OR shelfNumber = @value";

@@ -23,8 +23,8 @@ namespace SmartLibrary.Views
             contentDialogService.SetContentPresenter(RootContentDialog);
 
             _snackbarService = snackbarService;
-#if RELEASE
-            this.Loaded += Window_Loaded;
+#if RELEASE || DEBUG
+            Loaded += Window_Loaded;
 #endif
             BluetoothHelper.Instance.BleStateChangedEvent += OnBleStateChanged;
         }

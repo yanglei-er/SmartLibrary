@@ -124,7 +124,7 @@ namespace SmartLibrary.ViewModels
             ListViewItems.Add(new BluetoothDevice(deviceInfo[0], deviceInfo[1], deviceInfo[2]));
         }
 
-        private void ScanComplete()
+        private void ScanComplete(object? sender, EventArgs e)
         {
             StateText = "一共扫描到 " + ListViewItems.Count.ToString() + " 个设备";
             ScanButtonEnabled = true;

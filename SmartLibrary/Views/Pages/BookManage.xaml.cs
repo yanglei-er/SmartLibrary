@@ -39,7 +39,7 @@ namespace SmartLibrary.Views.Pages
             {
                 bookInfo.Isbn = (string)dataRowView[0];
                 bookInfo.BookName = (string)dataRowView[1];
-                bookInfo.Author = dataRowView[2].ToString();
+                bookInfo.Author = (string)dataRowView[2];
                 bookInfo.ShelfNumber = (long)dataRowView[11];
                 bookInfo.IsBorrowed = Convert.ToBoolean(dataRowView[12]);
             }
@@ -53,13 +53,17 @@ namespace SmartLibrary.Views.Pages
                 {
                     dataRowView[1] = bookInfo.BookName;
                 }
+                if (string.IsNullOrEmpty(dataRowView[2].ToString()))
+                {
+                    dataRowView[2] = bookInfo.Author;
+                }
                 else
                 {
-                    if ((string)dataRowView[1] != bookInfo.BookName || dataRowView[2].ToString() != bookInfo.Author || (Int64)dataRowView[11] != bookInfo.ShelfNumber)
+                    if ((string)dataRowView[1] != bookInfo.BookName || (string)dataRowView[2] != bookInfo.Author || (Int64)dataRowView[11] != bookInfo.ShelfNumber)
                     {
                         bookInfo.Isbn = (string)dataRowView[0];
                         bookInfo.BookName = (string)dataRowView[1];
-                        bookInfo.Author = dataRowView[2].ToString();
+                        bookInfo.Author = (string)dataRowView[2];
                         bookInfo.ShelfNumber = (long)dataRowView[11];
                         bookInfo.IsBorrowed = Convert.ToBoolean(dataRowView[12]);
                         ViewModel.UpdateSimple(bookInfo);
