@@ -82,7 +82,6 @@ namespace SmartLibrary
 
         private void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
-
         }
     }
 }

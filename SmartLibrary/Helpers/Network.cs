@@ -8,9 +8,11 @@ namespace SmartLibrary.Helpers
         [LibraryImport("sensapi.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static partial bool IsNetworkAlive(out int connectionDescription);
+
         private static readonly HttpClient httpClient = new();
 
         #region UAPool
+
         private static readonly List<string> UAPool =
         [
             "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36 OPR/26.0.1656.60",
@@ -36,7 +38,8 @@ namespace SmartLibrary.Helpers
         {
             return UAPool[new Random().Next(0, UAPool.Count)];
         }
-        #endregion
+
+        #endregion UAPool
 
         public static bool IsInternetConnected()
         {

@@ -26,7 +26,7 @@ namespace SmartLibrary.Extensions
             return (double)target.GetValue(VerticalOffsetProperty);
         }
 
-        #endregion
+        #endregion VerticalOffset Property
 
         #region TimeDuration Property
 
@@ -46,7 +46,7 @@ namespace SmartLibrary.Extensions
             return (TimeSpan)target.GetValue(TimeDurationProperty);
         }
 
-        #endregion
+        #endregion TimeDuration Property
 
         #region PointsToScroll Property
 
@@ -66,7 +66,7 @@ namespace SmartLibrary.Extensions
             return (double)target.GetValue(PointsToScrollProperty);
         }
 
-        #endregion
+        #endregion PointsToScroll Property
 
         #region OnVerticalOffset Changed
 
@@ -78,7 +78,7 @@ namespace SmartLibrary.Extensions
             }
         }
 
-        #endregion
+        #endregion OnVerticalOffset Changed
 
         #region IsEnabled Property
 
@@ -98,7 +98,7 @@ namespace SmartLibrary.Extensions
             return (bool)target.GetValue(IsEnabledProperty);
         }
 
-        #endregion
+        #endregion IsEnabled Property
 
         #region OnIsEnabledChanged Changed
 
@@ -115,7 +115,7 @@ namespace SmartLibrary.Extensions
             }
         }
 
-        #endregion
+        #endregion OnIsEnabledChanged Changed
 
         #region AnimateScroll Helper
 
@@ -131,7 +131,7 @@ namespace SmartLibrary.Extensions
             scrollViewer.BeginAnimation(VerticalOffsetProperty, verticalAnimation);
         }
 
-        #endregion
+        #endregion AnimateScroll Helper
 
         #region NormalizeScrollPos Helper
 
@@ -156,7 +156,7 @@ namespace SmartLibrary.Extensions
             return returnValue;
         }
 
-        #endregion
+        #endregion NormalizeScrollPos Helper
 
         #region SetEventHandlersForScrollViewer Helper
 
@@ -165,7 +165,6 @@ namespace SmartLibrary.Extensions
             scroller.PreviewMouseWheel += new MouseWheelEventHandler(ScrollViewerPreviewMouseWheel);
             scroller.PreviewKeyDown += new KeyEventHandler(ScrollViewerPreviewKeyDown);
             scroller.PreviewMouseLeftButtonUp += Scroller_PreviewMouseLeftButtonUp;
-
         }
 
         private static void Scroller_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -173,7 +172,7 @@ namespace SmartLibrary.Extensions
             intendedLocation = ((ScrollViewer)sender).VerticalOffset;
         }
 
-        #endregion
+        #endregion SetEventHandlersForScrollViewer Helper
 
         #region ScrollerLoaded Event Handler
 
@@ -185,7 +184,7 @@ namespace SmartLibrary.Extensions
             }
         }
 
-        #endregion
+        #endregion ScrollerLoaded Event Handler
 
         #region ScrollViewerPreviewMouseWheel Event Handler
 
@@ -210,7 +209,7 @@ namespace SmartLibrary.Extensions
             e.Handled = true;
         }
 
-        #endregion
+        #endregion ScrollViewerPreviewMouseWheel Event Handler
 
         #region ScrollViewerPreviewKeyDown Handler
 
@@ -256,5 +255,6 @@ namespace SmartLibrary.Extensions
             e.Handled = isKeyHandled;
         }
     }
-    #endregion
+
+    #endregion ScrollViewerPreviewKeyDown Handler
 }

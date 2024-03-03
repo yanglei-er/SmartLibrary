@@ -11,6 +11,7 @@ namespace SmartLibrary.Views.Pages
         private readonly BookInfoSimple bookInfo = new("", "", "", 0, false);
 
         public BookManageViewModel ViewModel { get; }
+
         public BookManage(BookManageViewModel viewModel)
         {
             ViewModel = viewModel;

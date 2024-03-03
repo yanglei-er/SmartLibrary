@@ -20,63 +20,88 @@ namespace SmartLibrary.ViewModels
 
         [ObservableProperty]
         private bool _isbnBoxEnabled = true;
+
         [ObservableProperty]
         private string _isbnBoxPlaceholderText = "请输入13位ISBN码";
+
         [ObservableProperty]
         private bool _isbnAttitudeVisible = false;
+
         [ObservableProperty]
         private string _isbnAttitudeImage = string.Empty;
+
         [ObservableProperty]
         private bool _isScanButtonEnabled = false;
+
         [ObservableProperty]
         private bool _isSearchButtonEnabled = false;
 
         [ObservableProperty]
         private bool _isLoading = false;
+
         [ObservableProperty]
         private bool _isNetwrokError = false;
+
         [ObservableProperty]
         private string _networkErrorText = string.Empty;
+
         [ObservableProperty]
         private bool _isBookExisted = false;
+
         [ObservableProperty]
         private bool _isAddButtonEnabled = false;
 
         [ObservableProperty]
         private string _bookNameText = string.Empty;
+
         [ObservableProperty]
         private string _authorText = string.Empty;
+
         [ObservableProperty]
         private string _pressText = string.Empty;
 
         [ObservableProperty]
         private string _isbnText = string.Empty;
+
         [ObservableProperty]
         private string _bookName = string.Empty;
+
         [ObservableProperty]
         private string _author = string.Empty;
+
         [ObservableProperty]
         private string _press = string.Empty;
+
         [ObservableProperty]
         private string _pressDate = string.Empty;
+
         [ObservableProperty]
         private string _pressPlace = string.Empty;
+
         [ObservableProperty]
         private string _price = string.Empty;
+
         [ObservableProperty]
         private string _pages = string.Empty;
+
         [ObservableProperty]
         private string _words = string.Empty;
+
         [ObservableProperty]
         private string _clcName = string.Empty;
+
         [ObservableProperty]
         private string _bookDesc = string.Empty;
+
         [ObservableProperty]
         private string _language = string.Empty;
+
         [ObservableProperty]
         private string _picture = string.Empty;
+
         [ObservableProperty]
         private string _shelfNum = string.Empty;
+
         [ObservableProperty]
         private bool _isBorrowed = false;
 
@@ -96,7 +121,6 @@ namespace SmartLibrary.ViewModels
         [RelayCommand]
         private void OnScanButtonClick()
         {
-
         }
 
         [RelayCommand]
@@ -225,7 +249,6 @@ namespace SmartLibrary.ViewModels
                 Title = "选择图书封面图片",
                 Filter = "图像文件|*.jpg;*.png;*.jpeg;*.bmp|所有文件|*.*",
                 InitialDirectory = Environment.CurrentDirectory + @".\pictures\"
-
             };
             if (openFileDialog.ShowDialog() == true)
             {
@@ -344,6 +367,7 @@ namespace SmartLibrary.ViewModels
                 BookNameText = $"《{value}》";
             }
         }
+
         partial void OnAuthorChanged(string value)
         {
             if (string.IsNullOrEmpty(value))
@@ -355,6 +379,7 @@ namespace SmartLibrary.ViewModels
                 AuthorText = "作者：" + value;
             }
         }
+
         partial void OnPressChanged(string value)
         {
             if (string.IsNullOrEmpty(value))

@@ -4,7 +4,6 @@
     {
         public Borrow_Return_BookViewModel()
         {
-
         }
     }
 }

@@ -23,10 +23,13 @@ namespace SmartLibrary.ViewModels
 
         [ObservableProperty]
         private bool _missingDatabase = false;
+
         [ObservableProperty]
         private bool _databaseEmpty = false;
+
         [ObservableProperty]
         private bool _isTopbarEnabled = true;
+
         [ObservableProperty]
         private bool _isBottombarEnabled = true;
 
@@ -102,7 +105,6 @@ namespace SmartLibrary.ViewModels
 
         public void OnNavigatedFrom()
         {
-
         }
 
         [RelayCommand]
@@ -421,7 +423,6 @@ namespace SmartLibrary.ViewModels
 
         public void GotoTargetPage(string page)
         {
-
             if (string.IsNullOrEmpty(page))
             {
                 TargetPage = -1;

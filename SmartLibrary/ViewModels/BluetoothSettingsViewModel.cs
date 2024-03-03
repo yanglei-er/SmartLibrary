@@ -42,7 +42,7 @@ namespace SmartLibrary.ViewModels
         private int _listviewSelectedIndex = -1;
 
         [ObservableProperty]
-        private ObservableCollection<BluetoothDevice> _listViewItems = new ObservableCollection<BluetoothDevice>();
+        private ObservableCollection<BluetoothDevice> _listViewItems = [];
 
         public BluetoothSettingsViewModel()
         {

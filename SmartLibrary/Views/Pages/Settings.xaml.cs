@@ -6,6 +6,7 @@ namespace SmartLibrary.Views.Pages
     public partial class Settings : INavigableView<SettingsViewModel>
     {
         public SettingsViewModel ViewModel { get; }
+
         public Settings(SettingsViewModel viewModel)
         {
             ViewModel = viewModel;

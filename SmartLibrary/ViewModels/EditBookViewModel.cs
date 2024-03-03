@@ -8,6 +8,7 @@ namespace SmartLibrary.ViewModels
     public partial class EditBookViewModel : ObservableObject, INavigationAware
     {
         private readonly INavigationService _navigationService;
+
         public EditBookViewModel(INavigationService navigationService)
         {
             _navigationService = navigationService;
@@ -25,7 +26,9 @@ namespace SmartLibrary.ViewModels
             _navigationService.Navigate(typeof(BookManage));
         }
 
-        public void OnNavigatedTo() { }
+        public void OnNavigatedTo()
+        { }
+
         public void OnNavigatedFrom()
         {
             WeakReferenceMessenger.Default.Unregister<string>(this);

@@ -12,10 +12,13 @@ namespace SmartLibrary.Helpers
         private BluetoothRadio? bluetoothRadio;
 
         public delegate void ConnectEventHandler(string info);
+
         public event ConnectEventHandler ConnectEvent = delegate { };
 
         public delegate void DiscoverDeviceEventHandler(List<string> deviceInfo);
+
         public event DiscoverDeviceEventHandler DiscoverDevice = delegate { };
+
         public event EventHandler DiscoverComplete = delegate { };
 
         public static BluetoothHelper Instance
@@ -34,10 +37,13 @@ namespace SmartLibrary.Helpers
 
         //蓝牙状态改变
         public delegate void BleStateChangedEventHandler(bool state);
+
         public event BleStateChangedEventHandler BleStateChangedEvent = delegate { };
+
         public const int DBT_DEVNODES_CHANGED = 0x0007;
         private const int WM_DEVICECHANGE = 0x0219;
         public bool _previousBleState;
+
         public IntPtr HwndHandler(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
             if (msg == WM_DEVICECHANGE)

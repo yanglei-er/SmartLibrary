@@ -12,7 +12,9 @@ namespace SmartLibrary.Helpers
         private readonly string DataSource = string.Empty;
 
         public delegate void ExecuteCompletedEventHandler(DataTable datatable);
+
         public event ExecuteCompletedEventHandler ExecutePagerCompleted = delegate { };
+
         public event ExecuteCompletedEventHandler ExecuteDataTableCompleted = delegate { };
 
         /// <summary>
@@ -94,7 +96,7 @@ namespace SmartLibrary.Helpers
         /// <summary>
         /// 获得连接对象
         /// </summary>
-        /// <returns>SQLiteConnection</returns>       
+        /// <returns>SQLiteConnection</returns>
         public SQLiteConnection GetSQLiteConnection()
         {
             string connStr = string.Format("Data Source={0}", DataSource);
@@ -557,6 +559,7 @@ namespace SmartLibrary.Helpers
             string sql = $"SELECT * FROM main WHERE bookName LIKE '%{str}%' OR author LIKE '%{str}%'";
             return ExecuteDataTable(sql);
         }
+
         public DataTable AutoSuggestByNum(int num)
         {
             string sql = $"SELECT * FROM main WHERE isbn = {num} OR shelfNumber = {num}";
@@ -568,6 +571,7 @@ namespace SmartLibrary.Helpers
             string sql = $"UPDATE main SET isBorrowed = 1 WHERE isbn = '{isbn}'";
             ExecuteNonQuery(sql);
         }
+
         public void ReturnBook(string isbn)
         {
             string sql = $"UPDATE main SET isBorrowed = 0 WHERE isbn = '{isbn}'";
