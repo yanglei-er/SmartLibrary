@@ -40,8 +40,8 @@ namespace SmartLibrary.Views.Pages
                 bookInfo.Isbn = (string)dataRowView[0];
                 bookInfo.BookName = (string)dataRowView[1];
                 bookInfo.Author = (string)dataRowView[2];
-                bookInfo.ShelfNumber = (long)dataRowView[11];
-                bookInfo.IsBorrowed = Convert.ToBoolean(dataRowView[12]);
+                bookInfo.ShelfNumber = (long)dataRowView[3];
+                bookInfo.IsBorrowed = Convert.ToBoolean(dataRowView[4]);
             }
         }
 
@@ -59,13 +59,13 @@ namespace SmartLibrary.Views.Pages
                 }
                 else
                 {
-                    if ((string)dataRowView[1] != bookInfo.BookName || (string)dataRowView[2] != bookInfo.Author || (Int64)dataRowView[11] != bookInfo.ShelfNumber)
+                    if ((string)dataRowView[1] != bookInfo.BookName || (string)dataRowView[2] != bookInfo.Author || (Int64)dataRowView[3] != bookInfo.ShelfNumber)
                     {
                         bookInfo.Isbn = (string)dataRowView[0];
                         bookInfo.BookName = (string)dataRowView[1];
                         bookInfo.Author = (string)dataRowView[2];
-                        bookInfo.ShelfNumber = (long)dataRowView[11];
-                        bookInfo.IsBorrowed = Convert.ToBoolean(dataRowView[12]);
+                        bookInfo.ShelfNumber = (long)dataRowView[3];
+                        bookInfo.IsBorrowed = Convert.ToBoolean(dataRowView[4]);
                         ViewModel.UpdateSimple(bookInfo);
                     }
                 }
@@ -77,7 +77,7 @@ namespace SmartLibrary.Views.Pages
             if (DataGrid.SelectedItem is DataRowView dataRowView)
             {
                 string isbn = (string)dataRowView[0];
-                bool isBorrowed = Convert.ToBoolean(dataRowView[12]);
+                bool isBorrowed = Convert.ToBoolean(dataRowView[4]);
                 ViewModel.CheckBox_Click(isbn, isBorrowed);
             }
         }

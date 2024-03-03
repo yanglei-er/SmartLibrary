@@ -1,8 +1,10 @@
-﻿using Microsoft.Win32;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Win32;
 using SmartLibrary.Helpers;
-using SmartLibrary.Models;
+using SmartLibrary.Views.Pages;
 using System.IO;
 using System.Text;
+using System.Text.Json;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
 using Wpf.Ui.Extensions;
@@ -17,6 +19,8 @@ namespace SmartLibrary.ViewModels
         private readonly SQLiteHelper BooksDb = SQLiteHelper.GetDatabase("books.smartlibrary");
 
         [ObservableProperty]
+        private bool _isbnBoxEnabled = true;
+        [ObservableProperty]
         private string _isbnBoxPlaceholderText = "请输入13位ISBN码";
         [ObservableProperty]
         private bool _isbnAttitudeVisible = false;
@@ -27,6 +31,12 @@ namespace SmartLibrary.ViewModels
         [ObservableProperty]
         private bool _isSearchButtonEnabled = false;
 
+        [ObservableProperty]
+        private bool _isLoading = false;
+        [ObservableProperty]
+        private bool _isNetwrokError = false;
+        [ObservableProperty]
+        private string _networkErrorText = string.Empty;
         [ObservableProperty]
         private bool _isBookExisted = false;
         [ObservableProperty]
@@ -41,8 +51,6 @@ namespace SmartLibrary.ViewModels
 
         [ObservableProperty]
         private string _isbnText = string.Empty;
-        [ObservableProperty]
-        private string _picture = string.Empty;
         [ObservableProperty]
         private string _bookName = string.Empty;
         [ObservableProperty]
@@ -63,6 +71,10 @@ namespace SmartLibrary.ViewModels
         private string _clcName = string.Empty;
         [ObservableProperty]
         private string _bookDesc = string.Empty;
+        [ObservableProperty]
+        private string _language = string.Empty;
+        [ObservableProperty]
+        private string _picture = string.Empty;
         [ObservableProperty]
         private string _shelfNum = string.Empty;
         [ObservableProperty]
@@ -88,18 +100,16 @@ namespace SmartLibrary.ViewModels
         }
 
         [RelayCommand]
-        public void OnSearchButtonClick(string parameter)
+        public async Task OnSearchButtonClick()
         {
-            if (BooksDb.Exists(parameter))
+            if (BooksDb.Exists(IsbnText))
             {
                 System.Media.SystemSounds.Asterisk.Play();
 
                 IsBookExisted = true;
                 IsSearchButtonEnabled = false;
-                IsAddButtonEnabled = false;
-                CleanExceptIsbn();
 
-                BookInfo bookInfo = BooksDb.GetOneBookInfo(parameter);
+                Models.BookInfo bookInfo = BooksDb.GetOneBookInfo(IsbnText);
                 BookName = bookInfo.BookName;
                 Author = bookInfo.Author;
                 Press = bookInfo.Press ?? string.Empty;
@@ -110,16 +120,70 @@ namespace SmartLibrary.ViewModels
                 Words = bookInfo.Words ?? string.Empty;
                 Pages = bookInfo.Pages ?? string.Empty;
                 BookDesc = bookInfo.BookDesc ?? string.Empty;
+                Language = bookInfo.Language ?? string.Empty;
+                Picture = LocalStorage.GetPictureUrl(IsbnText, bookInfo.Picture);
                 ShelfNum = bookInfo.ShelfNumber.ToString();
                 IsBorrowed = bookInfo.IsBorrowed;
-                Picture = bookInfo.Picture ?? string.Empty;
             }
             else
             {
                 IsSearchButtonEnabled = false;
-                IsAddButtonEnabled = true;
-                CleanExceptIsbn();
+                if (Network.IsInternetConnected())
+                {
+                    IsLoading = true;
+                    IsbnBoxEnabled = false;
+                    IsNetwrokError = false;
+                    string result = await Network.GetAsync($"http://openapi.daohe168.com.cn/api/library/isbn/query?isbn={IsbnText}&appKey=d7c6c07a0a04ba4e65921e2f90726384");
+
+                    if (result.StartsWith("Error"))
+                    {
+                        System.Media.SystemSounds.Asterisk.Play();
+                        NetworkErrorText = "连接服务器失败，错误代码：" + result.Split(":")[1];
+                        IsNetwrokError = true;
+                    }
+                    else
+                    {
+                        using JsonDocument jsondocument = JsonDocument.Parse(result);
+                        JsonElement rootElement = jsondocument.RootElement;
+                        if (rootElement.GetProperty("success").GetBoolean())
+                        {
+                            JsonElement dataElement = rootElement.GetProperty("data");
+                            BookName = dataElement.GetProperty("bookName").GetString() ?? string.Empty;
+                            Author = dataElement.GetProperty("author").GetString() ?? string.Empty;
+                            Press = dataElement.GetProperty("press").GetString() ?? string.Empty;
+                            PressDate = dataElement.GetProperty("pressDate").GetString() ?? string.Empty;
+                            PressPlace = dataElement.GetProperty("pressPlace").GetString() ?? string.Empty;
+                            Price = (dataElement.GetProperty("price").GetDouble() / 100).ToString();
+                            ClcName = dataElement.GetProperty("clcName").GetString() ?? string.Empty;
+                            Words = dataElement.GetProperty("words").GetString() ?? string.Empty;
+                            Pages = dataElement.GetProperty("pages").GetString() ?? string.Empty;
+                            BookDesc = dataElement.GetProperty("bookDesc").GetString() ?? string.Empty;
+                            Language = dataElement.GetProperty("language").GetString() ?? string.Empty;
+                            string? picture = dataElement.GetProperty("pictures").GetString();
+                            if (!string.IsNullOrEmpty(picture))
+                            {
+                                Picture = LocalStorage.GetPictureUrl(IsbnText, picture.Replace("[\"", "").Replace("\"]", ""));
+                            }
+                        }
+                        else
+                        {
+                            System.Media.SystemSounds.Asterisk.Play();
+                            NetworkErrorText = rootElement.GetProperty("message").GetString() + ". 您可以手动录入书籍信息。" ?? "查询失败，原因未知。您可以手动录入书籍信息。";
+                            IsNetwrokError = true;
+                        }
+                    }
+                    IsLoading = false;
+                }
+                else
+                {
+                    IsSearchButtonEnabled = true;
+                    System.Media.SystemSounds.Asterisk.Play();
+                    NetworkErrorText = "网络未连接！无法查询联网数据库，请手动录入书籍信息或连接网络后重试。";
+                    IsNetwrokError = true;
+                }
             }
+            IsbnBoxEnabled = true;
+            IsAddButtonEnabled = true;
         }
 
         partial void OnIsbnTextChanged(string value)
@@ -131,21 +195,25 @@ namespace SmartLibrary.ViewModels
                 IsAddButtonEnabled = false;
                 CleanExceptIsbn();
                 IsBookExisted = false;
-                return;
-            }
-            IsbnAttitudeVisible = true;
-            if (value.Length == 13)
-            {
-                IsbnAttitudeImage = "pack://application:,,,/Assets/pic/right.png";
-                IsSearchButtonEnabled = true;
+                IsNetwrokError = false;
             }
             else
             {
-                IsbnAttitudeImage = "pack://application:,,,/Assets/pic/wrong.png";
-                IsSearchButtonEnabled = false;
-                IsAddButtonEnabled = false;
-                CleanExceptIsbn();
-                IsBookExisted = false;
+                IsbnAttitudeVisible = true;
+                if (value.Length == 13)
+                {
+                    IsbnAttitudeImage = "pack://application:,,,/Assets/pic/right.png";
+                    IsSearchButtonEnabled = true;
+                }
+                else
+                {
+                    IsbnAttitudeImage = "pack://application:,,,/Assets/pic/wrong.png";
+                    IsSearchButtonEnabled = false;
+                    IsAddButtonEnabled = false;
+                    CleanExceptIsbn();
+                    IsBookExisted = false;
+                    IsNetwrokError = false;
+                }
             }
         }
 
@@ -156,6 +224,8 @@ namespace SmartLibrary.ViewModels
             {
                 Title = "选择图书封面图片",
                 Filter = "图像文件|*.jpg;*.png;*.jpeg;*.bmp|所有文件|*.*",
+                InitialDirectory = Environment.CurrentDirectory + @".\pictures\"
+
             };
             if (openFileDialog.ShowDialog() == true)
             {
@@ -163,6 +233,10 @@ namespace SmartLibrary.ViewModels
                 {
                     Picture = openFileDialog.FileName;
                 }
+            }
+            else
+            {
+                Picture = string.Empty;
             }
         }
 
@@ -175,54 +249,63 @@ namespace SmartLibrary.ViewModels
         [RelayCommand]
         private async Task OnAddBookButtonClick()
         {
-            StringBuilder tip = new();
-            if (string.IsNullOrEmpty(BookName))
+            if (IsBookExisted)
             {
-                tip.AppendLine("书名不能为空！");
-            }
-            if (string.IsNullOrEmpty(Author))
-            {
-                tip.AppendLine("作者不能为空！");
-            }
-            if (string.IsNullOrEmpty(ShelfNum))
-            {
-                tip.AppendLine("书架号不能为空！");
-            }
-
-            if (string.IsNullOrEmpty(tip.ToString()))
-            {
-                BookInfo bookInfo = new()
-                {
-                    Isbn = IsbnText,
-                    BookName = BookName,
-                    Author = Author,
-                    Press = Press,
-                    PressDate = PressDate,
-                    PressPlace = PressPlace,
-                    Price = Price,
-                    ClcName = ClcName,
-                    Words = Words,
-                    Pages = Pages,
-                    BookDesc = BookDesc,
-                    ShelfNumber = int.Parse(ShelfNum),
-                    IsBorrowed = IsBorrowed,
-                    Picture = Picture
-                };
-                BooksDb.AddBook(bookInfo);
-                System.Media.SystemSounds.Asterisk.Play();
-                _snackbarService.Show("添加成功", $"书籍《{BookName}》已添加到数据库中。", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
-                IsbnText = string.Empty;
+                _navigationService.NavigateWithHierarchy(typeof(EditBook));
+                WeakReferenceMessenger.Default.Send(IsbnText);
             }
             else
             {
-                string content = "您必须完善以下书籍信息， 才能将书籍添加到数据库中：\n\n" + tip.ToString();
-                System.Media.SystemSounds.Asterisk.Play();
-                await _contentDialogService.ShowSimpleDialogAsync(new SimpleContentDialogCreateOptions()
+                StringBuilder tip = new();
+                if (string.IsNullOrEmpty(BookName))
                 {
-                    Title = "添加书籍",
-                    Content = content,
-                    CloseButtonText = "好的",
-                });
+                    tip.AppendLine("书名不能为空！");
+                }
+                if (string.IsNullOrEmpty(Author))
+                {
+                    tip.AppendLine("作者不能为空！");
+                }
+                if (string.IsNullOrEmpty(ShelfNum))
+                {
+                    tip.AppendLine("书架号不能为空！");
+                }
+
+                if (string.IsNullOrEmpty(tip.ToString()))
+                {
+                    Models.BookInfo bookInfo = new()
+                    {
+                        Isbn = IsbnText,
+                        BookName = BookName,
+                        Author = Author,
+                        Press = Press,
+                        PressDate = PressDate,
+                        PressPlace = PressPlace,
+                        Price = Price,
+                        ClcName = ClcName,
+                        Words = Words,
+                        Pages = Pages,
+                        BookDesc = BookDesc,
+                        Language = Language,
+                        Picture = LocalStorage.GetPictureLocalPath(IsbnText, Picture),
+                        ShelfNumber = int.Parse(ShelfNum),
+                        IsBorrowed = IsBorrowed,
+                    };
+                    BooksDb.AddBook(bookInfo);
+                    System.Media.SystemSounds.Asterisk.Play();
+                    _snackbarService.Show("添加成功", $"书籍《{BookName}》已添加到数据库中。", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
+                    IsbnText = string.Empty;
+                }
+                else
+                {
+                    string content = "您必须完善以下书籍信息， 才能将书籍添加到数据库中：\n\n" + tip.ToString();
+                    System.Media.SystemSounds.Asterisk.Play();
+                    await _contentDialogService.ShowSimpleDialogAsync(new SimpleContentDialogCreateOptions()
+                    {
+                        Title = "添加书籍",
+                        Content = content,
+                        CloseButtonText = "去完善",
+                    });
+                }
             }
         }
 
@@ -244,9 +327,10 @@ namespace SmartLibrary.ViewModels
             Words = string.Empty;
             Pages = string.Empty;
             BookDesc = string.Empty;
+            Language = string.Empty;
+            Picture = string.Empty;
             ShelfNum = string.Empty;
             IsBorrowed = false;
-            Picture = string.Empty;
         }
 
         partial void OnBookNameChanged(string value)

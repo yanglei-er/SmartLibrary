@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
+using SmartLibrary.Views.Pages;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
 
@@ -21,7 +22,7 @@ namespace SmartLibrary.ViewModels
         [RelayCommand]
         private void NavigateBack()
         {
-            _navigationService.GoBack();
+            _navigationService.Navigate(typeof(BookManage));
         }
 
         public void OnNavigatedTo() { }

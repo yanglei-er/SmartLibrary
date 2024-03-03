@@ -3,17 +3,17 @@ using System.Windows.Data;
 
 namespace SmartLibrary.Converters
 {
-    internal sealed class BoolToAppearanceConverter : IValueConverter
+    internal sealed class BookExistedConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if ((bool)value)
+            if((bool)value)
             {
-                return "Primary";
+                return "编辑";
             }
             else
             {
-                return "Secondary";
+                return "添加";
             }
         }
 

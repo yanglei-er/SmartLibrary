@@ -23,7 +23,7 @@ namespace SmartLibrary.Views.Pages
                     if (isbnBox.Text.Length == 13)
                     {
                         XuNiBox.Focus();
-                        ViewModel.OnSearchButtonClick(isbnBox.Text);
+                        _ = ViewModel.OnSearchButtonClick();
                     }
                 }
             }

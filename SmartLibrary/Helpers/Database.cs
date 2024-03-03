@@ -82,9 +82,10 @@ namespace SmartLibrary.Helpers
                 sbr.AppendLine("'bookDesc' TEXT,");
                 sbr.AppendLine("'pages' TEXT,");
                 sbr.AppendLine("'words' TEXT,");
+                sbr.AppendLine("'language' TEXT,");
+                sbr.AppendLine("'picture' TEXT,");
                 sbr.AppendLine("'shelfNumber' INTEGER NOT NULL,");
-                sbr.AppendLine("'isBorrowed' INTEGER NOT NULL DEFAULT 0,");
-                sbr.AppendLine("'picture' TEXT");
+                sbr.AppendLine("'isBorrowed' INTEGER NOT NULL DEFAULT 0");
                 sbr.AppendLine(");");
                 ExecuteNonQuery(sbr.ToString());
             }
@@ -268,6 +269,21 @@ namespace SmartLibrary.Helpers
             Task.Run(() => ExecutePagerAction(pageIndex - 1, pageSize));
         }
 
+        private void ExecutePagerSimpleAction(int pageIndex, int pageSize)
+        {
+            StringBuilder sbr = new();
+            sbr.AppendLine("SELECT isbn,bookName,author,shelfNumber,isBorrowed FROM main LIMIT ");
+            sbr.AppendLine(pageSize.ToString());
+            sbr.AppendLine(" OFFSET ");
+            sbr.AppendLine((pageIndex * pageSize).ToString());
+            ExecutePagerCompleted.Invoke(ExecuteDataTable(sbr.ToString(), null));
+        }
+
+        public void ExecutePagerSimple(int pageIndex, int pageSize)
+        {
+            Task.Run(() => ExecutePagerSimpleAction(pageIndex - 1, pageSize));
+        }
+
         /// <summary>
         /// 重新组织数据库：VACUUM 将会从头重新组织数据库
         /// </summary>
@@ -302,6 +318,11 @@ namespace SmartLibrary.Helpers
         public void DelBook(string isbn)
         {
             ExecuteNonQuery($"DELETE FROM main WHERE isbn = {isbn}", null);
+            string localFilePath = @".\pictures\" + isbn + ".jpg";
+            if (File.Exists(localFilePath))
+            {
+                File.Delete(localFilePath);
+            }
         }
 
         /// <summary>
@@ -362,12 +383,12 @@ namespace SmartLibrary.Helpers
                 string isbn = reader.GetString(0);
                 if (!Exists(isbn))
                 {
-                    //string sqlStr = "INSERT INTO main VALUES (\"@isbn\",\"@bookName\",\"@author\",\"@press\",\"@pressDate\",\"@pressPlace\",@price,\"@clcName\",\"@bookDesc\",\"@pages\",\"@words\",@shelfNumber,@isBorrowed,\"@picture\")";
-                    string sqlStr = $"INSERT INTO main VALUES ('{isbn}','{reader.GetString(1)}','{reader.GetString(2)}','{reader.GetString(3)}','{reader.GetString(4)}','{reader.GetString(5)}','{reader.GetString(6)}','{reader.GetString(7)}','{reader.GetString(8)}','{reader.GetString(9)}','{reader.GetString(10)}',@shelfNumber,@isBorrowed,'{reader.GetValue(13)}')";
+                    //string sqlStr = "INSERT INTO main VALUES (\"@isbn\",\"@bookName\",\"@author\",\"@press\",\"@pressDate\",\"@pressPlace\",@price,\"@clcName\",\"@bookDesc\",\"@pages\",\"@words\",\"@languag\",@picture\",@shelfNumber,@isBorrowed)";
+                    string sqlStr = $"INSERT INTO main VALUES ('{isbn}','{reader.GetString(1)}','{reader.GetString(2)}','{reader.GetString(3)}','{reader.GetString(4)}','{reader.GetString(5)}','{reader.GetString(6)}','{reader.GetString(7)}','{reader.GetString(8)}','{reader.GetString(9)}','{reader.GetString(10)}','{reader.GetValue(12)}','{reader.GetValue(12)}',@shelfNumber,@isBorrowed)";
 
                     SQLiteParameter[] parameters = [
-                        new SQLiteParameter("@shelfNumber", reader.GetInt64(11)),
-                        new SQLiteParameter("@isBorrowed", reader.GetInt64(12)),
+                        new SQLiteParameter("@shelfNumber", reader.GetInt64(13)),
+                        new SQLiteParameter("@isBorrowed", reader.GetInt64(14)),
                     ];
                     PrepareCommand(command, oldDbConnection, sqlStr, parameters);
                     command.Transaction = transaction;
@@ -412,9 +433,10 @@ namespace SmartLibrary.Helpers
                 book.BookDesc = reader.GetString(8);
                 book.Pages = reader.GetString(9);
                 book.Words = reader.GetString(10);
-                book.ShelfNumber = reader.GetInt64(11);
-                book.IsBorrowed = Convert.ToBoolean(reader.GetInt64(12));
-                book.Picture = reader.GetString(13);
+                book.Language = reader.GetString(11);
+                book.Picture = reader.GetString(12);
+                book.ShelfNumber = reader.GetInt64(13);
+                book.IsBorrowed = Convert.ToBoolean(reader.GetInt64(14));
             }
             selectCommand.Dispose();
             reader.Dispose();
@@ -424,7 +446,7 @@ namespace SmartLibrary.Helpers
 
         public void AddBook(BookInfo book)
         {
-            string sqlStr = $"INSERT INTO main VALUES ('{book.Isbn}','{book.BookName}','{book.Author}','{book.Press}','{book.PressDate}','{book.PressPlace}','{book.Price}','{book.ClcName}','{book.BookDesc}','{book.Pages}','{book.Words}',@shelfNumber,@isBorrowed,'{book.Picture}')";
+            string sqlStr = $"INSERT INTO main VALUES ('{book.Isbn}','{book.BookName}','{book.Author}','{book.Press}','{book.PressDate}','{book.PressPlace}','{book.Price}','{book.ClcName}','{book.BookDesc}','{book.Pages}','{book.Words}','{book.Language}','{book.Picture}',@shelfNumber,@isBorrowed)";
             SQLiteParameter[] parameters = [
                         new SQLiteParameter("@shelfNumber", book.ShelfNumber),
                         new SQLiteParameter("@isBorrowed", book.IsBorrowed),
@@ -537,9 +559,8 @@ namespace SmartLibrary.Helpers
         }
         public DataTable AutoSuggestByNum(int num)
         {
-            string sql = $"SELECT * FROM main WHERE isbn = @value OR shelfNumber = @value";
-            SQLiteParameter[] parameters = [new SQLiteParameter("@value", num)];
-            return ExecuteDataTable(sql, parameters);
+            string sql = $"SELECT * FROM main WHERE isbn = {num} OR shelfNumber = {num}";
+            return ExecuteDataTable(sql);
         }
 
         public void BorrowBook(string isbn)

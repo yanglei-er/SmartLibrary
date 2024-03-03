@@ -102,7 +102,7 @@ namespace SmartLibrary.ViewModels
 
         public void OnNavigatedFrom()
         {
-            
+
         }
 
         [RelayCommand]
@@ -169,7 +169,7 @@ namespace SmartLibrary.ViewModels
         private void Pager()
         {
             IsDelButtonEnabled = false;
-            BooksDb.ExecutePager(CurrentPage, PageCountList[CurrentIndex]);
+            BooksDb.ExecutePagerSimple(CurrentPage, PageCountList[CurrentIndex]);
 
             PageButtonList.Clear();
             if (TotalPageCount <= 7)
