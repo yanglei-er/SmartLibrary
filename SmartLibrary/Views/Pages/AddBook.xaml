@@ -1,14 +1,14 @@
 ﻿<Page
     x:Class="SmartLibrary.Views.Pages.AddBook"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:gif="http://wpfanimatedgif.codeplex.com"
     xmlns:converters="clr-namespace:SmartLibrary.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:extensions="clr-namespace:SmartLibrary.Extensions"
+    xmlns:gif="http://wpfanimatedgif.codeplex.com"
     xmlns:local="clr-namespace:SmartLibrary.Views.Pages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     Title="AddBook"
     d:DataContext="{d:DesignInstance local:AddBook,
                                      IsDesignTimeCreatable=False}"
@@ -44,7 +44,7 @@
                 Grid.Column="0"
                 MinWidth="130"
                 Margin="0,0,8,0"
-                Appearance="Success"
+                Appearance="Primary"
                 Command="{Binding ViewModel.ScanButtonClickCommand, Mode=OneWay}"
                 Content="扫描"
                 FontSize="24"
@@ -81,9 +81,8 @@
             Grid.Row="1"
             Margin="0,8,0,0"
             FontSize="16"
-            IsClosable="False"
-            IsOpen="True"
-            Message="本书已在数据库中！若要更改书籍信息，请转到编辑界面。"
+            IsOpen="{Binding ViewModel.IsBookExisted, Mode=TwoWay}"
+            Message="本书已在数据库中！若要更改书籍信息，请转到编辑界面，本界面的更改皆无效。"
             Severity="Warning"
             Visibility="{Binding ViewModel.IsBookExisted, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
         <ui:InfoBar
@@ -91,8 +90,7 @@
             Grid.Row="1"
             Margin="0,8,0,0"
             FontSize="16"
-            IsClosable="False"
-            IsOpen="True"
+            IsOpen="{Binding ViewModel.IsNetwrokError, Mode=TwoWay}"
             Message="{Binding ViewModel.NetworkErrorText, Mode=OneWay}"
             Severity="Error"
             Visibility="{Binding ViewModel.IsNetwrokError, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
@@ -136,7 +134,7 @@
                         <RowDefinition Height="*" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <Grid Grid.Row="0" Margin="0,16,0,16">
+                    <Grid Grid.Row="0">
                         <ui:TextBlock
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"

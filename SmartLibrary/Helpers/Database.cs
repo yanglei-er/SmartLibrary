@@ -355,6 +355,19 @@ namespace SmartLibrary.Helpers
         }
 
         /// <summary>
+        /// 更新数据库
+        /// </summary>
+        public void Update(BookInfo book)
+        {
+            string sqlStr = $"UPDATE main SET bookName = '{book.BookName}', author = '{book.Author}', press = '{book.Press}', pressDate = '{book.PressDate}', pressPlace = '{book.PressPlace}', price = '{book.Price}', clcName = '{book.ClcName}', bookDesc = '{book.BookDesc}', pages = '{book.Pages}', words = '{book.Words}', language = '{book.Language}', picture = '{book.Picture}', shelfNumber = @shelfNumber, isBorrowed = @isBorrowed WHERE isbn = '{book.Isbn}'";
+            SQLiteParameter[] parameters = [
+                        new SQLiteParameter("@shelfNumber", book.ShelfNumber),
+                        new SQLiteParameter("@isBorrowed", book.IsBorrowed),
+                    ];
+            ExecuteNonQuery(sqlStr, parameters);
+        }
+
+        /// <summary>
         /// 合并数据库
         /// </summary>
         public int[] MergeDatabase(string newDbPath)
@@ -556,13 +569,13 @@ namespace SmartLibrary.Helpers
 
         public DataTable AutoSuggestByString(string str)
         {
-            string sql = $"SELECT * FROM main WHERE bookName LIKE '%{str}%' OR author LIKE '%{str}%'";
+            string sql = $"SELECT isbn,bookName,author,shelfNumber,isBorrowed FROM main WHERE bookName LIKE '%{str}%' OR author LIKE '%{str}%'";
             return ExecuteDataTable(sql);
         }
 
         public DataTable AutoSuggestByNum(int num)
         {
-            string sql = $"SELECT * FROM main WHERE isbn = {num} OR shelfNumber = {num}";
+            string sql = $"SELECT isbn,bookName,author,shelfNumber,isBorrowed FROM main WHERE isbn = {num} OR shelfNumber = {num}";
             return ExecuteDataTable(sql);
         }
 

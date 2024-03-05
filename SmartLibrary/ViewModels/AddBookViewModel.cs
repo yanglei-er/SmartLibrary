@@ -145,7 +145,7 @@ namespace SmartLibrary.ViewModels
                 Pages = bookInfo.Pages ?? string.Empty;
                 BookDesc = bookInfo.BookDesc ?? string.Empty;
                 Language = bookInfo.Language ?? string.Empty;
-                Picture = LocalStorage.GetPictureUrl(IsbnText, bookInfo.Picture);
+                Picture = LocalStorage.GetPicture(IsbnText, bookInfo.Picture);
                 ShelfNum = bookInfo.ShelfNumber.ToString();
                 IsBorrowed = bookInfo.IsBorrowed;
             }
@@ -186,7 +186,7 @@ namespace SmartLibrary.ViewModels
                             string? picture = dataElement.GetProperty("pictures").GetString();
                             if (!string.IsNullOrEmpty(picture))
                             {
-                                Picture = LocalStorage.GetPictureUrl(IsbnText, picture.Replace("[\"", "").Replace("\"]", ""));
+                                Picture = LocalStorage.SearchPicture(IsbnText, picture.Replace("[\"", "").Replace("\"]", ""));
                             }
                         }
                         else
@@ -242,7 +242,7 @@ namespace SmartLibrary.ViewModels
         }
 
         [RelayCommand]
-        private void OnSelectPictureButtonClick()
+        private async Task OnSelectPictureButtonClickAsync()
         {
             OpenFileDialog openFileDialog = new()
             {
@@ -259,7 +259,16 @@ namespace SmartLibrary.ViewModels
             }
             else
             {
-                Picture = string.Empty;
+                if (await _contentDialogService.ShowSimpleDialogAsync(new SimpleContentDialogCreateOptions()
+                {
+                    Title = "更改书籍信息",
+                    Content = "是否将书籍图片设为空？",
+                    PrimaryButtonText = "是",
+                    CloseButtonText = "否",
+                }) == ContentDialogResult.Primary)
+                {
+                    Picture = string.Empty;
+                }
             }
         }
 
@@ -309,7 +318,7 @@ namespace SmartLibrary.ViewModels
                         Pages = Pages,
                         BookDesc = BookDesc,
                         Language = Language,
-                        Picture = LocalStorage.GetPictureLocalPath(IsbnText, Picture),
+                        Picture = LocalStorage.AddPicture(IsbnText, Picture),
                         ShelfNumber = int.Parse(ShelfNum),
                         IsBorrowed = IsBorrowed,
                     };

@@ -1,4 +1,5 @@
 ﻿using SmartLibrary.ViewModels;
+using System.Windows.Input;
 using Wpf.Ui.Controls;
 
 namespace SmartLibrary.Views.Pages
@@ -12,6 +13,14 @@ namespace SmartLibrary.Views.Pages
             ViewModel = viewModel;
             DataContext = this;
             InitializeComponent();
+        }
+
+        private void TextBox_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                XuNiBox.Focus();
+            }
         }
     }
 }

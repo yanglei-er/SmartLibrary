@@ -7,7 +7,7 @@ namespace SmartLibrary.Helpers
 {
     public sealed class LocalStorage
     {
-        public static string GetPictureUrl(string isbn, string? path)
+        public static string SearchPicture(string isbn, string? path)
         {
             if (!string.IsNullOrEmpty(path))
             {
@@ -42,26 +42,24 @@ namespace SmartLibrary.Helpers
             }
         }
 
-        public static string GetPictureLocalPath(string isbn, string path)
+        public static string AddPicture(string isbn, string? path)
         {
             string localFilePath = @".\pictures\" + isbn + ".jpg";
-            if (!string.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path))
+            {
+                if (File.Exists(localFilePath))
+                {
+                    File.Delete(localFilePath);
+                }
+                return string.Empty;
+            }
+            else
             {
                 if (File.Exists(path))
                 {
-                    if (Path.GetDirectoryName(Path.GetFullPath(path)) == Path.GetDirectoryName(Path.GetFullPath(@".\pictures")))
-                    {
-                        if (Path.GetFileNameWithoutExtension(path) != isbn)
-                        {
-                            File.Move(path, localFilePath);
-                        }
-                    }
-                    else
-                    {
-                        using Image image = Image.Load(path);
-                        image.Mutate(a => a.Resize(180, 260));
-                        _ = image.SaveAsJpegAsync(localFilePath, new JpegEncoder() { Quality = 100 });
-                    }
+                    using Image image = Image.Load(path);
+                    image.Mutate(a => a.Resize(new ResizeOptions() { Size = new(180, 260), Mode = SixLabors.ImageSharp.Processing.ResizeMode.Crop }));
+                    image.SaveAsJpegAsync(localFilePath, new JpegEncoder() { Quality = 100 });
                     return localFilePath;
                 }
                 else
@@ -70,13 +68,26 @@ namespace SmartLibrary.Helpers
                     return path;
                 }
             }
+        }
+
+        public static string GetPicture(string isbn, string? path)
+        {
+            string localFilePath = @".\pictures\" + isbn + ".jpg";
+            if (string.IsNullOrEmpty(path))
+            {
+                return string.Empty;
+            }
             else
             {
                 if (File.Exists(localFilePath))
                 {
-                    File.Delete(localFilePath);
+                    return Path.GetFullPath(localFilePath);
                 }
-                return string.Empty;
+                else
+                {
+                    SavePictureAsync(localFilePath, path);
+                    return path;
+                }
             }
         }
     }
