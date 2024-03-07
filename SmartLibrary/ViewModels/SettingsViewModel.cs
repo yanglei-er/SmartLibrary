@@ -1,42 +1,81 @@
-﻿using System.Reflection;
-using System.Windows.Media;
-using Wpf.Ui.Appearance;
+﻿using SmartLibrary.Helpers;
 
 namespace SmartLibrary.ViewModels
 {
     public partial class SettingsViewModel : ObservableObject
     {
         [ObservableProperty]
-        private ApplicationTheme _currentApplicationTheme = ApplicationThemeManager.GetAppTheme();
+        private bool _autoStart = Convert.ToBoolean(SettingsHelper.GetConfig("AutoStart"));
 
         [ObservableProperty]
-        private string _appVersion = string.Empty;
+        private bool _autoStartMinimized = Convert.ToBoolean(SettingsHelper.GetConfig("AutoStartMinimized"));
 
         [ObservableProperty]
-        private string _dotNetVersion = string.Empty;
+        private bool _trayEnabled = Convert.ToBoolean(SettingsHelper.GetConfig("TrayEnabled"));
 
-        public SettingsViewModel()
+        [ObservableProperty]
+        private bool _autoCheckUpdate = Convert.ToBoolean(SettingsHelper.GetConfig("AutoCheckUpdate"));
+
+        [ObservableProperty]
+        private bool _hardwareRendering = Convert.ToBoolean(SettingsHelper.GetConfig("HardwareRendering"));
+
+        [ObservableProperty]
+        private int _currentApplicationThemeIndex = GetCurrentApplicationThemeIndex(SettingsHelper.GetConfig("Theme"));
+
+        partial void OnAutoStartChanged(bool value)
         {
-            AppVersion = Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? string.Empty;
-            DotNetVersion = ".Net " + Environment.Version.ToString();
-            ApplicationThemeManager.Changed += OnThemeChanged;
+            SettingsHelper.SetConfig("AutoStart", value.ToString());
         }
 
-        ~SettingsViewModel()
+        partial void OnAutoStartMinimizedChanged(bool value)
         {
-            ApplicationThemeManager.Changed -= OnThemeChanged;
+            SettingsHelper.SetConfig("AutoStartMinimized", value.ToString());
         }
 
-        partial void OnCurrentApplicationThemeChanged(ApplicationTheme value)
+        partial void OnTrayEnabledChanged(bool value)
         {
-            ApplicationThemeManager.Apply(value);
+            SettingsHelper.SetConfig("TrayEnabled", value.ToString());
         }
 
-        private void OnThemeChanged(ApplicationTheme currentApplicationTheme, Color systemAccent)
+        partial void OnAutoCheckUpdateChanged(bool value)
         {
-            if (CurrentApplicationTheme != currentApplicationTheme)
+            SettingsHelper.SetConfig("AutoCheckUpdate", value.ToString());
+        }
+
+        partial void OnHardwareRenderingChanged(bool value)
+        {
+            SettingsHelper.SetConfig("hardwareRendering", value.ToString());
+        }
+
+        partial void OnCurrentApplicationThemeIndexChanged(int value)
+        {
+            if (value == 0)
             {
-                CurrentApplicationTheme = currentApplicationTheme;
+                SettingsHelper.SetConfig("Theme", "System");
+            }
+            else if (value == 1)
+            {
+                SettingsHelper.SetConfig("Theme", "Light");
+            }
+            else
+            {
+                SettingsHelper.SetConfig("Theme", "Dark");
+            }
+        }
+
+        private static int GetCurrentApplicationThemeIndex(string theme)
+        {
+            if (theme == "System")
+            {
+                return 0;
+            }
+            else if (theme == "Light")
+            {
+                return 1;
+            }
+            else
+            {
+                return 2;
             }
         }
     }

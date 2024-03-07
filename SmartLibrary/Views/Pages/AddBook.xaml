@@ -12,8 +12,8 @@
     Title="AddBook"
     d:DataContext="{d:DesignInstance local:AddBook,
                                      IsDesignTimeCreatable=False}"
-    d:DesignHeight="650"
-    d:DesignWidth="800"
+    d:DesignHeight="700"
+    d:DesignWidth="1180"
     ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
     ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
     Foreground="{DynamicResource TextFillColorPrimaryBrush}"
@@ -135,27 +135,35 @@
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <Grid Grid.Row="0">
-                        <ui:TextBlock
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            FontSize="16"
-                            Text="书籍图片" />
-                        <ui:Image
-                            Width="180"
-                            Height="260"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            RenderOptions.BitmapScalingMode="HighQuality"
-                            Source="{Binding ViewModel.Picture, Converter={StaticResource StringToImageSourceConverter}, Mode=OneWay}"
-                            Stretch="UniformToFill" />
-                        <ui:Button
-                            Width="180"
-                            Height="260"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Background="Transparent"
-                            Command="{Binding ViewModel.SelectPictureButtonClickCommand, Mode=OneWay}"
-                            Cursor="Hand" />
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="0.06*" />
+                            <RowDefinition Height="1*" />
+                            <RowDefinition Height="0.06*" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="0.5*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="0.5*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid Grid.Row="1" Grid.Column="1">
+                            <ui:TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="18"
+                                Text="书籍图片" />
+                            <ui:Image
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                RenderOptions.BitmapScalingMode="HighQuality"
+                                Source="{Binding ViewModel.Picture, Converter={StaticResource StringToImageSourceConverter}, Mode=OneWay}"
+                                Stretch="UniformToFill" />
+                            <ui:Button
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                Background="Transparent"
+                                Command="{Binding ViewModel.SelectPictureButtonClickCommand, Mode=OneWay}"
+                                Cursor="Hand" />
+                        </Grid>
                     </Grid>
                     <ScrollViewer
                         Grid.Row="1"
@@ -163,7 +171,7 @@
                         extensions:ScrollAnimationBehavior.PointsToScroll="16"
                         extensions:ScrollAnimationBehavior.TimeDuration="00:00:00.20">
                         <Grid
-                            Margin="32,0,32,0"
+                            Margin="32,16,32,0"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Top">
                             <Grid.RowDefinitions>

@@ -37,7 +37,7 @@ namespace SmartLibrary.Helpers
                     Directory.CreateDirectory(@".\pictures");
                 }
                 using Image image = Image.Load(picture);
-                image.Mutate(a => a.Resize(new ResizeOptions() { Size = new(180, 260), Mode = SixLabors.ImageSharp.Processing.ResizeMode.Crop }));
+                image.Mutate(a => a.Resize(new ResizeOptions() { Size = new(270, 390), Mode = SixLabors.ImageSharp.Processing.ResizeMode.Crop }));
                 _ = image.SaveAsJpegAsync(path, new JpegEncoder() { Quality = 100 });
             }
         }
@@ -58,7 +58,7 @@ namespace SmartLibrary.Helpers
                 if (File.Exists(path))
                 {
                     using Image image = Image.Load(path);
-                    image.Mutate(a => a.Resize(new ResizeOptions() { Size = new(180, 260), Mode = SixLabors.ImageSharp.Processing.ResizeMode.Crop }));
+                    image.Mutate(a => a.Resize(new ResizeOptions() { Size = new(270, 390), Mode = SixLabors.ImageSharp.Processing.ResizeMode.Crop }));
                     image.SaveAsJpegAsync(localFilePath, new JpegEncoder() { Quality = 100 });
                     return localFilePath;
                 }

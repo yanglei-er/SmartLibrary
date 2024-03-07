@@ -66,6 +66,7 @@ namespace SmartLibrary.Views
         protected override void OnClosed(EventArgs e)
         {
             BluetoothHelper.Instance.BleStateChangedEvent -= OnBleStateChanged;
+            BluetoothHelper.Instance.StartDisconnect();
             base.OnClosed(e);
             Application.Current.Shutdown();
         }

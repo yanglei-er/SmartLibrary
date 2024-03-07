@@ -18,6 +18,9 @@ namespace SmartLibrary.ViewModels
         private readonly SQLiteHelper BooksDb = SQLiteHelper.GetDatabase("books.smartlibrary");
 
         [ObservableProperty]
+        public bool _isEditButtonEnabled = false;
+
+        [ObservableProperty]
         private string _isbnText = string.Empty;
 
         [ObservableProperty]
@@ -114,6 +117,7 @@ namespace SmartLibrary.ViewModels
                 if (File.Exists(openFileDialog.FileName))
                 {
                     Picture = openFileDialog.FileName;
+                    IsEditButtonEnabled = true;
                 }
             }
             else
@@ -127,6 +131,7 @@ namespace SmartLibrary.ViewModels
                 }) == ContentDialogResult.Primary)
                 {
                     Picture = string.Empty;
+                    IsEditButtonEnabled = true;
                 }
             }
         }
@@ -135,6 +140,7 @@ namespace SmartLibrary.ViewModels
         private void OnBorrowedButtonClick()
         {
             IsBorrowed = !IsBorrowed;
+            IsEditButtonEnabled = true;
         }
 
         [RelayCommand]
@@ -177,6 +183,7 @@ namespace SmartLibrary.ViewModels
                 BooksDb.Update(bookInfo);
                 System.Media.SystemSounds.Asterisk.Play();
                 _snackbarService.Show("更改成功", $"书籍《{BookName}》信息已更新。", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
+                IsEditButtonEnabled = false;
             }
             else
             {

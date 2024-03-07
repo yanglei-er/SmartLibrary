@@ -12,7 +12,7 @@
     <PropertyGroup>
 	    <ApplicationIcon>applicationIcon.ico</ApplicationIcon>
 		<Description>Smart library</Description>
-		<Version>0.1.9.1</Version>
+		<Version>0.1.9.2</Version>
 		<Copyright>©2024 赵杨磊.All Rights Reserved.</Copyright>
 	</PropertyGroup>
 
