@@ -122,6 +122,7 @@ namespace SmartLibrary.ViewModels
             }
             else
             {
+                System.Media.SystemSounds.Asterisk.Play();
                 if (await _contentDialogService.ShowSimpleDialogAsync(new SimpleContentDialogCreateOptions()
                 {
                     Title = "更改书籍信息",

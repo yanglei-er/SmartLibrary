@@ -1,13 +1,12 @@
-﻿using System.Collections;
-using System.IO;
+﻿using System.IO;
 
 namespace SmartLibrary.Helpers
 {
-    public sealed class FileSize
+    public sealed class FileOccupancy
     {
         public static string GetDirectorySize(string path)
         {
-            if(Directory.Exists(path))
+            if (Directory.Exists(path))
             {
                 DirectoryInfo folder = new(path);
                 return FormatBytes(FolderSize(folder));

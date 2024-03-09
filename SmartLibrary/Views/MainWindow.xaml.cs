@@ -1,6 +1,9 @@
 ﻿using SmartLibrary.Helpers;
+using System.Windows;
 using System.Windows.Interop;
+using System.Windows.Media;
 using Wpf.Ui;
+using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
 
 namespace SmartLibrary.Views
@@ -12,9 +15,10 @@ namespace SmartLibrary.Views
 
         public MainWindow(ViewModels.MainWindowViewModel viewModel, IPageService pageService, INavigationService navigationService, ISnackbarService snackbarService, IContentDialogService contentDialogService)
         {
+            LoadingSettings();
+
             ViewModel = viewModel;
             DataContext = this;
-
             InitializeComponent();
 
             SetPageService(pageService);
@@ -29,19 +33,15 @@ namespace SmartLibrary.Views
             BluetoothHelper.Instance.BleStateChangedEvent += OnBleStateChanged;
         }
 
-        #region INavigationWindow methods
-
-        public INavigationView GetNavigation() => RootNavigation;
-
-        public bool Navigate(Type pageType) => RootNavigation.Navigate(pageType);
-
-        public void SetPageService(IPageService pageService) => RootNavigation.SetPageService(pageService);
-
-        public void ShowWindow() => Show();
-
-        public void CloseWindow() => Close();
-
-        #endregion INavigationWindow methods
+        private void LoadingSettings()
+        {
+            ApplicationTheme theme = Helpers.Utils.GetUserApplicationTheme(SettingsHelper.GetConfig("Theme"));
+            ApplicationThemeManager.Apply(theme);
+            if (Convert.ToBoolean(SettingsHelper.GetConfig("IsCustomizedAccentColor")))
+            {
+                ApplicationAccentColorManager.Apply(Helpers.Utils.StringToColor(SettingsHelper.GetConfig("CustomizedAccentColor")), theme);
+            }
+        }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
@@ -80,5 +80,19 @@ namespace SmartLibrary.Views
         {
             throw new NotImplementedException();
         }
+
+        #region INavigationWindow methods
+
+        public INavigationView GetNavigation() => RootNavigation;
+
+        public bool Navigate(Type pageType) => RootNavigation.Navigate(pageType);
+
+        public void SetPageService(IPageService pageService) => RootNavigation.SetPageService(pageService);
+
+        public void ShowWindow() => Show();
+
+        public void CloseWindow() => Close();
+
+        #endregion INavigationWindow methods
     }
 }

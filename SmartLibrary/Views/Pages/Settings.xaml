@@ -2,6 +2,7 @@
     x:Class="SmartLibrary.Views.Pages.Settings"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:SmartLibrary.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:extensions="clr-namespace:SmartLibrary.Extensions"
     xmlns:local="clr-namespace:SmartLibrary.Views.Pages"
@@ -10,13 +11,44 @@
     Title="Settings"
     d:DataContext="{d:DesignInstance local:Settings,
                                      IsDesignTimeCreatable=False}"
-    d:DesignHeight="750"
+    d:DesignHeight="950"
     d:DesignWidth="800"
     ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
     ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
     Foreground="{DynamicResource TextFillColorPrimaryBrush}"
     ScrollViewer.CanContentScroll="False"
     mc:Ignorable="d">
+    <Page.Resources>
+        <converters:IsCustomizedAccentColorConverter x:Key="IsCustomizedAccentColorConverter" />
+        <converters:StringToBrushConverter x:Key="StringToBrushConverter" />
+        <Style x:Key="AccentColorButtonStyle" TargetType="ui:Button">
+            <Setter Property="Width" Value="45" />
+            <Setter Property="Height" Value="45" />
+            <Setter Property="CornerRadius" Value="2" />
+            <Setter Property="Margin" Value="2" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border
+                            x:Name="border"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="4"
+                            SnapsToDevicePixels="True" />
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="White" />
+                                <Setter TargetName="border" Property="BorderThickness" Value="2" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+
+        </Style>
+    </Page.Resources>
 
     <Grid Margin="16,16,4,16">
         <ScrollViewer
@@ -89,22 +121,6 @@
                         OffContent="关"
                         OnContent="开" />
                 </ui:CardControl>
-                <ui:CardControl Margin="0,4,0,0" Icon="{ui:SymbolIcon DeveloperBoardLightning20}">
-                    <ui:CardControl.Header>
-                        <StackPanel>
-                            <ui:TextBlock FontSize="16" Text="使用GPU渲染界面（硬件加速）" />
-                            <ui:TextBlock
-                                FontSize="13"
-                                Foreground="{StaticResource TextFillColorSecondaryBrush}"
-                                Text="*需重启软件后生效" />
-                        </StackPanel>
-                    </ui:CardControl.Header>
-                    <ui:ToggleSwitch
-                        Margin="0,0,8,0"
-                        IsChecked="{Binding ViewModel.HardwareRendering, Mode=TwoWay}"
-                        OffContent="关"
-                        OnContent="开" />
-                </ui:CardControl>
                 <ui:CardExpander
                     Margin="0,4,0,0"
                     ContentPadding="0"
@@ -125,7 +141,7 @@
                             HorizontalAlignment="Stretch"
                             HorizontalContentAlignment="Stretch"
                             Background="Transparent"
-                            BorderThickness="0,1,0,0"
+                            BorderThickness="0"
                             Click="BooksDataButton_Click"
                             CornerRadius="0">
                             <Grid>
@@ -203,11 +219,202 @@
                     <ComboBox
                         x:Name="Theme_ComboBox"
                         Width="Auto"
-                        MinWidth="120"
+                        MinWidth="140"
                         SelectedIndex="{Binding ViewModel.CurrentApplicationThemeIndex, Mode=TwoWay}">
                         <ComboBoxItem>跟随系统</ComboBoxItem>
                         <ComboBoxItem>浅色</ComboBoxItem>
                         <ComboBoxItem>深色</ComboBoxItem>
+                    </ComboBox>
+                </ui:CardControl>
+                <ui:CardExpander
+                    Margin="0,4,0,0"
+                    ContentPadding="0"
+                    Icon="{ui:SymbolIcon Color24}">
+                    <ui:CardExpander.Header>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <ui:TextBlock FontSize="16" Text="主题色" />
+                                <ui:TextBlock
+                                    FontSize="13"
+                                    Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                    Text="设置程序中显示的强调色" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                <RadioButton GroupName="AccentColor" IsChecked="{Binding ViewModel.IsCustomizedAccentColor, Converter={StaticResource IsCustomizedAccentColorConverter}, ConverterParameter=System, Mode=TwoWay}">
+                                    <ui:TextBlock FontSize="15" Text="跟随系统" />
+                                </RadioButton>
+                                <RadioButton GroupName="AccentColor" IsChecked="{Binding ViewModel.IsCustomizedAccentColor, Converter={StaticResource IsCustomizedAccentColorConverter}, ConverterParameter=User, Mode=TwoWay}">
+                                    <ui:TextBlock FontSize="15" Text="自定义" />
+                                </RadioButton>
+                            </StackPanel>
+                        </Grid>
+                    </ui:CardExpander.Header>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Margin="0,16,0,0">
+                            <ui:TextBlock
+                                Margin="24,0,0,0"
+                                FontSize="16"
+                                Text="Windows 颜色" />
+                            <ItemsControl x:Name="AccentColor">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <ui:Button
+                                            Background="{Binding Converter={StaticResource StringToBrushConverter}, Mode=OneWay}"
+                                            Command="{Binding ElementName=AccentColor, Path=DataContext.ViewModel.CustomizedAccentColorChangedCommand, Mode=OneWay}"
+                                            CommandParameter="{Binding}"
+                                            Style="{StaticResource AccentColorButtonStyle}" />
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <WrapPanel
+                                            Width="460"
+                                            Margin="24,6,0,16"
+                                            HorizontalAlignment="Left" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                            </ItemsControl>
+                        </StackPanel>
+                        <Border
+                            Grid.Column="1"
+                            Width="1"
+                            Background="{DynamicResource ControlFillColorDefaultBrush}" />
+                        <Grid Grid.Column="2" Margin="26,16,0,0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <ui:TextBlock
+                                Grid.Row="0"
+                                FontSize="16"
+                                Text="预览颜色" />
+                            <Grid
+                                Grid.Row="1"
+                                Width="200"
+                                Height="200">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+                                <Border
+                                    Grid.ColumnSpan="2"
+                                    Height="50"
+                                    Background="{Binding ViewModel.SystemAccentColor, Mode=OneWay}">
+                                    <TextBlock
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Foreground="{DynamicResource TextOnAccentFillColorPrimaryBrush}"
+                                        Text="SystemAccentColor" />
+                                </Border>
+                                <Border
+                                    Grid.Row="1"
+                                    Grid.Column="0"
+                                    Width="100"
+                                    Height="50"
+                                    Background="{Binding ViewModel.Light1, Mode=OneWay}">
+                                    <TextBlock
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Foreground="{DynamicResource TextOnAccentFillColorPrimaryBrush}"
+                                        Text="Light1" />
+                                </Border>
+                                <Border
+                                    Grid.Row="2"
+                                    Grid.Column="0"
+                                    Width="100"
+                                    Height="50"
+                                    Background="{Binding ViewModel.Light2, Mode=OneWay}">
+                                    <TextBlock
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Foreground="{DynamicResource TextOnAccentFillColorPrimaryBrush}"
+                                        Text="Light2" />
+                                </Border>
+                                <Border
+                                    Grid.Row="3"
+                                    Grid.Column="0"
+                                    Width="100"
+                                    Height="50"
+                                    Background="{Binding ViewModel.Light3, Mode=OneWay}">
+                                    <TextBlock
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Foreground="{DynamicResource TextOnAccentFillColorPrimaryBrush}"
+                                        Text="Light3" />
+                                </Border>
+                                <Border
+                                    Grid.Row="1"
+                                    Grid.Column="1"
+                                    Width="100"
+                                    Height="50"
+                                    Background="{Binding ViewModel.Dark1, Mode=OneWay}">
+                                    <TextBlock
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Foreground="{DynamicResource TextOnAccentFillColorPrimaryBrush}"
+                                        Text="Dark1" />
+                                </Border>
+                                <Border
+                                    Grid.Row="2"
+                                    Grid.Column="1"
+                                    Width="100"
+                                    Height="50"
+                                    Background="{Binding ViewModel.Dark2, Mode=OneWay}">
+                                    <TextBlock
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Foreground="{DynamicResource TextOnAccentFillColorPrimaryBrush}"
+                                        Text="Dark2" />
+                                </Border>
+                                <Border
+                                    Grid.Row="3"
+                                    Grid.Column="1"
+                                    Width="100"
+                                    Height="50"
+                                    Background="{Binding ViewModel.Dark3, Mode=OneWay}">
+                                    <TextBlock
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Foreground="{DynamicResource TextOnAccentFillColorPrimaryBrush}"
+                                        Text="Dark3" />
+                                </Border>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                </ui:CardExpander>
+                <ui:CardControl Margin="0,4,0,0" Icon="{ui:SymbolIcon StarEmphasis24}">
+                    <ui:CardControl.Header>
+                        <StackPanel>
+                            <ui:TextBlock FontSize="16" Text="窗口背景透明材质" />
+                            <ui:TextBlock
+                                FontSize="13"
+                                Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                Text="设置窗口背景透明效果和透明材质" />
+                        </StackPanel>
+                    </ui:CardControl.Header>
+                    <ComboBox
+                        Width="Auto"
+                        MinWidth="140"
+                        SelectedIndex="{Binding ViewModel.CurrentBackdropIndex, Mode=TwoWay}">
+                        <ComboBoxItem>None</ComboBoxItem>
+                        <ComboBoxItem>Acrylic</ComboBoxItem>
+                        <ComboBoxItem>Mica</ComboBoxItem>
+                        <ComboBoxItem>Tabbed</ComboBoxItem>
                     </ComboBox>
                 </ui:CardControl>
                 <ui:TextBlock

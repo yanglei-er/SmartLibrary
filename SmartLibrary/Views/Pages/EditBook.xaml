@@ -179,7 +179,6 @@
                                         FontSize="80"
                                         MaxLength="2"
                                         PreviewKeyDown="TextBox_PreviewKeyDown"
-                                        PreviewTextInput="TextBox_PreviewTextInput"
                                         Text="{Binding ViewModel.ShelfNum, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                 </StackPanel>
                                 <Grid Grid.Column="1">
@@ -237,7 +236,6 @@
                                         BorderThickness="0"
                                         FontSize="18"
                                         PreviewKeyDown="TextBox_PreviewKeyDown"
-                                        PreviewTextInput="TextBox_PreviewTextInput"
                                         Text="{Binding ViewModel.BookName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                         TextWrapping="Wrap" />
                                 </Grid>
@@ -255,7 +253,6 @@
                                         BorderThickness="0"
                                         FontSize="18"
                                         PreviewKeyDown="TextBox_PreviewKeyDown"
-                                        PreviewTextInput="TextBox_PreviewTextInput"
                                         Text="{Binding ViewModel.Author, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                         TextWrapping="Wrap" />
                                 </Grid>
@@ -283,7 +280,6 @@
                                         BorderThickness="0"
                                         FontSize="18"
                                         PreviewKeyDown="TextBox_PreviewKeyDown"
-                                        PreviewTextInput="TextBox_PreviewTextInput"
                                         Text="{Binding ViewModel.Press, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                         TextWrapping="Wrap" />
                                 </Grid>
@@ -301,7 +297,6 @@
                                         BorderThickness="0"
                                         FontSize="18"
                                         PreviewKeyDown="TextBox_PreviewKeyDown"
-                                        PreviewTextInput="TextBox_PreviewTextInput"
                                         Text="{Binding ViewModel.PressDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                         TextWrapping="Wrap" />
                                 </Grid>
@@ -320,7 +315,6 @@
                                         BorderThickness="0"
                                         FontSize="18"
                                         PreviewKeyDown="TextBox_PreviewKeyDown"
-                                        PreviewTextInput="TextBox_PreviewTextInput"
                                         Text="{Binding ViewModel.PressPlace, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                         TextWrapping="Wrap" />
                                 </Grid>
@@ -349,7 +343,6 @@
                                         BorderThickness="0"
                                         FontSize="18"
                                         PreviewKeyDown="TextBox_PreviewKeyDown"
-                                        PreviewTextInput="TextBox_PreviewTextInput"
                                         Text="{Binding ViewModel.Price, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                     <ui:TextBlock
                                         Grid.Column="2"
@@ -373,7 +366,6 @@
                                         BorderThickness="0"
                                         FontSize="18"
                                         PreviewKeyDown="TextBox_PreviewKeyDown"
-                                        PreviewTextInput="TextBox_PreviewTextInput"
                                         Text="{Binding ViewModel.Pages, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                 </Grid>
                                 <Grid Margin="0,6,0,0">
@@ -389,7 +381,6 @@
                                         Grid.Column="1"
                                         BorderThickness="0"
                                         FontSize="18"
-                                        PreviewTextInput="TextBox_PreviewTextInput"
                                         Text="{Binding ViewModel.Words, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                 </Grid>
                             </StackPanel>
@@ -415,7 +406,6 @@
                                         BorderThickness="0"
                                         FontSize="18"
                                         PreviewKeyDown="TextBox_PreviewKeyDown"
-                                        PreviewTextInput="TextBox_PreviewTextInput"
                                         Text="{Binding ViewModel.ClcName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                 </Grid>
                                 <Grid Margin="0,6,0,0">
@@ -432,7 +422,6 @@
                                         BorderThickness="0"
                                         FontSize="18"
                                         PreviewKeyDown="TextBox_PreviewKeyDown"
-                                        PreviewTextInput="TextBox_PreviewTextInput"
                                         Text="{Binding ViewModel.Language, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                 </Grid>
                                 <ui:TextBlock
@@ -444,7 +433,6 @@
                                     AcceptsReturn="True"
                                     BorderThickness="0"
                                     FontSize="18"
-                                    PreviewTextInput="TextBox_PreviewTextInput"
                                     Text="{Binding ViewModel.BookDesc, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                     TextWrapping="Wrap" />
                             </StackPanel>

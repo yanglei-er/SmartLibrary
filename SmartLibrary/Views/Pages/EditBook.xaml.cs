@@ -21,11 +21,10 @@ namespace SmartLibrary.Views.Pages
             {
                 XuNiBox.Focus();
             }
-        }
-
-        private void TextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
-        {
-            ViewModel.IsEditButtonEnabled = true;
+            else
+            {
+                ViewModel.IsEditButtonEnabled = true;
+            }
         }
     }
 }

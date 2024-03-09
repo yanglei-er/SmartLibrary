@@ -1,4 +1,7 @@
 ﻿using SmartLibrary.Helpers;
+using System.Windows.Media;
+using Wpf.Ui.Appearance;
+using Wpf.Ui.Extensions;
 
 namespace SmartLibrary.ViewModels
 {
@@ -17,10 +20,49 @@ namespace SmartLibrary.ViewModels
         private bool _autoCheckUpdate = Convert.ToBoolean(SettingsHelper.GetConfig("AutoCheckUpdate"));
 
         [ObservableProperty]
-        private bool _hardwareRendering = Convert.ToBoolean(SettingsHelper.GetConfig("HardwareRendering"));
+        private int _currentApplicationThemeIndex = Helpers.Utils.GetCurrentApplicationThemeIndex(SettingsHelper.GetConfig("Theme"));
 
         [ObservableProperty]
-        private int _currentApplicationThemeIndex = GetCurrentApplicationThemeIndex(SettingsHelper.GetConfig("Theme"));
+        private bool _isCustomizedAccentColor = Convert.ToBoolean(SettingsHelper.GetConfig("IsCustomizedAccentColor"));
+
+        #region AccentColorGroup
+        [ObservableProperty]
+        private SolidColorBrush _systemAccentColor;
+        [ObservableProperty]
+        private SolidColorBrush _light1;
+        [ObservableProperty]
+        private SolidColorBrush _light2;
+        [ObservableProperty]
+        private SolidColorBrush _light3;
+        [ObservableProperty]
+        private SolidColorBrush _dark1;
+        [ObservableProperty]
+        private SolidColorBrush _dark2;
+        [ObservableProperty]
+        private SolidColorBrush _dark3;
+        #endregion AccentColorGroup
+
+        [ObservableProperty]
+        private int _currentBackdropIndex = Helpers.Utils.GetCurrentBackdropIndex(SettingsHelper.GetConfig("Backdrop"));
+
+        public SettingsViewModel()
+        {
+            if (IsCustomizedAccentColor)
+            {
+                SystemAccentColor = Helpers.Utils.StringToSolidColorBrush(SettingsHelper.GetConfig("CustomizedAccentColor"));
+            }
+            else
+            {
+                SystemAccentColor = (SolidColorBrush)ApplicationAccentColorManager.SystemAccentBrush;
+            }
+            Color _color = SystemAccentColor.Color;
+            Light1 = Helpers.Utils.ColorToSolidColorBrush(_color.Update(15f, -12f));
+            Light2 = Helpers.Utils.ColorToSolidColorBrush(_color.Update(30f, -24f));
+            Light3 = Helpers.Utils.ColorToSolidColorBrush(_color.Update(45f, -36f));
+            Dark1 = Helpers.Utils.ColorToSolidColorBrush(_color.UpdateBrightness(-5f));
+            Dark2 = Helpers.Utils.ColorToSolidColorBrush(_color.UpdateBrightness(-10f));
+            Dark3 = Helpers.Utils.ColorToSolidColorBrush(_color.UpdateBrightness(-15f));
+        }
 
         partial void OnAutoStartChanged(bool value)
         {
@@ -42,11 +84,6 @@ namespace SmartLibrary.ViewModels
             SettingsHelper.SetConfig("AutoCheckUpdate", value.ToString());
         }
 
-        partial void OnHardwareRenderingChanged(bool value)
-        {
-            SettingsHelper.SetConfig("hardwareRendering", value.ToString());
-        }
-
         partial void OnCurrentApplicationThemeIndexChanged(int value)
         {
             if (value == 0)
@@ -63,19 +100,70 @@ namespace SmartLibrary.ViewModels
             }
         }
 
-        private static int GetCurrentApplicationThemeIndex(string theme)
+        partial void OnIsCustomizedAccentColorChanged(bool value)
         {
-            if (theme == "System")
+            SettingsHelper.SetConfig("IsCustomizedAccentColor", value.ToString());
+            if (value)
             {
-                return 0;
-            }
-            else if (theme == "Light")
-            {
-                return 1;
+                SystemAccentColor = Helpers.Utils.StringToSolidColorBrush(SettingsHelper.GetConfig("CustomizedAccentColor"));
+                ApplicationAccentColorManager.Apply(SystemAccentColor.Color, Helpers.Utils.GetUserApplicationTheme(SettingsHelper.GetConfig("Theme")));
             }
             else
             {
-                return 2;
+                ApplicationAccentColorManager.ApplySystemAccent();
+                SystemAccentColor = (SolidColorBrush)ApplicationAccentColorManager.SystemAccentBrush;
+            }
+            Color _color = SystemAccentColor.Color;
+            Light1 = Helpers.Utils.ColorToSolidColorBrush(_color.Update(15f, -12f));
+            Light2 = Helpers.Utils.ColorToSolidColorBrush(_color.Update(30f, -24f));
+            Light3 = Helpers.Utils.ColorToSolidColorBrush(_color.Update(45f, -36f));
+            Dark1 = Helpers.Utils.ColorToSolidColorBrush(_color.UpdateBrightness(-5f));
+            Dark2 = Helpers.Utils.ColorToSolidColorBrush(_color.UpdateBrightness(-10f));
+            Dark3 = Helpers.Utils.ColorToSolidColorBrush(_color.UpdateBrightness(-15f));
+        }
+
+        [RelayCommand]
+        private void OnCustomizedAccentColorChanged(string color)
+        {
+            if (color != SystemAccentColor.ToString())
+            {
+                if (IsCustomizedAccentColor)
+                {
+                    SystemAccentColor = Helpers.Utils.StringToSolidColorBrush(color);
+                    SettingsHelper.SetConfig("CustomizedAccentColor", color);
+                }
+                else
+                {
+                    SystemAccentColor = (SolidColorBrush)ApplicationAccentColorManager.SystemAccentBrush;
+                }
+                Color _color = SystemAccentColor.Color;
+                Light1 = Helpers.Utils.ColorToSolidColorBrush(_color.Update(15f, -12f));
+                Light2 = Helpers.Utils.ColorToSolidColorBrush(_color.Update(30f, -24f));
+                Light3 = Helpers.Utils.ColorToSolidColorBrush(_color.Update(45f, -36f));
+                Dark1 = Helpers.Utils.ColorToSolidColorBrush(_color.UpdateBrightness(-5f));
+                Dark2 = Helpers.Utils.ColorToSolidColorBrush(_color.UpdateBrightness(-10f));
+                Dark3 = Helpers.Utils.ColorToSolidColorBrush(_color.UpdateBrightness(-15f));
+                ApplicationAccentColorManager.Apply(SystemAccentColor.Color, Helpers.Utils.GetUserApplicationTheme(SettingsHelper.GetConfig("Theme")));
+            }
+        }
+
+        partial void OnCurrentBackdropIndexChanged(int value)
+        {
+            if (value == 0)
+            {
+                SettingsHelper.SetConfig("Backdrop", "None");
+            }
+            else if (value == 1)
+            {
+                SettingsHelper.SetConfig("Backdrop", "Acrylic");
+            }
+            else if (value == 2)
+            {
+                SettingsHelper.SetConfig("Backdrop", "Mica");
+            }
+            else
+            {
+                SettingsHelper.SetConfig("Backdrop", "Tabbed");
             }
         }
     }
