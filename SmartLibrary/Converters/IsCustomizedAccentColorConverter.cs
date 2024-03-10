@@ -7,9 +7,9 @@ namespace SmartLibrary.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if((bool)value)
+            if ((bool)value)
             {
-                if((string)parameter == "System")
+                if ((string)parameter == "System")
                 {
                     return false;
                 }
@@ -26,14 +26,14 @@ namespace SmartLibrary.Converters
                 }
                 else
                 {
-                    return false ;
+                    return false;
                 }
             }
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if((string)parameter == "System")
+            if ((string)parameter == "System")
             {
                 return false;
             }

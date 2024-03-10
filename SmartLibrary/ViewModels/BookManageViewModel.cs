@@ -74,11 +74,7 @@ namespace SmartLibrary.ViewModels
             _navigationService = navigationService;
             _snackbarService = snackbarService;
             _contentDialogService = contentDialogService;
-            if (SQLiteHelper.IsDatabaseConnected("books.smartlibrary"))
-            {
-                BooksDb.ExecutePagerCompleted += ExecutePagerCompleted;
-            }
-            else
+            if (!SQLiteHelper.IsDatabaseConnected("books.smartlibrary"))
             {
                 MissingDatabase = true;
                 IsTopbarEnabled = false;
@@ -86,20 +82,12 @@ namespace SmartLibrary.ViewModels
             }
         }
 
-        ~BookManageViewModel()
-        {
-            if (SQLiteHelper.IsDatabaseConnected("books.smartlibrary"))
-            {
-                BooksDb.ExecutePagerCompleted -= ExecutePagerCompleted;
-            }
-        }
-
         public void OnNavigatedTo()
         {
             if (SQLiteHelper.IsDatabaseConnected("books.smartlibrary"))
             {
-                Refresh();
-                Pager();
+                RefreshAsync();
+                PagerAsync();
             }
         }
 
@@ -115,21 +103,19 @@ namespace SmartLibrary.ViewModels
             {
                 MissingDatabase = false;
                 IsTopbarEnabled = true;
-                BooksDb.ExecutePagerCompleted += ExecutePagerCompleted;
-                Refresh();
-                Pager();
+                RefreshAsync();
+                PagerAsync();
             }
         }
 
         [RelayCommand]
-        private void CreateDatabase()
+        private async Task CreateDatabase()
         {
-            BooksDb.CreateDataBase();
+            await BooksDb.CreateDataBaseAsync();
             BooksDb = SQLiteHelper.GetDatabase("books.smartlibrary");
             MissingDatabase = false;
             IsTopbarEnabled = true;
-            BooksDb.ExecutePagerCompleted += ExecutePagerCompleted;
-            Refresh();
+            RefreshAsync();
         }
 
         [RelayCommand]
@@ -146,9 +132,9 @@ namespace SmartLibrary.ViewModels
             WeakReferenceMessenger.Default.Send(isbn);
         }
 
-        private void Refresh()
+        private async void RefreshAsync()
         {
-            TotalCount = BooksDb.GetRecordCount();
+            TotalCount = await BooksDb.GetRecordCountAsync();
             if (TotalCount == 0)
             {
                 DatabaseEmpty = true;
@@ -168,10 +154,10 @@ namespace SmartLibrary.ViewModels
             if (CurrentPage != TotalPageCount) { IsPageDownEnabled = true; }
         }
 
-        private void Pager()
+        private async void PagerAsync()
         {
             IsDelButtonEnabled = false;
-            BooksDb.ExecutePagerSimple(CurrentPage, PageCountList[CurrentIndex]);
+            DataGridItems = (await BooksDb.ExecutePagerSimple(CurrentPage, PageCountList[CurrentIndex])).DefaultView;
 
             PageButtonList.Clear();
             if (TotalPageCount <= 7)
@@ -217,13 +203,13 @@ namespace SmartLibrary.ViewModels
 
         partial void OnCurrentIndexChanged(int value)
         {
-            Refresh();
-            if (CurrentPage == 1) Pager();
+            RefreshAsync();
+            if (CurrentPage == 1) PagerAsync();
             CurrentPage = 1;
         }
 
         [RelayCommand]
-        private void OnTopButtonClick(string parameter)
+        private async Task OnTopButtonClick(string parameter)
         {
             if (parameter == "Import")
             {
@@ -237,7 +223,7 @@ namespace SmartLibrary.ViewModels
                 {
                     if (!SQLiteHelper.IsDatabaseConnected("books.smartlibrary"))
                     {
-                        CreateDatabase();
+                        await CreateDatabase();
                     }
                     int[] mergedResult = [0, 0];
                     List<string> fileNames = new(openFileDialog.FileNames);
@@ -249,7 +235,7 @@ namespace SmartLibrary.ViewModels
                             repeatFileNames.Add(fileName);
                             continue;
                         }
-                        int[] _mergedResult = BooksDb.MergeDatabase(fileName);
+                        int[] _mergedResult = await BooksDb.MergeDatabaseAsync(fileName);
                         mergedResult[0] += _mergedResult[0];
                         mergedResult[1] += _mergedResult[1];
                     }
@@ -260,8 +246,8 @@ namespace SmartLibrary.ViewModels
                     }
                     if (mergedResult[0] != 0)
                     {
-                        Refresh();
-                        Pager();
+                        RefreshAsync();
+                        PagerAsync();
                     }
                     _snackbarService.Show("导入数据库", $"{fileNames.Count} 个数据库已导入，共 {mergedResult[0] + mergedResult[1]} 条数据，导入 {mergedResult[0]} 条，重复 {mergedResult[1]} 条。", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
                 }
@@ -301,7 +287,7 @@ namespace SmartLibrary.ViewModels
                     foreach (DataRowView item in selectedItems)
                     {
                         string isbn = (string)item[0];
-                        BooksDb.DelBook(isbn);
+                        BooksDb.DelBookAsync(isbn);
                         if (!IsBottombarEnabled)
                         {
                             indexs.Add(DataGridItems.Table.Rows.IndexOf(item.Row));
@@ -313,8 +299,8 @@ namespace SmartLibrary.ViewModels
 
                 if (IsBottombarEnabled)
                 {
-                    Refresh();
-                    Pager();
+                    RefreshAsync();
+                    PagerAsync();
                 }
                 else
                 {
@@ -339,11 +325,11 @@ namespace SmartLibrary.ViewModels
         private void DelOneBook(DataRowView selectedItem)
         {
             string isbn = (string)selectedItem[0];
-            BooksDb.DelBook(isbn);
+            BooksDb.DelBookAsync(isbn);
             if (IsBottombarEnabled)
             {
-                Refresh();
-                Pager();
+                RefreshAsync();
+                PagerAsync();
             }
             else
             {
@@ -384,7 +370,7 @@ namespace SmartLibrary.ViewModels
         partial void OnCurrentPageChanged(int value)
         {
             TargetPage = value;
-            Pager();
+            PagerAsync();
             if (CurrentPage == 1) IsPageUpEnabled = false;
             else if (CurrentPage == TotalPageCount) IsPageDownEnabled = false;
         }
@@ -440,40 +426,35 @@ namespace SmartLibrary.ViewModels
             }
         }
 
-        private void ExecutePagerCompleted(DataTable datatable)
-        {
-            DataGridItems = datatable.DefaultView;
-        }
-
         public void UpdateSimple(BookInfoSimple bookInfo)
         {
-            BooksDb.UpdateSimple(bookInfo.Isbn, bookInfo.BookName, bookInfo.Author, bookInfo.ShelfNumber, bookInfo.IsBorrowed);
+            BooksDb.UpdateSimpleAsync(bookInfo.Isbn, bookInfo.BookName, bookInfo.Author, bookInfo.ShelfNumber, bookInfo.IsBorrowed);
         }
 
         public void CheckBox_Click(string isbn, bool value)
         {
             if (value)
             {
-                BooksDb.BorrowBook(isbn);
+                BooksDb.BorrowBookAsync(isbn);
             }
             else
             {
-                BooksDb.ReturnBook(isbn);
+                BooksDb.ReturnBookAsync(isbn);
             }
         }
 
-        public void AutoSuggest(string? str)
+        public async void AutoSuggest(string? str)
         {
             if (!string.IsNullOrEmpty(str))
             {
                 IsBottombarEnabled = false;
                 if (int.TryParse(str, out int num))
                 {
-                    DataGridItems = BooksDb.AutoSuggestByNum(num).DefaultView;
+                    DataGridItems = (await BooksDb.AutoSuggestByNumAsync(num)).DefaultView;
                 }
                 else
                 {
-                    DataGridItems = BooksDb.AutoSuggestByString(str).DefaultView;
+                    DataGridItems = (await BooksDb.AutoSuggestByStringAsync(str)).DefaultView;
                 }
                 if (DataGridItems.Count > 0)
                 {
@@ -487,8 +468,8 @@ namespace SmartLibrary.ViewModels
             }
             else
             {
-                Refresh();
-                Pager();
+                RefreshAsync();
+                PagerAsync();
             }
         }
     }

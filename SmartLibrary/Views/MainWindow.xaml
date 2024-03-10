@@ -29,7 +29,6 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-
         <ui:TitleBar
             Title="智慧图书馆"
             Grid.Row="0"

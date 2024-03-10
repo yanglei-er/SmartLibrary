@@ -126,14 +126,14 @@ namespace SmartLibrary.ViewModels
         [RelayCommand]
         public async Task OnSearchButtonClick()
         {
-            if (BooksDb.Exists(IsbnText))
+            if (await BooksDb.ExistsAsync(IsbnText))
             {
                 System.Media.SystemSounds.Asterisk.Play();
 
                 IsBookExisted = true;
                 IsSearchButtonEnabled = false;
 
-                Models.BookInfo bookInfo = BooksDb.GetOneBookInfo(IsbnText);
+                Models.BookInfo bookInfo = await BooksDb.GetOneBookInfoAsync(IsbnText);
                 BookName = bookInfo.BookName;
                 Author = bookInfo.Author;
                 Press = bookInfo.Press ?? string.Empty;
@@ -322,7 +322,7 @@ namespace SmartLibrary.ViewModels
                         ShelfNumber = int.Parse(ShelfNum),
                         IsBorrowed = IsBorrowed,
                     };
-                    BooksDb.AddBook(bookInfo);
+                    BooksDb.AddBookAsync(bookInfo);
                     System.Media.SystemSounds.Asterisk.Play();
                     _snackbarService.Show("添加成功", $"书籍《{BookName}》已添加到数据库中。", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
                     IsbnText = string.Empty;

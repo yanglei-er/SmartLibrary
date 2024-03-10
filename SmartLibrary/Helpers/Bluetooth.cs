@@ -158,7 +158,7 @@ namespace SmartLibrary.Helpers
         {
             if (bluetoothClient != null)
             {
-                if(bluetoothClient.Connected)
+                if (bluetoothClient.Connected)
                 {
                     bluetoothClient.Close();
                     bluetoothClient = new BluetoothClient();

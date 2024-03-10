@@ -82,10 +82,10 @@ namespace SmartLibrary.ViewModels
             WeakReferenceMessenger.Default.Register<string>(this, OnMessageReceived);
         }
 
-        private void OnMessageReceived(object recipient, string message)
+        private async void OnMessageReceived(object recipient, string message)
         {
             IsbnText = message;
-            Models.BookInfo bookInfo = BooksDb.GetOneBookInfo(IsbnText);
+            Models.BookInfo bookInfo = await BooksDb.GetOneBookInfoAsync(IsbnText);
             BookName = bookInfo.BookName;
             Author = bookInfo.Author;
             Press = bookInfo.Press ?? string.Empty;
@@ -181,7 +181,7 @@ namespace SmartLibrary.ViewModels
                     ShelfNumber = int.Parse(ShelfNum),
                     IsBorrowed = IsBorrowed,
                 };
-                BooksDb.Update(bookInfo);
+                BooksDb.UpdateAsync(bookInfo);
                 System.Media.SystemSounds.Asterisk.Play();
                 _snackbarService.Show("更改成功", $"书籍《{BookName}》信息已更新。", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
                 IsEditButtonEnabled = false;

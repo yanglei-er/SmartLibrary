@@ -49,15 +49,15 @@ namespace SmartLibrary.Helpers
 
         public static int GetCurrentBackdropIndex(string backdrop)
         {
-            if(backdrop == "None")
+            if (backdrop == "None")
             {
                 return 0;
             }
-            else if(backdrop == "Acrylic")
+            else if (backdrop == "Acrylic")
             {
                 return 1;
             }
-            else if(backdrop == "Mica")
+            else if (backdrop == "Mica")
             {
                 return 2;
             }
@@ -69,15 +69,15 @@ namespace SmartLibrary.Helpers
 
         public static WindowBackdropType GetUserBackdrop(string backdrop)
         {
-            if(backdrop == "None")
+            if (backdrop == "None")
             {
                 return WindowBackdropType.None;
             }
-            else if(backdrop == "Acrylic")
+            else if (backdrop == "Acrylic")
             {
                 return WindowBackdropType.Acrylic;
             }
-            else if(backdrop == "Mica")
+            else if (backdrop == "Mica")
             {
                 return WindowBackdropType.Mica;
             }

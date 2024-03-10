@@ -1,7 +1,5 @@
 ﻿using SmartLibrary.Helpers;
-using System.Windows;
 using System.Windows.Interop;
-using System.Windows.Media;
 using Wpf.Ui;
 using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
@@ -41,6 +39,7 @@ namespace SmartLibrary.Views
             {
                 ApplicationAccentColorManager.Apply(Helpers.Utils.StringToColor(SettingsHelper.GetConfig("CustomizedAccentColor")), theme);
             }
+            //WindowBackdrop.ApplyBackdrop(this, Helpers.Utils.GetUserBackdrop(SettingsHelper.GetConfig("Backdrop")));
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)

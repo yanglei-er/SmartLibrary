@@ -1,5 +1,6 @@
 ﻿using SmartLibrary.Models;
 using System.Data;
+using System.Data.Common;
 using System.Data.SQLite;
 using System.IO;
 using System.Text;
@@ -10,12 +11,6 @@ namespace SmartLibrary.Helpers
     {
         private static readonly Dictionary<string, SQLiteHelper> DataBaceList = [];
         private readonly string DataSource = string.Empty;
-
-        public delegate void ExecuteCompletedEventHandler(DataTable datatable);
-
-        public event ExecuteCompletedEventHandler ExecutePagerCompleted = delegate { };
-
-        public event ExecuteCompletedEventHandler ExecuteDataTableCompleted = delegate { };
 
         /// <summary>
         /// 构造函数
@@ -61,7 +56,7 @@ namespace SmartLibrary.Helpers
         /// <summary>
         /// 创建数据库，如果数据库文件存在则忽略此操作
         /// </summary>
-        public void CreateDataBase()
+        public async Task CreateDataBaseAsync()
         {
             string? path = Path.GetDirectoryName(DataSource);
             if ((!string.IsNullOrWhiteSpace(path)) && (!Directory.Exists(path)))
@@ -89,7 +84,7 @@ namespace SmartLibrary.Helpers
                 sbr.AppendLine("'shelfNumber' INTEGER NOT NULL,");
                 sbr.AppendLine("'isBorrowed' INTEGER NOT NULL DEFAULT 0");
                 sbr.AppendLine(");");
-                ExecuteNonQuery(sbr.ToString());
+                await ExecuteNonQueryAsync(sbr.ToString());
             }
         }
 
@@ -111,11 +106,11 @@ namespace SmartLibrary.Helpers
         /// <param name="conn">SQLiteConnection</param>
         /// <param name="sqlStr">Sql命令文本</param>
         /// <param name="p">参数数组</param>
-        private static void PrepareCommand(SQLiteCommand cmd, SQLiteConnection conn, string sqlStr, params SQLiteParameter[]? p)
+        private static async void PrepareCommand(SQLiteCommand cmd, SQLiteConnection conn, string sqlStr, params SQLiteParameter[]? p)
         {
             if (conn.State != ConnectionState.Open)
             {
-                conn.Open();
+                await conn.OpenAsync();
             }
             cmd.Parameters.Clear();
             cmd.Connection = conn;
@@ -156,27 +151,17 @@ namespace SmartLibrary.Helpers
         /// <param name="cmdText">Sql命令文本</param>
         /// <param name="data">参数数组</param>
         /// <returns>DataTable</returns>
-        public DataTable ExecuteDataTable(string cmdText, params SQLiteParameter[]? data)
+        public async Task<DataTable> ExecuteDataTableAsync(string cmdText, params SQLiteParameter[]? data)
         {
             var dt = new DataTable();
             using (SQLiteConnection connection = GetSQLiteConnection())
             {
                 var command = new SQLiteCommand();
                 PrepareCommand(command, connection, cmdText, data);
-                SQLiteDataReader reader = command.ExecuteReader();
+                DbDataReader reader = await command.ExecuteReaderAsync();
                 dt.Load(reader);
             }
             return dt;
-        }
-
-        private void ExecuteDataTableAction(string cmdText, params SQLiteParameter[]? data)
-        {
-            ExecuteDataTableCompleted.Invoke(ExecuteDataTable(cmdText, data));
-        }
-
-        public void ExecuteDataTableAsync(string cmdText, params SQLiteParameter[]? data)
-        {
-            Task.Run(() => ExecuteDataTableAction(cmdText, data));
         }
 
         /// <summary>
@@ -199,12 +184,12 @@ namespace SmartLibrary.Helpers
         /// <param name="cmdText">Sql命令文本</param>
         /// <param name="data">传入的参数</param>
         /// <returns>返回受影响的行数</returns>
-        public int ExecuteNonQuery(string cmdText, params SQLiteParameter[]? data)
+        public async Task<int> ExecuteNonQueryAsync(string cmdText, params SQLiteParameter[]? data)
         {
             using SQLiteConnection connection = GetSQLiteConnection();
             var command = new SQLiteCommand();
             PrepareCommand(command, connection, cmdText, data);
-            return command.ExecuteNonQuery();
+            return await command.ExecuteNonQueryAsync();
         }
 
         /// <summary>
@@ -213,22 +198,13 @@ namespace SmartLibrary.Helpers
         /// <param name="cmdText">Sql命令文本</param>
         /// <param name="data">传入的参数</param>
         /// <returns>SQLiteDataReader</returns>
-        public SQLiteDataReader ExecuteReader(string cmdText, params SQLiteParameter[]? data)
+        public async Task<DbDataReader> ExecuteReaderAsync(string cmdText, params SQLiteParameter[]? data)
         {
             var command = new SQLiteCommand();
             using SQLiteConnection connection = GetSQLiteConnection();
-            try
-            {
-                PrepareCommand(command, connection, cmdText, data);
-                SQLiteDataReader reader = command.ExecuteReader(CommandBehavior.CloseConnection);
-                return reader;
-            }
-            catch
-            {
-                connection.Close();
-                command.Dispose();
-                throw;
-            }
+            PrepareCommand(command, connection, cmdText, data);
+            DbDataReader reader = await command.ExecuteReaderAsync(CommandBehavior.CloseConnection);
+            return reader;
         }
 
         /// <summary>
@@ -237,59 +213,38 @@ namespace SmartLibrary.Helpers
         /// <param name="cmdText">Sql命令文本</param>
         /// <param name="data">传入的参数</param>
         /// <returns>object</returns>
-        public object ExecuteScalar(string cmdText, params SQLiteParameter[]? data)
+        public async Task<object?> ExecuteScalarAsync(string cmdText, params SQLiteParameter[]? data)
         {
             using SQLiteConnection connection = GetSQLiteConnection();
             var cmd = new SQLiteCommand();
             PrepareCommand(cmd, connection, cmdText, data);
-            return cmd.ExecuteScalar();
+            return await cmd.ExecuteScalarAsync();
         }
 
-        private void ExecutePagerAction(int pageIndex, int pageSize)
+        public async Task<DataTable> ExecutePagerAsync(int pageIndex, int pageSize)
         {
-            //pageIndex 页码
-            //pageSize 每页条数
-            //OFFSET 代表从第几条记录的后面开始查询
-            //LIMIT 查询多少条结果
-            //SELECT* FROM 表名 LIMIT pageSize OFFSET(pageIndex* pageSize);
             StringBuilder sbr = new();
             sbr.AppendLine("SELECT * FROM main LIMIT ");
             sbr.AppendLine(pageSize.ToString());
             sbr.AppendLine(" OFFSET ");
-            sbr.AppendLine((pageIndex * pageSize).ToString());
-            ExecutePagerCompleted.Invoke(ExecuteDataTable(sbr.ToString(), null));
+            sbr.AppendLine((pageIndex - 1 * pageSize).ToString());
+            return await ExecuteDataTableAsync(sbr.ToString());
         }
 
-        /// <summary>
-        /// 分页查询
-        /// </summary>
-        /// <param name="pageIndex">页牵引</param>
-        /// <param name="pageSize">页大小</param>
-        /// <returns>DataSet</returns>
-        public void ExecutePager(int pageIndex, int pageSize)
-        {
-            Task.Run(() => ExecutePagerAction(pageIndex - 1, pageSize));
-        }
-
-        private void ExecutePagerSimpleAction(int pageIndex, int pageSize)
+        public async Task<DataTable> ExecutePagerSimple(int pageIndex, int pageSize)
         {
             StringBuilder sbr = new();
             sbr.AppendLine("SELECT isbn,bookName,author,shelfNumber,isBorrowed FROM main LIMIT ");
             sbr.AppendLine(pageSize.ToString());
             sbr.AppendLine(" OFFSET ");
-            sbr.AppendLine((pageIndex * pageSize).ToString());
-            ExecutePagerCompleted.Invoke(ExecuteDataTable(sbr.ToString(), null));
-        }
-
-        public void ExecutePagerSimple(int pageIndex, int pageSize)
-        {
-            Task.Run(() => ExecutePagerSimpleAction(pageIndex - 1, pageSize));
+            sbr.AppendLine((pageIndex - 1 * pageSize).ToString());
+            return await ExecuteDataTableAsync(sbr.ToString());
         }
 
         /// <summary>
         /// 重新组织数据库：VACUUM 将会从头重新组织数据库
         /// </summary>
-        public void ResetDataBass()
+        public async void ResetDataBassAsync()
         {
             using SQLiteConnection conn = GetSQLiteConnection();
             var cmd = new SQLiteCommand();
@@ -301,25 +256,24 @@ namespace SmartLibrary.Helpers
             cmd.CommandText = "vacuum";
             cmd.CommandType = CommandType.Text;
             cmd.CommandTimeout = 30;
-            cmd.ExecuteNonQuery();
+            await cmd.ExecuteNonQueryAsync();
         }
 
         /// <summary>
         /// 查询总记录数
         /// </summary>
-        public int GetRecordCount()
+        public async Task<int> GetRecordCountAsync()
         {
-            string? command = ExecuteScalar("SELECT count(shelfNumber) FROM main", null).ToString();
-            if (command != null) { return int.Parse(command); }
-            else { return 0; }
+            object? result = await ExecuteScalarAsync("SELECT count(shelfNumber) FROM main");
+            return Convert.ToInt32(result);
         }
 
         /// <summary>
         /// 删除书籍
         /// </summary>
-        public void DelBook(string isbn)
+        public async void DelBookAsync(string isbn)
         {
-            ExecuteNonQuery($"DELETE FROM main WHERE isbn = {isbn}", null);
+            await ExecuteNonQueryAsync($"DELETE FROM main WHERE isbn = {isbn}");
             string localFilePath = @".\pictures\" + isbn + ".jpg";
             if (File.Exists(localFilePath))
             {
@@ -330,11 +284,19 @@ namespace SmartLibrary.Helpers
         /// <summary>
         /// 书籍是否存在
         /// </summary>
-        public bool Exists(string isbn)
+        public async Task<bool> ExistsAsync(string isbn)
         {
-            if ((long)ExecuteScalar($"SELECT COUNT(*) FROM main WHERE isbn = {isbn}", null) > 0)
+            object? result = await ExecuteScalarAsync($"SELECT COUNT(*) FROM main WHERE isbn = {isbn}", null);
+            if (result != null)
             {
-                return true;
+                if ((long)result > 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
             else
             {
@@ -345,32 +307,32 @@ namespace SmartLibrary.Helpers
         /// <summary>
         /// 简单更新数据库
         /// </summary>
-        public void UpdateSimple(string isbn, string bookName, string? author, long shelfNumber, bool isBorrowed)
+        public async void UpdateSimpleAsync(string isbn, string bookName, string? author, long shelfNumber, bool isBorrowed)
         {
             string sql = $"UPDATE main SET bookName = '{bookName}', author = '{author}', shelfNumber = @shelfNumber, isBorrowed = @isBorrowed WHERE isbn = '{isbn}'";
             SQLiteParameter[] parameters = [
                 new SQLiteParameter("@shelfNumber", shelfNumber),
                 new SQLiteParameter("@isBorrowed", isBorrowed)];
-            ExecuteNonQuery(sql, parameters);
+            await ExecuteNonQueryAsync(sql, parameters);
         }
 
         /// <summary>
         /// 更新数据库
         /// </summary>
-        public void Update(BookInfo book)
+        public async void UpdateAsync(BookInfo book)
         {
             string sqlStr = $"UPDATE main SET bookName = '{book.BookName}', author = '{book.Author}', press = '{book.Press}', pressDate = '{book.PressDate}', pressPlace = '{book.PressPlace}', price = '{book.Price}', clcName = '{book.ClcName}', bookDesc = '{book.BookDesc}', pages = '{book.Pages}', words = '{book.Words}', language = '{book.Language}', picture = '{book.Picture}', shelfNumber = @shelfNumber, isBorrowed = @isBorrowed WHERE isbn = '{book.Isbn}'";
             SQLiteParameter[] parameters = [
                         new SQLiteParameter("@shelfNumber", book.ShelfNumber),
                         new SQLiteParameter("@isBorrowed", book.IsBorrowed),
                     ];
-            ExecuteNonQuery(sqlStr, parameters);
+            await ExecuteNonQueryAsync(sqlStr, parameters);
         }
 
         /// <summary>
         /// 合并数据库
         /// </summary>
-        public int[] MergeDatabase(string newDbPath)
+        public async Task<int[]> MergeDatabaseAsync(string newDbPath)
         {
             int mergedCount = 0;
             int repeatedCount = 0;
@@ -378,17 +340,17 @@ namespace SmartLibrary.Helpers
             SQLiteConnection oldDbConnection = GetSQLiteConnection();
             if (oldDbConnection.State != ConnectionState.Open)
             {
-                oldDbConnection.Open();
+                await oldDbConnection.OpenAsync();
             }
 
             SQLiteConnection newDbConnection = new()
             {
                 ConnectionString = "Data Source=" + newDbPath
             };
-            newDbConnection.Open();
+            await newDbConnection.OpenAsync();
 
             SQLiteCommand selectCommand = new("SELECT * FROM main", newDbConnection);
-            SQLiteDataReader reader = selectCommand.ExecuteReader();
+            DbDataReader reader = await selectCommand.ExecuteReaderAsync();
 
             SQLiteCommand command = new();
             SQLiteTransaction transaction = oldDbConnection.BeginTransaction();
@@ -396,7 +358,7 @@ namespace SmartLibrary.Helpers
             while (reader.Read())
             {
                 string isbn = reader.GetString(0);
-                if (!Exists(isbn))
+                if (!await ExistsAsync(isbn))
                 {
                     //string sqlStr = "INSERT INTO main VALUES (\"@isbn\",\"@bookName\",\"@author\",\"@press\",\"@pressDate\",\"@pressPlace\",@price,\"@clcName\",\"@bookDesc\",\"@pages\",\"@words\",\"@languag\",@picture\",@shelfNumber,@isBorrowed)";
                     string sqlStr = $"INSERT INTO main VALUES ('{isbn}','{reader.GetString(1)}','{reader.GetString(2)}','{reader.GetString(3)}','{reader.GetString(4)}','{reader.GetString(5)}','{reader.GetString(6)}','{reader.GetString(7)}','{reader.GetString(8)}','{reader.GetString(9)}','{reader.GetString(10)}','{reader.GetValue(12)}','{reader.GetValue(12)}',@shelfNumber,@isBorrowed)";
@@ -407,7 +369,7 @@ namespace SmartLibrary.Helpers
                     ];
                     PrepareCommand(command, oldDbConnection, sqlStr, parameters);
                     command.Transaction = transaction;
-                    command.ExecuteNonQuery();
+                    await command.ExecuteNonQueryAsync();
                     mergedCount++;
                 }
                 else
@@ -423,18 +385,18 @@ namespace SmartLibrary.Helpers
             return [mergedCount, repeatedCount];
         }
 
-        public BookInfo GetOneBookInfo(string isbn)
+        public async Task<BookInfo> GetOneBookInfoAsync(string isbn)
         {
             BookInfo book = new();
             string sql = $"SELECT * FROM main WHERE isbn = {isbn}";
 
-            SQLiteConnection oldDbConnection = GetSQLiteConnection();
-            if (oldDbConnection.State != ConnectionState.Open)
+            SQLiteConnection DbConnection = GetSQLiteConnection();
+            if (DbConnection.State != ConnectionState.Open)
             {
-                oldDbConnection.Open();
+                await DbConnection.OpenAsync();
             }
-            SQLiteCommand selectCommand = new(sql, oldDbConnection);
-            SQLiteDataReader reader = selectCommand.ExecuteReader();
+            SQLiteCommand command = new(sql, DbConnection);
+            DbDataReader reader = await command.ExecuteReaderAsync();
             if (reader.Read())
             {
                 book.Isbn = isbn;
@@ -453,20 +415,20 @@ namespace SmartLibrary.Helpers
                 book.ShelfNumber = reader.GetInt64(13);
                 book.IsBorrowed = Convert.ToBoolean(reader.GetInt64(14));
             }
-            selectCommand.Dispose();
+            command.Dispose();
             reader.Dispose();
-            oldDbConnection.Dispose();
+            DbConnection.Dispose();
             return book;
         }
 
-        public void AddBook(BookInfo book)
+        public async void AddBookAsync(BookInfo book)
         {
             string sqlStr = $"INSERT INTO main VALUES ('{book.Isbn}','{book.BookName}','{book.Author}','{book.Press}','{book.PressDate}','{book.PressPlace}','{book.Price}','{book.ClcName}','{book.BookDesc}','{book.Pages}','{book.Words}','{book.Language}','{book.Picture}',@shelfNumber,@isBorrowed)";
             SQLiteParameter[] parameters = [
                         new SQLiteParameter("@shelfNumber", book.ShelfNumber),
                         new SQLiteParameter("@isBorrowed", book.IsBorrowed),
                     ];
-            ExecuteNonQuery(sqlStr, parameters);
+            await ExecuteNonQueryAsync(sqlStr, parameters);
         }
 
         //public List<BookInfo> GetBookInfos(object value)
@@ -567,28 +529,29 @@ namespace SmartLibrary.Helpers
         //    return books;
         //}
 
-        public DataTable AutoSuggestByString(string str)
+        public async Task<DataTable> AutoSuggestByStringAsync(string str)
         {
             string sql = $"SELECT isbn,bookName,author,shelfNumber,isBorrowed FROM main WHERE bookName LIKE '%{str}%' OR author LIKE '%{str}%'";
-            return ExecuteDataTable(sql);
+            return await ExecuteDataTableAsync(sql);
         }
 
-        public DataTable AutoSuggestByNum(int num)
+        public async Task<DataTable> AutoSuggestByNumAsync(int num)
         {
             string sql = $"SELECT isbn,bookName,author,shelfNumber,isBorrowed FROM main WHERE isbn = {num} OR shelfNumber = {num}";
-            return ExecuteDataTable(sql);
+            return await ExecuteDataTableAsync(sql);
         }
 
-        public void BorrowBook(string isbn)
+        public async void BorrowBookAsync(string isbn)
         {
             string sql = $"UPDATE main SET isBorrowed = 1 WHERE isbn = '{isbn}'";
-            ExecuteNonQuery(sql);
+            await ExecuteNonQueryAsync(sql);
         }
 
-        public void ReturnBook(string isbn)
+        public async void ReturnBookAsync(string isbn)
         {
             string sql = $"UPDATE main SET isBorrowed = 0 WHERE isbn = '{isbn}'";
-            ExecuteNonQuery(sql);
+            await ExecuteNonQueryAsync(sql);
         }
     }
+
 }
