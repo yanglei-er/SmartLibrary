@@ -79,7 +79,7 @@ namespace SmartLibrary.ViewModels
             _navigationService = navigationService;
             _snackbarService = snackbarService;
             _contentDialogService = contentDialogService;
-            WeakReferenceMessenger.Default.Register<string>(this, OnMessageReceived);
+            WeakReferenceMessenger.Default.Register<string, string>(this, "EditBook", OnMessageReceived);
         }
 
         private async void OnMessageReceived(object recipient, string message)
@@ -185,6 +185,7 @@ namespace SmartLibrary.ViewModels
                 System.Media.SystemSounds.Asterisk.Play();
                 _snackbarService.Show("更改成功", $"书籍《{BookName}》信息已更新。", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
                 IsEditButtonEnabled = false;
+                WeakReferenceMessenger.Default.Send(string.Empty, "BookManage");
             }
             else
             {

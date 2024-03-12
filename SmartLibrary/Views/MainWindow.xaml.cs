@@ -39,7 +39,6 @@ namespace SmartLibrary.Views
             {
                 ApplicationAccentColorManager.Apply(Helpers.Utils.StringToColor(SettingsHelper.GetConfig("CustomizedAccentColor")), theme);
             }
-            //WindowBackdrop.ApplyBackdrop(this, Helpers.Utils.GetUserBackdrop(SettingsHelper.GetConfig("Backdrop")));
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)

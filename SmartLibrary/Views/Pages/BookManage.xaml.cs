@@ -60,7 +60,7 @@ namespace SmartLibrary.Views.Pages
                 }
                 else
                 {
-                    if ((string)dataRowView[1] != bookInfo.BookName || (string)dataRowView[2] != bookInfo.Author || (Int64)dataRowView[3] != bookInfo.ShelfNumber)
+                    if ((string)dataRowView[1] != bookInfo.BookName || (string)dataRowView[2] != bookInfo.Author || (long)dataRowView[3] != bookInfo.ShelfNumber)
                     {
                         bookInfo.Isbn = (string)dataRowView[0];
                         bookInfo.BookName = (string)dataRowView[1];
@@ -81,11 +81,6 @@ namespace SmartLibrary.Views.Pages
                 bool isBorrowed = Convert.ToBoolean(dataRowView[4]);
                 ViewModel.CheckBox_Click(isbn, isBorrowed);
             }
-        }
-
-        private void AutoSuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
-        {
-            ViewModel.AutoSuggest(args.Text);
         }
     }
 }

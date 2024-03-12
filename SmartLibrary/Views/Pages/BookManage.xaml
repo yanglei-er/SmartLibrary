@@ -1,13 +1,13 @@
 ﻿<Page
     x:Class="SmartLibrary.Views.Pages.BookManage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:converters="clr-namespace:SmartLibrary.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:extensions="clr-namespace:SmartLibrary.Extensions"
     xmlns:local="clr-namespace:SmartLibrary.Views.Pages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     Title="BookManage"
     d:DataContext="{d:DesignInstance local:BookManage,
                                      IsDesignTimeCreatable=False}"
@@ -176,11 +176,10 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <ui:AutoSuggestBox
-                x:Name="AutoSuggestBox"
                 Grid.Column="0"
                 IsEnabled="{Binding ViewModel.IsTopbarEnabled, Mode=OneWay}"
                 PlaceholderText="快速查找ISBN、书名、作者、书架号"
-                TextChanged="AutoSuggestBox_TextChanged" />
+                Text="{Binding ViewModel.AutoSuggestBoxText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <ui:Button
                 Grid.Column="1"
                 Height="35"

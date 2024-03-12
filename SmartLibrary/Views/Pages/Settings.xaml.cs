@@ -27,6 +27,11 @@ namespace SmartLibrary.Views.Pages
             CacheCount.Text = "缓存文件已占用 " + FileOccupancy.GetDirectorySize(Environment.CurrentDirectory + @".\pictures\");
         }
 
+        private void AppFolderButton_Click(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("explorer.exe", Environment.CurrentDirectory);
+        }
+
         private void BooksDataButton_Click(object sender, RoutedEventArgs e)
         {
             System.Diagnostics.Process.Start("explorer.exe", Environment.CurrentDirectory + @".\database\");

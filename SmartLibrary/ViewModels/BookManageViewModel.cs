@@ -20,6 +20,10 @@ namespace SmartLibrary.ViewModels
         private readonly IContentDialogService _contentDialogService;
         private SQLiteHelper BooksDb = SQLiteHelper.GetDatabase("books.smartlibrary");
         private int TotalPageCount;
+        private bool needRefresh = false;
+
+        [ObservableProperty]
+        private string _autoSuggestBoxText = string.Empty;
 
         [ObservableProperty]
         private bool _missingDatabase = false;
@@ -74,7 +78,14 @@ namespace SmartLibrary.ViewModels
             _navigationService = navigationService;
             _snackbarService = snackbarService;
             _contentDialogService = contentDialogService;
-            if (!SQLiteHelper.IsDatabaseConnected("books.smartlibrary"))
+
+            WeakReferenceMessenger.Default.Register<string, string>(this, "BookManage", (_, _) => needRefresh = true);
+
+            if (SQLiteHelper.IsDatabaseConnected("books.smartlibrary"))
+            {
+                needRefresh = true;
+            }
+            else
             {
                 MissingDatabase = true;
                 IsTopbarEnabled = false;
@@ -84,15 +95,24 @@ namespace SmartLibrary.ViewModels
 
         public void OnNavigatedTo()
         {
-            if (SQLiteHelper.IsDatabaseConnected("books.smartlibrary"))
+            if(needRefresh)
             {
-                RefreshAsync();
-                PagerAsync();
+                if(string.IsNullOrEmpty(AutoSuggestBoxText))
+                {
+                    RefreshAsync();
+                    PagerAsync();
+                }
+                else
+                {
+                    AutoSuggest(AutoSuggestBoxText);
+                }
+                needRefresh = false;
             }
         }
 
         public void OnNavigatedFrom()
         {
+
         }
 
         [RelayCommand]
@@ -129,7 +149,7 @@ namespace SmartLibrary.ViewModels
         {
             _navigationService.NavigateWithHierarchy(typeof(EditBook));
             string isbn = (string)selectedItem[0];
-            WeakReferenceMessenger.Default.Send(isbn);
+            WeakReferenceMessenger.Default.Send(isbn, "EditBook");
         }
 
         private async void RefreshAsync()
@@ -157,7 +177,7 @@ namespace SmartLibrary.ViewModels
         private async void PagerAsync()
         {
             IsDelButtonEnabled = false;
-            DataGridItems = (await BooksDb.ExecutePagerSimple(CurrentPage, PageCountList[CurrentIndex])).DefaultView;
+            DataGridItems = (await BooksDb.ExecutePagerSimpleAsync(CurrentPage, PageCountList[CurrentIndex])).DefaultView;
 
             PageButtonList.Clear();
             if (TotalPageCount <= 7)
@@ -443,18 +463,23 @@ namespace SmartLibrary.ViewModels
             }
         }
 
-        public async void AutoSuggest(string? str)
+        partial void OnAutoSuggestBoxTextChanged(string value)
         {
-            if (!string.IsNullOrEmpty(str))
+            AutoSuggest(value);
+        }
+
+        private async void AutoSuggest(string value)
+        {
+            if (!string.IsNullOrEmpty(value))
             {
                 IsBottombarEnabled = false;
-                if (int.TryParse(str, out int num))
+                if (int.TryParse(value, out int num))
                 {
                     DataGridItems = (await BooksDb.AutoSuggestByNumAsync(num)).DefaultView;
                 }
                 else
                 {
-                    DataGridItems = (await BooksDb.AutoSuggestByStringAsync(str)).DefaultView;
+                    DataGridItems = (await BooksDb.AutoSuggestByStringAsync(value)).DefaultView;
                 }
                 if (DataGridItems.Count > 0)
                 {

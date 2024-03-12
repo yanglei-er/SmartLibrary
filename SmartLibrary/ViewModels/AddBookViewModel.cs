@@ -121,6 +121,7 @@ namespace SmartLibrary.ViewModels
         [RelayCommand]
         private void OnScanButtonClick()
         {
+
         }
 
         [RelayCommand]
@@ -284,7 +285,7 @@ namespace SmartLibrary.ViewModels
             if (IsBookExisted)
             {
                 _navigationService.NavigateWithHierarchy(typeof(EditBook));
-                WeakReferenceMessenger.Default.Send(IsbnText);
+                WeakReferenceMessenger.Default.Send(IsbnText,"EditBook");
             }
             else
             {
@@ -326,6 +327,7 @@ namespace SmartLibrary.ViewModels
                     System.Media.SystemSounds.Asterisk.Play();
                     _snackbarService.Show("添加成功", $"书籍《{BookName}》已添加到数据库中。", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
                     IsbnText = string.Empty;
+                    WeakReferenceMessenger.Default.Send(string.Empty, "BookManage");
                 }
                 else
                 {

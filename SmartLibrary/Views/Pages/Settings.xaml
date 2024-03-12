@@ -127,13 +127,25 @@
                     Expanded="FileOccupancyExpander_Expanded"
                     Icon="{ui:SymbolIcon DataPie24}">
                     <ui:CardExpander.Header>
-                        <StackPanel>
-                            <ui:TextBlock FontSize="16" Text="存储空间" />
-                            <ui:TextBlock
-                                FontSize="13"
-                                Foreground="{StaticResource TextFillColorSecondaryBrush}"
-                                Text="查看程序详细存储空间占用" />
-                        </StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <ui:TextBlock FontSize="16" Text="存储空间" />
+                                <ui:TextBlock
+                                    FontSize="13"
+                                    Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                    Text="查看程序详细存储空间占用" />
+                            </StackPanel>
+                            <ui:Button
+                                Grid.Column="1"
+                                Margin="0,0,32,0"
+                                BorderThickness="0"
+                                Click="AppFolderButton_Click"
+                                Content="打开 App 文件夹" />
+                        </Grid>
                     </ui:CardExpander.Header>
                     <StackPanel>
                         <ui:Button
