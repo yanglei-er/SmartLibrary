@@ -1,5 +1,6 @@
 ﻿using SmartLibrary.Helpers;
 using SmartLibrary.ViewModels;
+using System.IO;
 using System.Reflection;
 using Wpf.Ui.Controls;
 
@@ -24,7 +25,8 @@ namespace SmartLibrary.Views.Pages
         private void FileOccupancyExpander_Expanded(object sender, RoutedEventArgs e)
         {
             DataCount.Text = "数据库文件已占用 " + FileOccupancy.GetFileSize(Environment.CurrentDirectory + @".\database\books.smartlibrary");
-            CacheCount.Text = "缓存文件已占用 " + FileOccupancy.GetDirectorySize(Environment.CurrentDirectory + @".\pictures\");
+            PictureCacheCount.Text = "缓存文件已占用 " + FileOccupancy.GetDirectorySize(Environment.CurrentDirectory + @".\pictures\");
+            TempCount.Text = "临时文件已占用 " + FileOccupancy.GetDirectorySize(Environment.CurrentDirectory + @".\temp\");
         }
 
         private void AppFolderButton_Click(object sender, RoutedEventArgs e)
@@ -34,12 +36,23 @@ namespace SmartLibrary.Views.Pages
 
         private void BooksDataButton_Click(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start("explorer.exe", Environment.CurrentDirectory + @".\database\");
+            string path = Environment.CurrentDirectory + @".\database\";
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+            System.Diagnostics.Process.Start("explorer.exe", path);
         }
 
         private void PictureCacheButton_Click(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start("explorer.exe", Environment.CurrentDirectory + @".\pictures\");
+            string path = Environment.CurrentDirectory + @".\pictures\";
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+            System.Diagnostics.Process.Start("explorer.exe", path);
+        }
+
+        private void TempButton_Click(object sender, RoutedEventArgs e)
+        {
+            string path = Environment.CurrentDirectory + @".\temp\";
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+            System.Diagnostics.Process.Start("explorer.exe", path);
         }
     }
 }

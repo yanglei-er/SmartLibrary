@@ -138,7 +138,7 @@ namespace SmartLibrary.Helpers
             return dt;
         }
 
-        public async Task<DataTable> ExecuteDataTableAsync(string cmdText, params SQLiteParameter[]? data)
+        public async ValueTask<DataTable> ExecuteDataTableAsync(string cmdText, params SQLiteParameter[]? data)
         {
             var dt = new DataTable();
             using (SQLiteConnection connection = GetSQLiteConnection())
@@ -159,7 +159,7 @@ namespace SmartLibrary.Helpers
             return command.ExecuteNonQuery();
         }
 
-        public async Task<int> ExecuteNonQueryAsync(string cmdText, params SQLiteParameter[]? data)
+        public async ValueTask<int> ExecuteNonQueryAsync(string cmdText, params SQLiteParameter[]? data)
         {
             using SQLiteConnection connection = GetSQLiteConnection();
             SQLiteCommand command = new();
@@ -176,7 +176,7 @@ namespace SmartLibrary.Helpers
             return reader;
         }
 
-        public async Task<DbDataReader> ExecuteReaderAsync(string cmdText, params SQLiteParameter[]? data)
+        public async ValueTask<DbDataReader> ExecuteReaderAsync(string cmdText, params SQLiteParameter[]? data)
         {
             var command = new SQLiteCommand();
             using SQLiteConnection connection = GetSQLiteConnection();
@@ -193,7 +193,7 @@ namespace SmartLibrary.Helpers
             return cmd.ExecuteScalar();
         }
 
-        public async Task<object?> ExecuteScalarAsync(string cmdText, params SQLiteParameter[]? data)
+        public async ValueTask<object?> ExecuteScalarAsync(string cmdText, params SQLiteParameter[]? data)
         {
             using SQLiteConnection connection = GetSQLiteConnection();
             var cmd = new SQLiteCommand();
@@ -201,7 +201,7 @@ namespace SmartLibrary.Helpers
             return await cmd.ExecuteScalarAsync();
         }
 
-        public async Task<DataTable> ExecutePagerAsync(int pageIndex, int pageSize)
+        public async ValueTask<DataTable> ExecutePagerAsync(int pageIndex, int pageSize)
         {
             StringBuilder sbr = new();
             sbr.AppendLine("SELECT * FROM main LIMIT ");
@@ -211,7 +211,7 @@ namespace SmartLibrary.Helpers
             return await ExecuteDataTableAsync(sbr.ToString());
         }
 
-        public async Task<DataTable> ExecutePagerSimpleAsync(int pageIndex, int pageSize)
+        public async ValueTask<DataTable> ExecutePagerSimpleAsync(int pageIndex, int pageSize)
         {
             StringBuilder sbr = new();
             sbr.AppendLine("SELECT isbn,bookName,author,shelfNumber,isBorrowed FROM main LIMIT ");
@@ -238,7 +238,7 @@ namespace SmartLibrary.Helpers
             await cmd.ExecuteNonQueryAsync();
         }
 
-        public async Task<int> GetRecordCountAsync()
+        public async ValueTask<int> GetRecordCountAsync()
         {
             object? result = await ExecuteScalarAsync("SELECT count(shelfNumber) FROM main");
             return Convert.ToInt32(result);
@@ -254,7 +254,7 @@ namespace SmartLibrary.Helpers
             }
         }
 
-        public async Task<bool> ExistsAsync(string isbn)
+        public async ValueTask<bool> ExistsAsync(string isbn)
         {
             object? result = await ExecuteScalarAsync($"SELECT COUNT(*) FROM main WHERE isbn = {isbn}", null);
             if (Convert.ToInt32(result) > 0)
@@ -286,7 +286,7 @@ namespace SmartLibrary.Helpers
             await ExecuteNonQueryAsync(sqlStr, parameters);
         }
 
-        public async Task<int[]> MergeDatabaseAsync(string newDbPath)
+        public async ValueTask<int[]> MergeDatabaseAsync(string newDbPath)
         {
             int mergedCount = 0;
             int repeatedCount = 0;
@@ -336,7 +336,7 @@ namespace SmartLibrary.Helpers
             return [mergedCount, repeatedCount];
         }
 
-        public async Task<BookInfo> GetOneBookInfoAsync(string isbn)
+        public async ValueTask<BookInfo> GetOneBookInfoAsync(string isbn)
         {
             BookInfo book = new();
             string sql = $"SELECT * FROM main WHERE isbn = {isbn}";
@@ -381,13 +381,13 @@ namespace SmartLibrary.Helpers
             await ExecuteNonQueryAsync(sqlStr, parameters);
         }
 
-        public async Task<DataTable> AutoSuggestByStringAsync(string str)
+        public async ValueTask<DataTable> AutoSuggestByStringAsync(string str)
         {
             string sql = $"SELECT isbn,bookName,author,shelfNumber,isBorrowed FROM main WHERE bookName LIKE '%{str}%' OR author LIKE '%{str}%'";
             return await ExecuteDataTableAsync(sql);
         }
 
-        public async Task<DataTable> AutoSuggestByNumAsync(int num)
+        public async ValueTask<DataTable> AutoSuggestByNumAsync(int num)
         {
             string sql = $"SELECT isbn,bookName,author,shelfNumber,isBorrowed FROM main WHERE isbn = {num} OR shelfNumber = {num}";
             return await ExecuteDataTableAsync(sql);

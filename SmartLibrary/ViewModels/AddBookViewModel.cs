@@ -17,6 +17,10 @@ namespace SmartLibrary.ViewModels
         private readonly ISnackbarService _snackbarService;
         private readonly IContentDialogService _contentDialogService;
         private readonly SQLiteHelper BooksDb = SQLiteHelper.GetDatabase("books.smartlibrary");
+        private readonly LocalStorage localStorage = new();
+
+        [ObservableProperty]
+        private bool _isPictureLoading = false;
 
         [ObservableProperty]
         private bool _isbnBoxEnabled = true;
@@ -28,7 +32,7 @@ namespace SmartLibrary.ViewModels
         private bool _isbnAttitudeVisible = false;
 
         [ObservableProperty]
-        private string _isbnAttitudeImage = string.Empty;
+        private string _isbnAttitudeImage = "pack://application:,,,/Assets/pic/wrong.png";
 
         [ObservableProperty]
         private bool _isScanButtonEnabled = false;
@@ -99,6 +103,8 @@ namespace SmartLibrary.ViewModels
         [ObservableProperty]
         private string _picture = string.Empty;
 
+        private string PictureUrl = string.Empty;
+
         [ObservableProperty]
         private string _shelfNum = string.Empty;
 
@@ -110,6 +116,7 @@ namespace SmartLibrary.ViewModels
             _navigationService = navigationService;
             _snackbarService = snackbarService;
             _contentDialogService = contentDialogService;
+            localStorage.LoadingCompleted += LoadingCompleted;
 
             if (BluetoothHelper.Instance.IsBleConnected)
             {
@@ -146,7 +153,11 @@ namespace SmartLibrary.ViewModels
                 Pages = bookInfo.Pages ?? string.Empty;
                 BookDesc = bookInfo.BookDesc ?? string.Empty;
                 Language = bookInfo.Language ?? string.Empty;
-                Picture = LocalStorage.GetPicture(IsbnText, bookInfo.Picture);
+                PictureUrl = bookInfo.Picture ?? string.Empty;
+
+                IsPictureLoading = true;
+                localStorage.GetPicture(IsbnText, bookInfo.Picture);
+
                 ShelfNum = bookInfo.ShelfNumber.ToString();
                 IsBorrowed = bookInfo.IsBorrowed;
             }
@@ -184,11 +195,9 @@ namespace SmartLibrary.ViewModels
                             Pages = dataElement.GetProperty("pages").GetString() ?? string.Empty;
                             BookDesc = dataElement.GetProperty("bookDesc").GetString() ?? string.Empty;
                             Language = dataElement.GetProperty("language").GetString() ?? string.Empty;
-                            string? picture = dataElement.GetProperty("pictures").GetString();
-                            if (!string.IsNullOrEmpty(picture))
-                            {
-                                Picture = LocalStorage.SearchPicture(IsbnText, picture.Replace("[\"", "").Replace("\"]", ""));
-                            }
+                            PictureUrl = (dataElement.GetProperty("pictures").GetString() ?? string.Empty).Replace("[\"", "").Replace("\"]", "");
+                            IsPictureLoading = true;
+                            localStorage.SearchPicture(IsbnText, PictureUrl);
                         }
                         else
                         {
@@ -209,6 +218,12 @@ namespace SmartLibrary.ViewModels
             }
             IsbnBoxEnabled = true;
             IsAddButtonEnabled = true;
+        }
+
+        private void LoadingCompleted(string path)
+        {
+            IsPictureLoading = false;
+            Picture = path;
         }
 
         partial void OnIsbnTextChanged(string value)
@@ -255,6 +270,7 @@ namespace SmartLibrary.ViewModels
             {
                 if (File.Exists(openFileDialog.FileName))
                 {
+                    PictureUrl = openFileDialog.FileName;
                     Picture = openFileDialog.FileName;
                 }
             }
@@ -268,6 +284,7 @@ namespace SmartLibrary.ViewModels
                     CloseButtonText = "否",
                 }) == ContentDialogResult.Primary)
                 {
+                    PictureUrl = string.Empty;
                     Picture = string.Empty;
                 }
             }
@@ -285,7 +302,7 @@ namespace SmartLibrary.ViewModels
             if (IsBookExisted)
             {
                 _navigationService.NavigateWithHierarchy(typeof(EditBook));
-                WeakReferenceMessenger.Default.Send(IsbnText,"EditBook");
+                WeakReferenceMessenger.Default.Send(IsbnText, "EditBook");
             }
             else
             {
@@ -319,7 +336,7 @@ namespace SmartLibrary.ViewModels
                         Pages = Pages,
                         BookDesc = BookDesc,
                         Language = Language,
-                        Picture = LocalStorage.AddPicture(IsbnText, Picture),
+                        Picture = LocalStorage.AddPicture(IsbnText, PictureUrl),
                         ShelfNumber = int.Parse(ShelfNum),
                         IsBorrowed = IsBorrowed,
                     };
@@ -346,6 +363,7 @@ namespace SmartLibrary.ViewModels
         [RelayCommand]
         private void NavigateBack()
         {
+            localStorage.LoadingCompleted -= LoadingCompleted;
             _navigationService.GoBack();
         }
 

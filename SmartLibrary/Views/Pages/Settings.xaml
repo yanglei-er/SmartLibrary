@@ -198,9 +198,41 @@
                                     Grid.Column="0"
                                     Margin="8,0,0,0"
                                     FontSize="16"
-                                    Text="图片图片缓存" />
+                                    Text="图书图片缓存" />
                                 <TextBlock
-                                    x:Name="CacheCount"
+                                    x:Name="PictureCacheCount"
+                                    Margin="0,0,8,0"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Center"
+                                    FontSize="13"
+                                    Foreground="{StaticResource TextFillColorSecondaryBrush}" />
+                                <ui:SymbolIcon
+                                    Grid.Column="2"
+                                    Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                    Symbol="Open24" />
+                            </Grid>
+                        </ui:Button>
+                        <ui:Button
+                            Padding="16"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Stretch"
+                            Background="Transparent"
+                            BorderThickness="0,1,0,0"
+                            Click="TempButton_Click"
+                            CornerRadius="0">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock
+                                    Grid.Column="0"
+                                    Margin="8,0,0,0"
+                                    FontSize="16"
+                                    Text="临时数据" />
+                                <TextBlock
+                                    x:Name="TempCount"
                                     Margin="0,0,8,0"
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Center"

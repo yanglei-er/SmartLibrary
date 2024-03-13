@@ -95,9 +95,9 @@ namespace SmartLibrary.ViewModels
 
         public void OnNavigatedTo()
         {
-            if(needRefresh)
+            if (needRefresh)
             {
-                if(string.IsNullOrEmpty(AutoSuggestBoxText))
+                if (string.IsNullOrEmpty(AutoSuggestBoxText))
                 {
                     RefreshAsync();
                     PagerAsync();
