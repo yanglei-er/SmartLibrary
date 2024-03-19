@@ -14,6 +14,8 @@ namespace SmartLibrary.Helpers
         public delegate void LoadingCompletedEventHandler(string path);
         public event LoadingCompletedEventHandler LoadingCompleted = delegate { };
 
+        private static readonly Network network = Network.Instance;
+
         public async void SearchPicture(string isbn, string? path)
         {
             if (!string.IsNullOrEmpty(path))
@@ -30,9 +32,15 @@ namespace SmartLibrary.Helpers
                 }
                 else
                 {
-                    await SavePictureAsync(tempFilePath, path);
-                    await Task.Delay(500);
-                    LoadingCompleted(Path.GetFullPath(tempFilePath));
+                    if (await SavePictureAsync(tempFilePath, path))
+                    {
+                        await Task.Delay(300);
+                        LoadingCompleted(Path.GetFullPath(tempFilePath));
+                    }
+                    else
+                    {
+                        LoadingCompleted("Error");
+                    }
                 }
             }
             else
@@ -41,9 +49,9 @@ namespace SmartLibrary.Helpers
             }
         }
 
-        private static async Task SavePictureAsync(string path, string url)
+        private static async Task<bool> SavePictureAsync(string path, string url)
         {
-            byte[] picture = await Network.GetPicture(url);
+            byte[] picture = await network.GetPicture(url);
             if (picture.Length > 0)
             {
                 string localPath = Path.GetDirectoryName(path) ?? string.Empty;
@@ -54,6 +62,11 @@ namespace SmartLibrary.Helpers
                 using Image image = Image.Load(picture);
                 image.Mutate(a => a.Resize(new ResizeOptions() { Size = new(270, 390), Mode = SixLabors.ImageSharp.Processing.ResizeMode.Crop }));
                 await image.SaveAsJpegAsync(path, new JpegEncoder() { Quality = 100 });
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
 
@@ -108,13 +121,20 @@ namespace SmartLibrary.Helpers
                 {
                     if (ValidHttpURL(path, out _))
                     {
-                        await SavePictureAsync(localFilePath, path);
-                        await Task.Delay(500);
-                        LoadingCompleted(Path.GetFullPath(localFilePath));
+                        if (await SavePictureAsync(localFilePath, path))
+                        {
+                            await Task.Delay(300);
+                            LoadingCompleted(Path.GetFullPath(localFilePath));
+                        }
+                        else
+                        {
+                            LoadingCompleted("Error");
+                        }
+
                     }
                     else
                     {
-                        LoadingCompleted(string.Empty);
+                        LoadingCompleted("Error");
                     }
                 }
             }
@@ -123,13 +143,17 @@ namespace SmartLibrary.Helpers
         private static bool ValidHttpURL(string s, out Uri? resultURI)
         {
             if (!UriRegex().IsMatch(s))
+            {
                 s = "http://" + s;
-
+            }
             if (Uri.TryCreate(s, UriKind.Absolute, out resultURI))
-                return (resultURI.Scheme == Uri.UriSchemeHttp ||
-                        resultURI.Scheme == Uri.UriSchemeHttps);
-
-            return false;
+            {
+                return (resultURI.Scheme == Uri.UriSchemeHttp || resultURI.Scheme == Uri.UriSchemeHttps);
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

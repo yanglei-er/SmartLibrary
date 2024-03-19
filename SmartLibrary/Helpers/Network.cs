@@ -1,15 +1,27 @@
 ﻿using System.Net.Http;
-using System.Runtime.InteropServices;
 
 namespace SmartLibrary.Helpers
 {
     public sealed partial class Network
     {
-        [LibraryImport("sensapi.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static partial bool IsNetworkAlive(out int connectionDescription);
-
+        private static Network? _instance;
         private static readonly HttpClient httpClient = new();
+
+        public static Network Instance
+        {
+            get
+            {
+                _instance ??= new Network();
+                return _instance;
+            }
+        }
+
+        public bool IsInternetConnected { private set; get; } = System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable();
+
+        private Network()
+        {
+            System.Net.NetworkInformation.NetworkChange.NetworkAvailabilityChanged += (_, e) => IsInternetConnected = e.IsAvailable;
+        }
 
         #region UAPool
 
@@ -41,34 +53,43 @@ namespace SmartLibrary.Helpers
 
         #endregion UAPool
 
-        public static bool IsInternetConnected()
+        public async ValueTask<string> GetAsync(string url)
         {
-            return IsNetworkAlive(out _);
-        }
-
-        public static async ValueTask<string> GetAsync(string url)
-        {
-            httpClient.DefaultRequestHeaders.Clear();
-            httpClient.DefaultRequestHeaders.Add("User-Agent", GetUserAgent());
-            using HttpResponseMessage result = await httpClient.GetAsync(url);
-            if (result.IsSuccessStatusCode)
+            if (IsInternetConnected)
             {
-                return await result.Content.ReadAsStringAsync();
+                httpClient.DefaultRequestHeaders.Clear();
+                httpClient.DefaultRequestHeaders.Add("User-Agent", GetUserAgent());
+                using HttpResponseMessage result = await httpClient.GetAsync(url);
+                if (result.IsSuccessStatusCode)
+                {
+                    return await result.Content.ReadAsStringAsync();
+                }
+                else
+                {
+                    return "Error:" + result.StatusCode.ToString();
+                }
             }
             else
             {
-                return "Error:" + result.StatusCode.ToString();
+                return "Error:ERR_CONNECTION_TIMED_OUT";
             }
         }
 
-        public static async ValueTask<byte[]> GetPicture(string url)
+        public async ValueTask<byte[]> GetPicture(string url)
         {
-            httpClient.DefaultRequestHeaders.Clear();
-            httpClient.DefaultRequestHeaders.Add("User-Agent", GetUserAgent());
-            using HttpResponseMessage result = await httpClient.GetAsync(url);
-            if (result.IsSuccessStatusCode)
+            if (IsInternetConnected)
             {
-                return await result.Content.ReadAsByteArrayAsync();
+                httpClient.DefaultRequestHeaders.Clear();
+                httpClient.DefaultRequestHeaders.Add("User-Agent", GetUserAgent());
+                using HttpResponseMessage result = await httpClient.GetAsync(url);
+                if (result.IsSuccessStatusCode)
+                {
+                    return await result.Content.ReadAsByteArrayAsync();
+                }
+                else
+                {
+                    return [];
+                }
             }
             else
             {

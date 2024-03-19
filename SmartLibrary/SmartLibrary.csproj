@@ -3,18 +3,18 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0-windows10.0.22621.0</TargetFramework>
+	<SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
 	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	<Nullable>enable</Nullable>
-	<SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
   </PropertyGroup>
 
     <PropertyGroup>
 	    <ApplicationIcon>applicationIcon.ico</ApplicationIcon>
 		<Description>Smart library</Description>
-		<Version>0.1.9.6</Version>
-		<Copyright>©2024 赵杨磊.All Rights Reserved.</Copyright>
+		<Version>0.1.9.8</Version>
+		<Copyright>Copyright © 2024 赵杨磊.All Rights Reserved.</Copyright>
 	</PropertyGroup>
 
     <ItemGroup>
@@ -75,7 +75,7 @@
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
 		<PackageReference Include="SixLabors.ImageSharp" Version="3.1.3" />
 		<PackageReference Include="System.Data.SQLite" Version="1.0.118" />
-		<PackageReference Include="WPF-UI" Version="3.0.0" />
+		<PackageReference Include="WPF-UI" Version="3.0.1" />
 		<PackageReference Include="WpfAnimatedGif" Version="2.0.2" />
 	</ItemGroup>
 

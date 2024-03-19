@@ -21,7 +21,6 @@ namespace SmartLibrary.ViewModels
                         Content = "主页",
                         Icon = new SymbolIcon { Symbol = SymbolRegular.Home24 },
                         TargetPageType = typeof(Views.Pages.Home),
-                        NavigationCacheMode = NavigationCacheMode.Enabled
                     },
                     new NavigationViewItem()
                     {

@@ -22,6 +22,9 @@ namespace SmartLibrary.ViewModels
         private bool _isPictureLoading = false;
 
         [ObservableProperty]
+        private string _pictureLoadingText = "添加图片";
+
+        [ObservableProperty]
         public bool _isEditButtonEnabled = false;
 
         [ObservableProperty]
@@ -107,6 +110,7 @@ namespace SmartLibrary.ViewModels
             PictureUrl = bookInfo.Picture ?? string.Empty;
 
             IsPictureLoading = true;
+            PictureLoadingText = "正在加载图片";
             localStorage.GetPicture(IsbnText, bookInfo.Picture);
 
             ShelfNum = bookInfo.ShelfNumber.ToString();
@@ -116,8 +120,16 @@ namespace SmartLibrary.ViewModels
 
         private void LoadingCompleted(string path)
         {
+            if (path == "Error")
+            {
+                PictureLoadingText = "图片加载失败";
+                Picture = string.Empty;
+            }
+            else
+            {
+                Picture = path;
+            }
             IsPictureLoading = false;
-            Picture = path;
         }
 
         [RelayCommand]

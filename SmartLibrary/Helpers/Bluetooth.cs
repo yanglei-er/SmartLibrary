@@ -1,6 +1,7 @@
 ﻿using InTheHand.Net;
 using InTheHand.Net.Bluetooth;
 using InTheHand.Net.Sockets;
+using SmartLibrary.Models;
 using System.Net.NetworkInformation;
 
 namespace SmartLibrary.Helpers
@@ -15,11 +16,13 @@ namespace SmartLibrary.Helpers
 
         public event ConnectEventHandler ConnectEvent = delegate { };
 
-        public delegate void DiscoverDeviceEventHandler(List<string> deviceInfo);
+        public delegate void DiscoverDeviceEventHandler(BluetoothDevice deviceInfo);
 
         public event DiscoverDeviceEventHandler DiscoverDevice = delegate { };
 
-        public event EventHandler DiscoverComplete = delegate { };
+        public delegate void DiscoverCompleteEventHandler(string info);
+
+        public event DiscoverCompleteEventHandler DiscoverComplete = delegate { };
 
         public static BluetoothHelper Instance
         {
@@ -35,7 +38,7 @@ namespace SmartLibrary.Helpers
             _previousBleState = IsPlatformSupportBT();
         }
 
-        //蓝牙状态改变
+        #region 蓝牙状态改变
         public delegate void BleStateChangedEventHandler(bool state);
 
         public event BleStateChangedEventHandler BleStateChangedEvent = delegate { };
@@ -60,6 +63,7 @@ namespace SmartLibrary.Helpers
             }
             return IntPtr.Zero;
         }
+        #endregion 蓝牙状态改变
 
         public bool IsPlatformSupportBT()
         {
@@ -103,38 +107,34 @@ namespace SmartLibrary.Helpers
 
         private void BluetoothComponent_DiscoverDevice(object? sender, DiscoverDevicesEventArgs e)
         {
-            List<string> deviceInfo =
-            [
-                e.Devices[0].DeviceName,
-                e.Devices[0].DeviceAddress.ToString("C"),
-                e.Devices[0].ClassOfDevice.MajorDevice.ToString(),
-                e.Devices[0].Connected.ToString(),
-            ];
+            BluetoothDevice deviceInfo = new(e.Devices[0].DeviceName, e.Devices[0].DeviceAddress.ToString("C"), e.Devices[0].ClassOfDevice.MajorDevice.ToString(), e.Devices[0].Authenticated
+                       );
             DiscoverDevice(deviceInfo);
         }
 
         private void BluetoothComponent_DiscoverComplete(object? sender, DiscoverDevicesEventArgs e)
         {
-            DiscoverComplete(sender, e);
+            DiscoverComplete("完成");
         }
 
-        public void StartConnect(string address)
+        public void StartConnect(BluetoothDevice device)
         {
-            Task.Run(() => ConnectAction(address));
+            Task.Run(() => ConnectAction(device));
         }
 
-        private void ConnectAction(string address)
+        private void ConnectAction(BluetoothDevice device)
         {
-            BluetoothAddress btAddress = BluetoothAddress.Parse(address);
-            BluetoothDeviceInfo bluetoothDevice = new(btAddress);
-            // 检测是否配对
-            if (!bluetoothDevice.Authenticated)
+            BluetoothAddress btAddress = BluetoothAddress.Parse(device.Address);
+
+            using System.Timers.Timer tmr = new(2500)
             {
-                System.Timers.Timer tmr = new(2500)
-                {
-                    AutoReset = false
-                };
-                tmr.Elapsed += OnPairing;
+                AutoReset = false
+            };
+            tmr.Elapsed += (_, _) => ConnectEvent("正在配对");
+
+            // 检测是否配对
+            if (!device.IsAuthenticated)
+            {
                 tmr.Start();
             }
             try
@@ -145,13 +145,9 @@ namespace SmartLibrary.Helpers
             }
             catch (Exception ex)
             {
+                tmr.Stop();
                 ConnectEvent(ex.Message);
             }
-        }
-
-        private void OnPairing(object? sender, System.Timers.ElapsedEventArgs e)
-        {
-            ConnectEvent("正在配对");
         }
 
         public void StartDisconnect()

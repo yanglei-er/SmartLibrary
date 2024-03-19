@@ -7,9 +7,9 @@ namespace SmartLibrary.ViewModels
 {
     public partial class BluetoothSettingsViewModel : ObservableObject
     {
-        private string _connectedName = string.Empty;
-
         private readonly BluetoothHelper ble = BluetoothHelper.Instance;
+
+        private string _connectedName = string.Empty;
 
         [ObservableProperty]
         private string _stateText = string.Empty;
@@ -119,14 +119,22 @@ namespace SmartLibrary.ViewModels
             }
         }
 
-        private void DiscoverDevice(List<string> deviceInfo)
+        private void DiscoverDevice(BluetoothDevice device)
         {
-            ListViewItems.Add(new BluetoothDevice(deviceInfo[0], deviceInfo[1], deviceInfo[2]));
+            ListViewItems.Add(device);
         }
 
-        private void ScanComplete(object? sender, EventArgs e)
+        private void ScanComplete(string info)
         {
-            StateText = "一共扫描到 " + ListViewItems.Count.ToString() + " 个设备";
+            if (info == "完成")
+            {
+                StateText = "一共扫描到 " + ListViewItems.Count.ToString() + " 个设备";
+            }
+            else
+            {
+                StateText = info;
+            }
+            ScanButtonText = "扫描设备";
             ScanButtonEnabled = true;
             ProgressBarIsIndeterminate = ProgressBarVisibility = false;
         }
@@ -153,15 +161,7 @@ namespace SmartLibrary.ViewModels
         [RelayCommand]
         private void OnConnectButtonClick()
         {
-            if (!ble.IsBleConnected)
-            {
-                StateText = "正在连接 " + ListViewItems[ListviewSelectedIndex].Name;
-                ScanButtonEnabled = ConnectButtonEnabled = false;
-                ListviewEnabled = false;
-                ProgressBarVisibility = ProgressBarIsIndeterminate = true;
-                ble.StartConnect(ListViewItems[ListviewSelectedIndex].Address);
-            }
-            else
+            if (ble.IsBleConnected)
             {
                 ble.StartDisconnect();
                 if (ConnectButtonText == "连接新设备")
@@ -175,6 +175,14 @@ namespace SmartLibrary.ViewModels
                     ConnectButtonText = "连接设备";
                     _connectedName = string.Empty;
                 }
+            }
+            else
+            {
+                StateText = "正在连接 " + ListViewItems[ListviewSelectedIndex].Name;
+                ScanButtonEnabled = ConnectButtonEnabled = false;
+                ListviewEnabled = false;
+                ProgressBarVisibility = ProgressBarIsIndeterminate = true;
+                ble.StartConnect(ListViewItems[ListviewSelectedIndex]);
             }
         }
 

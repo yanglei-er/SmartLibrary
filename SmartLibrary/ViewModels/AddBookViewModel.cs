@@ -18,9 +18,13 @@ namespace SmartLibrary.ViewModels
         private readonly IContentDialogService _contentDialogService;
         private readonly SQLiteHelper BooksDb = SQLiteHelper.GetDatabase("books.smartlibrary");
         private readonly LocalStorage localStorage = new();
+        private readonly Network network = Network.Instance;
 
         [ObservableProperty]
         private bool _isPictureLoading = false;
+
+        [ObservableProperty]
+        private string _pictureLoadingText = "添加图片";
 
         [ObservableProperty]
         private bool _isbnBoxEnabled = true;
@@ -47,7 +51,7 @@ namespace SmartLibrary.ViewModels
         private bool _isNetwrokError = false;
 
         [ObservableProperty]
-        private string _networkErrorText = string.Empty;
+        private string _networkErrorText = "网络未连接！无法查询联网数据库，请手动录入书籍信息或连接网络后重试。";
 
         [ObservableProperty]
         private bool _isBookExisted = false;
@@ -123,6 +127,11 @@ namespace SmartLibrary.ViewModels
                 IsbnBoxPlaceholderText = "请扫描或输入13位ISBN码";
                 IsScanButtonEnabled = true;
             }
+
+            if (!network.IsInternetConnected)
+            {
+                IsNetwrokError = true;
+            }
         }
 
         [RelayCommand]
@@ -156,6 +165,7 @@ namespace SmartLibrary.ViewModels
                 PictureUrl = bookInfo.Picture ?? string.Empty;
 
                 IsPictureLoading = true;
+                Picture = "正在加载图片";
                 localStorage.GetPicture(IsbnText, bookInfo.Picture);
 
                 ShelfNum = bookInfo.ShelfNumber.ToString();
@@ -164,12 +174,12 @@ namespace SmartLibrary.ViewModels
             else
             {
                 IsSearchButtonEnabled = false;
-                if (Network.IsInternetConnected())
+                if (network.IsInternetConnected)
                 {
                     IsLoading = true;
                     IsbnBoxEnabled = false;
                     IsNetwrokError = false;
-                    string result = await Network.GetAsync($"http://openapi.daohe168.com.cn/api/library/isbn/query?isbn={IsbnText}&appKey=d7c6c07a0a04ba4e65921e2f90726384");
+                    string result = await network.GetAsync($"http://openapi.daohe168.com.cn/api/library/isbn/query?isbn={IsbnText}&appKey=d7c6c07a0a04ba4e65921e2f90726384");
 
                     if (result.StartsWith("Error"))
                     {
@@ -197,6 +207,7 @@ namespace SmartLibrary.ViewModels
                             Language = dataElement.GetProperty("language").GetString() ?? string.Empty;
                             PictureUrl = (dataElement.GetProperty("pictures").GetString() ?? string.Empty).Replace("[\"", "").Replace("\"]", "");
                             IsPictureLoading = true;
+                            PictureLoadingText = "正在加载图片";
                             localStorage.SearchPicture(IsbnText, PictureUrl);
                         }
                         else
@@ -222,8 +233,16 @@ namespace SmartLibrary.ViewModels
 
         private void LoadingCompleted(string path)
         {
+            if (path == "Error")
+            {
+                PictureLoadingText = "图片加载失败";
+                Picture = string.Empty;
+            }
+            else
+            {
+                Picture = path;
+            }
             IsPictureLoading = false;
-            Picture = path;
         }
 
         partial void OnIsbnTextChanged(string value)

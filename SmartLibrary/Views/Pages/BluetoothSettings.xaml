@@ -38,7 +38,7 @@
                 Width="64"
                 Height="64"
                 RenderOptions.BitmapScalingMode="HighQuality"
-                Source="{Binding ViewModel.StateImageSource,  Mode=OneWay}"
+                Source="{Binding ViewModel.StateImageSource, Mode=OneWay}"
                 Stretch="UniformToFill" />
             <StackPanel Grid.Column="1" Margin="4,4,0,0">
                 <ui:TextBlock

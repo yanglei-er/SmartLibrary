@@ -82,7 +82,7 @@ namespace SmartLibrary
 
         private void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
-            MessageBox.Show("我们很抱歉，当前应用程序遇到一些问题...\n " + e.Exception + " 意外的操作。");
+            MessageBox.Show("我们很抱歉，当前应用程序遇到一些问题...\n " + e.Exception.Message);
             e.Handled = true;
         }
     }

@@ -24,7 +24,6 @@
         <Style BasedOn="{StaticResource MyButtonStyle}" TargetType="ui:Button" />
         <converters:BoolToImageSourceConverter x:Key="BoolToImageSourceConverter" />
         <converters:BookExistedConverter x:Key="BookExistedConverter" />
-        <converters:BoolToLadingPictureTextConverter x:Key="BoolToLadingPictureTextConverter" />
     </Page.Resources>
 
     <Grid Margin="16">
@@ -156,7 +155,7 @@
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
                                     FontSize="18"
-                                    Text="{Binding ViewModel.IsPictureLoading, Converter={StaticResource BoolToLadingPictureTextConverter}, Mode=OneWay}" />
+                                    Text="{Binding ViewModel.PictureLoadingText, Mode=OneWay}" />
                             </StackPanel>
                             <ui:Image
                                 HorizontalAlignment="Stretch"
