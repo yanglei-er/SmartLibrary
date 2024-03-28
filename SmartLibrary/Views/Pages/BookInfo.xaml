@@ -16,5 +16,10 @@
     Foreground="{DynamicResource TextFillColorPrimaryBrush}"
     mc:Ignorable="d">
 
-    <Grid />
+    <Grid Margin="16">
+        <ui:AutoSuggestBox
+            Width="450"
+            VerticalAlignment="Top" Margin="0,100,0,0"
+            PlaceholderText="快速查找ISBN、书名、作者、书架号" />
+    </Grid>
 </Page>

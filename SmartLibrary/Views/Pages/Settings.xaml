@@ -125,7 +125,8 @@
                     Margin="0,4,0,0"
                     ContentPadding="0"
                     Expanded="FileOccupancyExpander_Expanded"
-                    Icon="{ui:SymbolIcon DataPie24}">
+                    Icon="{ui:SymbolIcon DataPie24}"
+                    IsExpanded="{Binding ViewModel.IsFileOccupancyExpanded, Mode=TwoWay}">
                     <ui:CardExpander.Header>
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -168,12 +169,12 @@
                                     FontSize="16"
                                     Text="图书数据库" />
                                 <TextBlock
-                                    x:Name="DataCount"
                                     Margin="0,0,8,0"
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Center"
                                     FontSize="13"
-                                    Foreground="{StaticResource TextFillColorSecondaryBrush}" />
+                                    Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                    Text="{Binding ViewModel.DataCount, Mode=OneWay}" />
                                 <ui:SymbolIcon
                                     Grid.Column="2"
                                     Foreground="{StaticResource TextFillColorSecondaryBrush}"
@@ -200,12 +201,12 @@
                                     FontSize="16"
                                     Text="图书图片缓存" />
                                 <TextBlock
-                                    x:Name="PictureCacheCount"
                                     Margin="0,0,8,0"
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Center"
                                     FontSize="13"
-                                    Foreground="{StaticResource TextFillColorSecondaryBrush}" />
+                                    Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                    Text="{Binding ViewModel.PictureCacheCount, Mode=OneWay}" />
                                 <ui:SymbolIcon
                                     Grid.Column="2"
                                     Foreground="{StaticResource TextFillColorSecondaryBrush}"
@@ -232,12 +233,12 @@
                                     FontSize="16"
                                     Text="临时数据" />
                                 <TextBlock
-                                    x:Name="TempCount"
                                     Margin="0,0,8,0"
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Center"
                                     FontSize="13"
-                                    Foreground="{StaticResource TextFillColorSecondaryBrush}" />
+                                    Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                    Text="{Binding ViewModel.TempCount, Mode=OneWay}" />
                                 <ui:SymbolIcon
                                     Grid.Column="2"
                                     Foreground="{StaticResource TextFillColorSecondaryBrush}"
@@ -273,6 +274,7 @@
                 <ui:CardExpander
                     Margin="0,4,0,0"
                     ContentPadding="0"
+                    Expanded="ColorExpander_Expanded"
                     Icon="{ui:SymbolIcon Color24}">
                     <ui:CardExpander.Header>
                         <Grid>
@@ -550,9 +552,9 @@
                                     FontTypography="Body"
                                     Text="&amp;" />
                                 <ui:Anchor
+                                    x:Name="WpfUIVersion"
                                     Background="{x:Null}"
                                     BorderBrush="{x:Null}"
-                                    Content="WPF-UI 3.0.0"
                                     Cursor="Hand"
                                     NavigateUri="https://wpfui.lepo.co/"
                                     ToolTipService.ToolTip="WPF UI provides the Fluent experience in your known and loved WPF framework. Intuitive design, themes, navigation and new immersive controls. All natively and effortlessly.">

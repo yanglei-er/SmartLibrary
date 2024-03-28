@@ -1,5 +1,4 @@
-﻿using SmartLibrary.Helpers;
-using SmartLibrary.ViewModels;
+﻿using SmartLibrary.ViewModels;
 using System.IO;
 using System.Reflection;
 using Wpf.Ui.Controls;
@@ -20,13 +19,17 @@ namespace SmartLibrary.Views.Pages
 
             AppVersion.Text = Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? string.Empty;
             DotNetVersion.Content = ".Net " + Environment.Version.ToString();
+            WpfUIVersion.Content = "WPF-UI " + "3.0.1";
         }
 
         private void FileOccupancyExpander_Expanded(object sender, RoutedEventArgs e)
         {
-            DataCount.Text = "数据库文件已占用 " + FileOccupancy.GetFileSize(Environment.CurrentDirectory + @".\database\books.smartlibrary");
-            PictureCacheCount.Text = "缓存文件已占用 " + FileOccupancy.GetDirectorySize(Environment.CurrentDirectory + @".\pictures\");
-            TempCount.Text = "临时文件已占用 " + FileOccupancy.GetDirectorySize(Environment.CurrentDirectory + @".\temp\");
+            ViewModel.FileOccupancyExpander_Expanded();
+        }
+
+        private void ColorExpander_Expanded(object sender, RoutedEventArgs e)
+        {
+            ViewModel.ColorExpander_Expanded();
         }
 
         private void AppFolderButton_Click(object sender, RoutedEventArgs e)
