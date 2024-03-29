@@ -13,6 +13,7 @@
                 <ui:ThemesDictionary Theme="Dark" />
                 <ui:ControlsDictionary />
                 <ResourceDictionary Source="pack://application:,,,/Style/MyButton.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Style/SelectableTextBlock.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <converters:StringToImageSourceConverter x:Key="StringToImageSourceConverter" />
             <converters:InverseBooleanConverter x:Key="InverseBooleanConverter" />

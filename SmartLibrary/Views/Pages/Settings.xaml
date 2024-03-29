@@ -483,18 +483,23 @@
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
                             <StackPanel Grid.Column="0">
-                                <ui:TextBlock FontSize="16" Text="智慧图书馆" />
-                                <ui:TextBlock
+                                <TextBox
+                                    FontSize="16"
+                                    Style="{StaticResource SelectableTextBlockStyle}"
+                                    Text="智慧图书馆" />
+                                <TextBox
                                     FontSize="13"
                                     Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                    Style="{StaticResource SelectableTextBlockStyle}"
                                     Text="©2024 赵杨磊.All Rights Reserved." />
                             </StackPanel>
-                            <ui:TextBlock
+                            <TextBox
                                 x:Name="AppVersion"
                                 Grid.Column="1"
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Center"
-                                FontSize="14" />
+                                FontSize="14"
+                                Style="{StaticResource SelectableTextBlockStyle}" />
                         </Grid>
                     </ui:CardExpander.Header>
                     <StackPanel>

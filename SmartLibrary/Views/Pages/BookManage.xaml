@@ -255,14 +255,22 @@
                 </Style>
             </ui:DataGrid.RowStyle>
             <ui:DataGrid.Columns>
-                <DataGridTextColumn
+                <DataGridTemplateColumn
                     Width="130"
-                    Binding="{Binding isbn, Mode=OneWay}"
                     CanUserResize="False"
                     CanUserSort="False"
-                    ElementStyle="{StaticResource CenterAlignmentStyle}"
                     Header="ISBN"
-                    IsReadOnly="True" />
+                    IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBox
+                                VerticalAlignment="Center"
+                                Style="{StaticResource SelectableTextBlockStyle}"
+                                Text="{Binding isbn, Mode=OneWay}"
+                                TextAlignment="Center" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
                 <DataGridTextColumn
                     Width="2*"
                     Binding="{Binding bookName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
