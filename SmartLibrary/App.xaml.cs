@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using SmartLibrary.Models;
 using SmartLibrary.Services;
+using SmartLibrary.Services.Contracts;
 using System.Windows.Threading;
 using Wpf.Ui;
 
@@ -21,21 +21,13 @@ namespace SmartLibrary
                     // App Host
                     services.AddHostedService<ApplicationHostService>();
 
-                    // Page resolver service
-                    services.AddSingleton<IPageService, PageService>();
-
-                    // ContentDialog manipulation
-                    services.AddSingleton<IContentDialogService, ContentDialogService>();
-
-                    // SnackBar manipulation
-                    services.AddSingleton<ISnackbarService, SnackbarService>();
-
-                    // Service containing navigation, same as INavigationWindow... but without window
-                    services.AddSingleton<INavigationService, NavigationService>();
-
-                    // Main window with navigation
-                    services.AddSingleton<INavigationWindow, Views.MainWindow>();
+                    // Main window container with navigation
+                    services.AddSingleton<IWindow, Views.MainWindow>();
                     services.AddSingleton<ViewModels.MainWindowViewModel>();
+                    services.AddSingleton<IContentDialogService, ContentDialogService>();
+                    services.AddSingleton<ISnackbarService, SnackbarService>();
+                    services.AddSingleton<INavigationService, NavigationService>();
+                    services.AddSingleton<WindowsProviderService>();
 
                     // Views and ViewModels
                     services.AddSingleton<Views.Pages.Home>();
@@ -57,9 +49,6 @@ namespace SmartLibrary
                     services.AddTransient<ViewModels.AddBookViewModel>();
                     services.AddTransient<Views.Pages.EditBook>();
                     services.AddTransient<ViewModels.EditBookViewModel>();
-
-                    // Configuration
-                    services.Configure<AppConfig>(context.Configuration.GetSection(nameof(AppConfig)));
                 }
             ).Build();
 
@@ -69,14 +58,20 @@ namespace SmartLibrary
             return _host.Services.GetService(typeof(T)) as T;
         }
 
-        private async void OnStartup(object sender, StartupEventArgs e)
+        public static T GetRequiredService<T>()
+        where T : class
         {
-            await _host.StartAsync();
+            return _host.Services.GetRequiredService<T>();
         }
 
-        private async void OnExit(object sender, ExitEventArgs e)
+        private void OnStartup(object sender, StartupEventArgs e)
         {
-            await _host.StopAsync();
+            _host.Start();
+        }
+
+        private void OnExit(object sender, ExitEventArgs e)
+        {
+            _host.StopAsync().Wait();
             _host.Dispose();
         }
 

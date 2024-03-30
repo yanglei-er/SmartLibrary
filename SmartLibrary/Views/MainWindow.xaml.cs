@@ -1,4 +1,6 @@
 ﻿using SmartLibrary.Helpers;
+using SmartLibrary.Services.Contracts;
+using SmartLibrary.ViewModels;
 using System.Windows.Interop;
 using Wpf.Ui;
 using Wpf.Ui.Appearance;
@@ -6,12 +8,16 @@ using Wpf.Ui.Controls;
 
 namespace SmartLibrary.Views
 {
-    public partial class MainWindow : INavigationWindow
+    public partial class MainWindow : IWindow
     {
         private readonly ISnackbarService _snackbarService;
-        public ViewModels.MainWindowViewModel ViewModel { get; }
+        public MainWindowViewModel ViewModel { get; }
 
-        public MainWindow(ViewModels.MainWindowViewModel viewModel, IPageService pageService, INavigationService navigationService, ISnackbarService snackbarService, IContentDialogService contentDialogService)
+        public MainWindow(MainWindowViewModel viewModel,
+        INavigationService navigationService,
+        IServiceProvider serviceProvider,
+        ISnackbarService snackbarService,
+        IContentDialogService contentDialogService)
         {
             LoadingSettings();
 
@@ -19,7 +25,7 @@ namespace SmartLibrary.Views
             DataContext = this;
             InitializeComponent();
 
-            SetPageService(pageService);
+            RootNavigation.SetServiceProvider(serviceProvider);
             navigationService.SetNavigationControl(RootNavigation);
             snackbarService.SetSnackbarPresenter(SnackbarPresenter);
             contentDialogService.SetContentPresenter(RootContentDialog);
@@ -68,29 +74,5 @@ namespace SmartLibrary.Views
             base.OnClosed(e);
             Application.Current.Shutdown();
         }
-
-        INavigationView INavigationWindow.GetNavigation()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void SetServiceProvider(IServiceProvider serviceProvider)
-        {
-            throw new NotImplementedException();
-        }
-
-        #region INavigationWindow methods
-
-        public INavigationView GetNavigation() => RootNavigation;
-
-        public bool Navigate(Type pageType) => RootNavigation.Navigate(pageType);
-
-        public void SetPageService(IPageService pageService) => RootNavigation.SetPageService(pageService);
-
-        public void ShowWindow() => Show();
-
-        public void CloseWindow() => Close();
-
-        #endregion INavigationWindow methods
     }
 }

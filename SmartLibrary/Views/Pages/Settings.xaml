@@ -333,7 +333,7 @@
                         <Border
                             Grid.Column="1"
                             Width="1"
-                            Background="{DynamicResource ControlFillColorDefaultBrush}" />
+                            Background="{DynamicResource ControlElevationBorderBrush}" />
                         <Grid Grid.Column="2" Margin="26,16,0,0">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
@@ -573,6 +573,22 @@
                                 </ui:Anchor>
                             </StackPanel>
                         </Grid>
+                        <Border BorderBrush="{DynamicResource ControlElevationBorderBrush}" BorderThickness="0,1,0,0">
+                            <DockPanel Margin="16" LastChildFill="False">
+                                <ui:TextBlock
+                                    VerticalAlignment="Center"
+                                    DockPanel.Dock="Left"
+                                    FontSize="16"
+                                    Text="克隆本仓库" />
+                                <TextBox
+                                    VerticalAlignment="Center"
+                                    DockPanel.Dock="Right"
+                                    FontSize="14"
+                                    Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                    Style="{StaticResource SelectableTextBlockStyle}"
+                                    Text="git clone https://github.com/yanglei-er/SmartLibrary.git" />
+                            </DockPanel>
+                        </Border>
                         <ui:Anchor
                             Padding="16"
                             HorizontalAlignment="Stretch"
