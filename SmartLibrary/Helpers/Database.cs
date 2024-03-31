@@ -336,6 +336,16 @@ namespace SmartLibrary.Helpers
             return [mergedCount, repeatedCount];
         }
 
+        public async ValueTask<DataTable> GetBookList(int pageIndex, int pageSize)
+        {
+            StringBuilder sbr = new();
+            sbr.AppendLine("SELECT isbn,bookName,author,press,picture FROM main LIMIT ");
+            sbr.AppendLine(pageSize.ToString());
+            sbr.AppendLine(" OFFSET ");
+            sbr.AppendLine((pageIndex - 1 * pageSize).ToString());
+            return await ExecuteDataTableAsync(sbr.ToString());
+        }
+
         public async ValueTask<BookInfo> GetOneBookInfoAsync(string isbn)
         {
             BookInfo book = new();

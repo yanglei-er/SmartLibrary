@@ -114,7 +114,7 @@
                                     VerticalAlignment="Center"
                                     FontSize="24"
                                     FontTypography="Subtitle"
-                                    Text="{Binding Name, Mode=OneWay}" />
+                                    Text="{Binding Name, Mode=OneTime}" />
                             </Grid>
                             <Grid Grid.Column="1">
                                 <Grid.RowDefinitions>
@@ -146,7 +146,7 @@
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Center"
                                     FontTypography="Body"
-                                    Text="{Binding Address, Mode=OneWay}" />
+                                    Text="{Binding Address, Mode=OneTime}" />
                                 <ui:TextBlock
                                     Grid.Row="1"
                                     Grid.Column="1"
@@ -154,7 +154,7 @@
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Center"
                                     FontTypography="Body"
-                                    Text="{Binding ClassOfDevice, Mode=OneWay}" />
+                                    Text="{Binding ClassOfDevice, Mode=OneTime}" />
                             </Grid>
                         </Grid>
                     </DataTemplate>

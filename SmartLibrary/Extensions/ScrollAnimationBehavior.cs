@@ -6,11 +6,11 @@ namespace SmartLibrary.Extensions
 {
     public partial class ScrollAnimationBehavior
     {
-        public static double intendedLocation = 0;
+        private static double intendedLocation = 0;
 
         #region VerticalOffset Property
 
-        public static DependencyProperty VerticalOffsetProperty =
+        private static readonly DependencyProperty VerticalOffsetProperty =
             DependencyProperty.RegisterAttached("VerticalOffset",
                                                 typeof(double),
                                                 typeof(ScrollAnimationBehavior),
@@ -30,7 +30,7 @@ namespace SmartLibrary.Extensions
 
         #region TimeDuration Property
 
-        public static DependencyProperty TimeDurationProperty =
+        public static readonly DependencyProperty TimeDurationProperty =
             DependencyProperty.RegisterAttached("TimeDuration",
                                                 typeof(TimeSpan),
                                                 typeof(ScrollAnimationBehavior),
@@ -50,7 +50,7 @@ namespace SmartLibrary.Extensions
 
         #region PointsToScroll Property
 
-        public static DependencyProperty PointsToScrollProperty =
+        public static readonly DependencyProperty PointsToScrollProperty =
             DependencyProperty.RegisterAttached("PointsToScroll",
                                                 typeof(double),
                                                 typeof(ScrollAnimationBehavior),
@@ -82,7 +82,7 @@ namespace SmartLibrary.Extensions
 
         #region IsEnabled Property
 
-        public static DependencyProperty IsEnabledProperty =
+        public static readonly DependencyProperty IsEnabledProperty =
                                                 DependencyProperty.RegisterAttached("IsEnabled",
                                                 typeof(bool),
                                                 typeof(ScrollAnimationBehavior),
@@ -105,13 +105,9 @@ namespace SmartLibrary.Extensions
         private static void OnIsEnabledChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
             var target = sender;
-
-            if (target != null && target is ScrollViewer)
+            if (target is ScrollViewer scroller)
             {
-                if (target is ScrollViewer scroller)
-                {
-                    scroller.Loaded += new RoutedEventHandler(ScrollerLoaded);
-                }
+                scroller.Loaded += new RoutedEventHandler(ScrollerLoaded);
             }
         }
 
@@ -190,7 +186,7 @@ namespace SmartLibrary.Extensions
 
         private static void ScrollViewerPreviewMouseWheel(object sender, MouseWheelEventArgs e)
         {
-            double mouseWheelChange = (double)e.Delta;
+            double mouseWheelChange = e.Delta;
             ScrollViewer scroller = (ScrollViewer)sender;
             double newVOffset = intendedLocation - (mouseWheelChange * 2);
             //We got hit by the mouse again. jump to the offset.

@@ -102,26 +102,29 @@
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
-                            <ui:TextBlock
+                            <ui:TextBox
                                 Grid.Row="0"
                                 HorizontalAlignment="Center"
                                 FontSize="24"
+                                Style="{StaticResource SelectableTextBlockStyle}"
                                 Text="{Binding ViewModel.BookNameText, Mode=OneWay}"
                                 TextAlignment="Center"
                                 TextWrapping="Wrap" />
-                            <ui:TextBlock
+                            <ui:TextBox
                                 Grid.Row="1"
                                 Margin="0,8,0,0"
                                 HorizontalAlignment="Center"
                                 FontSize="24"
+                                Style="{StaticResource SelectableTextBlockStyle}"
                                 Text="{Binding ViewModel.AuthorText, Mode=OneWay}"
                                 TextAlignment="Center"
                                 TextWrapping="Wrap" />
-                            <ui:TextBlock
+                            <ui:TextBox
                                 Grid.Row="2"
                                 Margin="0,8,0,0"
                                 HorizontalAlignment="Center"
                                 FontSize="24"
+                                Style="{StaticResource SelectableTextBlockStyle}"
                                 Text="{Binding ViewModel.PressText, Mode=OneWay}"
                                 TextAlignment="Center"
                                 TextWrapping="Wrap" />

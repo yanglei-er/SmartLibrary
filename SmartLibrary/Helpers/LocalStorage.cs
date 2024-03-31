@@ -1,6 +1,7 @@
 ﻿using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Processing;
+using SmartLibrary.Models;
 using System.IO;
 using System.Text.RegularExpressions;
 
@@ -13,6 +14,9 @@ namespace SmartLibrary.Helpers
 
         public delegate void LoadingCompletedEventHandler(string path);
         public event LoadingCompletedEventHandler LoadingCompleted = delegate { };
+
+        public delegate void BookShelfPictureLoadingCompletedEventHandler(ImageQueueInfo t);
+        public event BookShelfPictureLoadingCompletedEventHandler BookShelfPictureLoadigCompleted = delegate { };
 
         private static readonly Network network = Network.Instance;
 
@@ -135,6 +139,46 @@ namespace SmartLibrary.Helpers
                     else
                     {
                         LoadingCompleted("Error");
+                    }
+                }
+            }
+        }
+
+        public async void GetBookShelfPicture(ImageQueueInfo t)
+        {
+            if (string.IsNullOrEmpty(t.Url))
+            {
+                BookShelfPictureLoadigCompleted(t);
+            }
+            else
+            {
+                string localFilePath = @".\pictures\" + t.Isbn + ".jpg";
+                if (File.Exists(localFilePath))
+                {
+                    t.Url = Path.GetFullPath(localFilePath);
+                    BookShelfPictureLoadigCompleted(t);
+                }
+                else
+                {
+                    if (ValidHttpURL(t.Url, out _))
+                    {
+                        if (await SavePictureAsync(localFilePath, t.Url))
+                        {
+                            await Task.Delay(300);
+                            t.Url = Path.GetFullPath(localFilePath);
+                            BookShelfPictureLoadigCompleted(t);
+                        }
+                        else
+                        {
+                            t.Url = string.Empty;
+                            BookShelfPictureLoadigCompleted(t);
+                        }
+
+                    }
+                    else
+                    {
+                        t.Url = string.Empty;
+                        BookShelfPictureLoadigCompleted(t);
                     }
                 }
             }

@@ -128,6 +128,7 @@ namespace SmartLibrary.ViewModels
             else
             {
                 Picture = path;
+                PictureLoadingText = "添加图片";
             }
             IsPictureLoading = false;
         }

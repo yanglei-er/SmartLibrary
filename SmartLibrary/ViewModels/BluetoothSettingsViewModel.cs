@@ -114,8 +114,18 @@ namespace SmartLibrary.ViewModels
             }
             else
             {
-                var process = new Process { StartInfo = { FileName = "control", Arguments = "bthprops.cpl" } };
-                process.Start();
+                Process process = new();
+                process.StartInfo.FileName = "cmd.exe";
+                process.StartInfo.CreateNoWindow = true;//不显示程序窗口
+                process.StartInfo.UseShellExecute = false;//是否使用操作系统shell启动
+                process.StartInfo.RedirectStandardInput = true;//接受来自调用程序的输入信息
+                process.StartInfo.RedirectStandardOutput = true;//由调用程序获取输出信息
+                process.StartInfo.RedirectStandardError = true;//重定向标准错误输出
+                process.Start();//启动程序
+                process.StandardInput.WriteLine("start ms-settings:bluetooth &exit");
+                process.StandardInput.AutoFlush = true;
+                process.WaitForExit();
+                process.Close();
             }
         }
 

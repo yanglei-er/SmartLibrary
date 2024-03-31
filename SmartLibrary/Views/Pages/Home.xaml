@@ -96,7 +96,7 @@
                 <ui:CardAction
                     Grid.Column="0"
                     Margin="0,0,4,0"
-                    Padding="0"
+                    Padding="0" 
                     VerticalAlignment="Stretch"
                     Command="{Binding ViewModel.CardClickCommand, Mode=OneWay}"
                     CommandParameter="我要找书"

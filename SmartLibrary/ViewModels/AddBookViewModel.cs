@@ -165,7 +165,7 @@ namespace SmartLibrary.ViewModels
                 PictureUrl = bookInfo.Picture ?? string.Empty;
 
                 IsPictureLoading = true;
-                Picture = "正在加载图片";
+                PictureLoadingText = "正在加载图片";
                 localStorage.GetPicture(IsbnText, bookInfo.Picture);
 
                 ShelfNum = bookInfo.ShelfNumber.ToString();
@@ -241,6 +241,7 @@ namespace SmartLibrary.ViewModels
             else
             {
                 Picture = path;
+                PictureLoadingText = "添加图片";
             }
             IsPictureLoading = false;
         }

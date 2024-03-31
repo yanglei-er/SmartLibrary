@@ -3,20 +3,128 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:extensions="clr-namespace:SmartLibrary.Extensions"
     xmlns:local="clr-namespace:SmartLibrary.Views.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="clr-namespace:SmartLibrary.Models"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     Title="Bookshelf"
     d:DataContext="{d:DesignInstance local:Bookshelf,
                                      IsDesignTimeCreatable=False}"
-    d:DesignHeight="450"
-    d:DesignWidth="800"
+    d:DesignHeight="700"
+    d:DesignWidth="1180"
     ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
     ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
     Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+    ScrollViewer.CanContentScroll="False"
     mc:Ignorable="d">
 
-    <Grid Margin="16">
-        <ui:TextBlock Text="书架" />
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <ui:AutoSuggestBox
+            Grid.Row="0"
+            Margin="8,8,8,0"
+            PlaceholderText="搜索书名，作者等" />
+        <ItemsControl
+            x:Name="BooksList"
+            Grid.Row="1"
+            Margin="8,8,8,8"
+            d:ItemsSource="{d:SampleData ItemCount=6}"
+            ItemsSource="{Binding ViewModel.BookListItems, Mode=OneWay}">
+            <ItemsControl.Template>
+                <ControlTemplate TargetType="ItemsControl">
+                    <ScrollViewer
+                        extensions:ScrollAnimationBehavior.IsEnabled="True"
+                        extensions:ScrollAnimationBehavior.PointsToScroll="16"
+                        extensions:ScrollAnimationBehavior.TimeDuration="00:00:00.20">
+                        <ItemsPresenter Margin="-12,0,16,0" />
+                    </ScrollViewer>
+                </ControlTemplate>
+            </ItemsControl.Template>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate DataType="{x:Type models:BookShelfInfo}">
+                    <ui:CardAction
+                        Margin="12,0,0,12"
+                        Padding="0"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        Command="{Binding ElementName=BooksList, Path=DataContext.ViewModel.BookInfoCommand, Mode=OneWay}"
+                        CommandParameter="{Binding Isbn, Mode=OneTime}"
+                        IsChevronVisible="False">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid Grid.Column="0">
+                                <ui:Image
+                                    Width="120"
+                                    Height="173"
+                                    extensions:ImageDecoder.Isbn="{Binding Isbn, Mode=OneTime}"
+                                    extensions:ImageDecoder.Source="{Binding Picture, Mode=OneTime}"
+                                    CornerRadius="4,0,0,4"
+                                    RenderOptions.BitmapScalingMode="HighQuality"
+                                    Stretch="UniformToFill" />
+                                <ui:ProgressRing IsIndeterminate="True" />
+                            </Grid>
+                            <Grid Grid.Column="1">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+                                <StackPanel
+                                    Grid.Row="0"
+                                    Margin="12,4,12,0"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Top">
+                                    <ui:TextBlock
+                                        FontSize="18"
+                                        Text="{Binding BookName, Mode=OneTime}"
+                                        TextTrimming="CharacterEllipsis" />
+                                    <ui:TextBlock
+                                        Margin="0,4,0,0"
+                                        FontSize="16"
+                                        Text="{Binding Author, Mode=OneTime}"
+                                        TextTrimming="CharacterEllipsis" />
+                                    <ui:TextBlock
+                                        Margin="0,2,0,0"
+                                        Text="{Binding Press, Mode=OneTime}"
+                                        TextTrimming="CharacterEllipsis" />
+                                </StackPanel>
+                                <Border
+                                    Grid.Row="1"
+                                    Width="65"
+                                    Height="25"
+                                    Margin="0,0,8,8"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Bottom"
+                                    Background="{ui:ThemeResource ControlFillColorDefaultBrush}"
+                                    CornerRadius="4">
+                                    <TextBlock
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        FontSize="12"
+                                        Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                        Text="详细信息" />
+                                </Border>
+                            </Grid>
+                        </Grid>
+                    </ui:CardAction>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <ui:VirtualizingWrapPanel
+                        IsItemsHost="True"
+                        ItemSize="360,185"
+                        Orientation="Vertical"
+                        SpacingMode="Uniform"
+                        StretchItems="True" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+        </ItemsControl>
     </Grid>
 </Page>
