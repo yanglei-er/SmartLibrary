@@ -67,27 +67,16 @@ namespace SmartLibrary.Helpers
         {
             while (true)
             {
-                ImageQueueInfo? t = null;
                 lock (Stacks)
                 {
                     if (Stacks.Count > 0)
                     {
-                        t = Stacks.Dequeue();
-                    }
-                }
-                if (t != null)
-                {
-                    if(downloadingCount < 6)
-                    {
+                        ImageQueueInfo? t = Stacks.Dequeue();
                         _storage.GetBookShelfPicture(t);
                         downloadingCount++;
                     }
-                    else
-                    {
-                        autoEvent.WaitOne();
-                    }
                 }
-                if (Stacks.Count > 0)
+                if (Stacks.Count > 0 && downloadingCount < 6)
                 {
                     continue;
                 }
