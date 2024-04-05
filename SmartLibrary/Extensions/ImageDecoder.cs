@@ -42,7 +42,7 @@ namespace SmartLibrary.Extensions
             ImageQueue.OnComplate += ImageQueue_OnComplate;
         }
 
-        private static void ImageQueue_OnComplate(Image i, string u, BitmapImage b)
+        private static void ImageQueue_OnComplate(Image i, BitmapImage b)
         {
             i.Source = b;
             Storyboard storyboard = new();
@@ -60,7 +60,7 @@ namespace SmartLibrary.Extensions
                     {
                         progressring.IsIndeterminate = false;
                         progressring.Visibility = Visibility.Collapsed;
-                        break;
+                        return;
                     }
                 }
             }

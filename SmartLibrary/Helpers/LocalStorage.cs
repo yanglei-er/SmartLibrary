@@ -144,41 +144,41 @@ namespace SmartLibrary.Helpers
             }
         }
 
-        public async void GetBookShelfPicture(ImageQueueInfo t)
+        public async void GetBookShelfPicture(ImageQueueInfo imageInfo)
         {
-            if (string.IsNullOrEmpty(t.Url))
+            if (string.IsNullOrEmpty(imageInfo.Url))
             {
-                BookShelfPictureLoadigCompleted(t);
+                BookShelfPictureLoadigCompleted(imageInfo);
             }
             else
             {
-                string localFilePath = @".\pictures\" + t.Isbn + ".jpg";
+                string localFilePath = @".\pictures\" + imageInfo.Isbn + ".jpg";
                 if (File.Exists(localFilePath))
                 {
-                    t.Url = Path.GetFullPath(localFilePath);
-                    BookShelfPictureLoadigCompleted(t);
+                    imageInfo.Url = Path.GetFullPath(localFilePath);
+                    BookShelfPictureLoadigCompleted(imageInfo);
                 }
                 else
                 {
-                    if (ValidHttpURL(t.Url, out _))
+                    if (ValidHttpURL(imageInfo.Url, out _))
                     {
-                        if (await SavePictureAsync(localFilePath, t.Url))
+                        if (await SavePictureAsync(localFilePath, imageInfo.Url))
                         {
                             await Task.Delay(300);
-                            t.Url = Path.GetFullPath(localFilePath);
-                            BookShelfPictureLoadigCompleted(t);
+                            imageInfo.Url = Path.GetFullPath(localFilePath);
+                            BookShelfPictureLoadigCompleted(imageInfo);
                         }
                         else
                         {
-                            t.Url = string.Empty;
-                            BookShelfPictureLoadigCompleted(t);
+                            imageInfo.Url = string.Empty;
+                            BookShelfPictureLoadigCompleted(imageInfo);
                         }
 
                     }
                     else
                     {
-                        t.Url = string.Empty;
-                        BookShelfPictureLoadigCompleted(t);
+                        imageInfo.Url = string.Empty;
+                        BookShelfPictureLoadigCompleted(imageInfo);
                     }
                 }
             }

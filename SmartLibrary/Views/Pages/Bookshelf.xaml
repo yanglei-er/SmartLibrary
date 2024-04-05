@@ -66,6 +66,7 @@
                                     extensions:ImageDecoder.Isbn="{Binding Isbn, Mode=OneTime}"
                                     extensions:ImageDecoder.Source="{Binding Picture, Mode=OneTime}"
                                     CornerRadius="4,0,0,4"
+                                    Opacity="0"
                                     RenderOptions.BitmapScalingMode="HighQuality"
                                     Stretch="UniformToFill" />
                                 <ui:ProgressRing IsIndeterminate="True" />

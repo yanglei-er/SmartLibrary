@@ -13,52 +13,45 @@ namespace SmartLibrary.Helpers
         private static readonly LocalStorage _storage = new();
         private static int downloadingCount = 0;
 
-        public delegate void ComplateDelegate(Image i, string u, BitmapImage b);
+        public delegate void ComplateDelegate(Image image, BitmapImage bitmap);
         public static event ComplateDelegate OnComplate = delegate { };
 
         static ImageQueue()
         {
             _storage.BookShelfPictureLoadigCompleted += LoadingCompleted;
-            Thread t = new(new ThreadStart(DownloadImage))
+            Thread thread = new(new ThreadStart(DownloadImage))
             {
                 Name = "下载图片",
                 IsBackground = true
             };
-            t.Start();
+            thread.Start();
         }
 
-        private static void LoadingCompleted(ImageQueueInfo t)
+        private static void LoadingCompleted(ImageQueueInfo imageInfo)
         {
-            BitmapImage? bitmapImage = null;
-            if (!string.IsNullOrEmpty(t.Url))
+            using BinaryReader reader = new(File.Open(imageInfo.Url, FileMode.Open));
+            FileInfo fi = new(imageInfo.Url);
+            byte[] bytes = reader.ReadBytes((int)fi.Length);
+            reader.Close();
+
+            BitmapImage bitmapImage = new()
             {
-                using BinaryReader reader = new(File.Open(t.Url, FileMode.Open));
+                CacheOption = BitmapCacheOption.OnLoad
+            };
+            bitmapImage.BeginInit();
+            bitmapImage.StreamSource = new MemoryStream(bytes);
+            bitmapImage.EndInit();
 
-                FileInfo fi = new(t.Url);
-                byte[] bytes = reader.ReadBytes((int)fi.Length);
-                reader.Close();
-
-                bitmapImage = new()
-                {
-                    CacheOption = BitmapCacheOption.OnLoad
-                };
-
-                bitmapImage.BeginInit();
-                bitmapImage.StreamSource = new MemoryStream(bytes);
-                bitmapImage.EndInit();
-            }
-            if (bitmapImage != null)
+            if (bitmapImage.CanFreeze)
             {
-                if (bitmapImage.CanFreeze)
-                {
-                    bitmapImage.Freeze();
-                }
-
-                t.Image.Dispatcher.BeginInvoke(new Action<ImageQueueInfo, BitmapImage>((i, bmp) =>
-                {
-                    OnComplate(i.Image, i.Url, bmp);
-                }), [t, bitmapImage]);
+                bitmapImage.Freeze();
             }
+
+            imageInfo.Image.Dispatcher.BeginInvoke(new Action<ImageQueueInfo, BitmapImage>((image, bitmap) =>
+            {
+                OnComplate(image.Image, bitmap);
+            }), [imageInfo, bitmapImage]);
+
             downloadingCount--;
             autoEvent.Set();
         }

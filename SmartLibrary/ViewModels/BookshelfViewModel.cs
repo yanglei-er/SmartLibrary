@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using SmartLibrary.Helpers;
 using SmartLibrary.Models;
-using SmartLibrary.Views.Pages;
 using System.Collections.ObjectModel;
 using System.Data;
 using Wpf.Ui;
@@ -64,10 +63,8 @@ namespace SmartLibrary.ViewModels
         [RelayCommand]
         private void BookInfo(string isbn)
         {
-            //_navigationService.Navigate(typeof(Views.Pages.BookInfo));
-            //WeakReferenceMessenger.Default.Send(isbn, "BookInfo");
-            _navigationService.NavigateWithHierarchy(typeof(EditBook));
-            WeakReferenceMessenger.Default.Send(isbn, "EditBook");
+            _navigationService.Navigate(typeof(Views.Pages.BookInfo));
+            WeakReferenceMessenger.Default.Send(isbn, "BookInfo");
         }
     }
 }

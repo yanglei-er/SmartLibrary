@@ -37,6 +37,8 @@
     <None Remove="Assets\homeBluetooth.png" />
     <None Remove="Assets\homeSetting.png" />
     <None Remove="Assets\loading.gif" />
+    <None Remove="Assets\LoadingPictureError.png" />
+    <None Remove="Assets\PictureEmpty.png" />
     <None Remove="Assets\pic\cross.png" />
     <None Remove="Assets\pic\right.png" />
     <None Remove="Assets\pic\tick.png" />
@@ -61,6 +63,8 @@
     <Resource Include="Assets\gplv3-127x51.png" />
     <Resource Include="Assets\homeBluetooth.png" />
     <Resource Include="Assets\homeSetting.png" />
+    <Resource Include="Assets\LoadingPictureError.png" />
+    <Resource Include="Assets\PictureEmpty.png" />
     <Resource Include="Assets\pic\cross.png" />
     <Resource Include="Assets\pic\right.png" />
     <Resource Include="Assets\pic\tick.png" />
