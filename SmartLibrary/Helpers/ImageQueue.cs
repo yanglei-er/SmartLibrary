@@ -29,18 +29,26 @@ namespace SmartLibrary.Helpers
 
         private static void LoadingCompleted(ImageQueueInfo imageInfo)
         {
-            using BinaryReader reader = new(File.Open(imageInfo.Url, FileMode.Open));
-            FileInfo fi = new(imageInfo.Url);
-            byte[] bytes = reader.ReadBytes((int)fi.Length);
-            reader.Close();
-
-            BitmapImage bitmapImage = new()
+            BitmapImage? bitmapImage = null;
+            if (imageInfo.Url.StartsWith("pack"))
             {
-                CacheOption = BitmapCacheOption.OnLoad
-            };
-            bitmapImage.BeginInit();
-            bitmapImage.StreamSource = new MemoryStream(bytes);
-            bitmapImage.EndInit();
+                bitmapImage = new(new Uri(imageInfo.Url));
+            }
+            else
+            {
+                using BinaryReader reader = new(File.Open(imageInfo.Url, FileMode.Open));
+                FileInfo fi = new(imageInfo.Url);
+                byte[] bytes = reader.ReadBytes((int)fi.Length);
+                reader.Close();
+
+                bitmapImage = new()
+                {
+                    CacheOption = BitmapCacheOption.OnLoad
+                };
+                bitmapImage.BeginInit();
+                bitmapImage.StreamSource = new MemoryStream(bytes);
+                bitmapImage.EndInit();
+            }
 
             if (bitmapImage.CanFreeze)
             {

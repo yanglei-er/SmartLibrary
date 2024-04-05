@@ -403,6 +403,18 @@ namespace SmartLibrary.Helpers
             return await ExecuteDataTableAsync(sql);
         }
 
+        public async ValueTask<DataTable> AutoSuggestBookShelfInfoByStringAsync(string str)
+        {
+            string sql = $"SELECT isbn,bookName,author,press,picture FROM main WHERE bookName LIKE '%{str}%' OR author LIKE '%{str}%'";
+            return await ExecuteDataTableAsync(sql);
+        }
+
+        public async ValueTask<DataTable> AutoSuggestBookShelfInfoByNumAsync(int num)
+        {
+            string sql = $"SELECT isbn,bookName,author,press,picture FROM main WHERE shelfNumber = {num}";
+            return await ExecuteDataTableAsync(sql);
+        }
+
         public async void BorrowBookAsync(string isbn)
         {
             string sql = $"UPDATE main SET isBorrowed = 1 WHERE isbn = '{isbn}'";

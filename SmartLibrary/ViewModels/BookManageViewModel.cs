@@ -268,6 +268,7 @@ namespace SmartLibrary.ViewModels
                     {
                         RefreshAsync();
                         PagerAsync();
+                        WeakReferenceMessenger.Default.Send(string.Empty, "Bookshelf");
                     }
                     _snackbarService.Show("导入数据库", $"{fileNames.Count} 个数据库已导入，共 {mergedResult[0] + mergedResult[1]} 条数据，导入 {mergedResult[0]} 条，重复 {mergedResult[1]} 条。", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
                 }
@@ -282,7 +283,7 @@ namespace SmartLibrary.ViewModels
                 };
                 if (saveFileDialog.ShowDialog() == true)
                 {
-                    System.IO.File.Copy(@".\database\books.smartlibrary", saveFileDialog.FileName, true);
+                    File.Copy(@".\database\books.smartlibrary", saveFileDialog.FileName, true);
                     _snackbarService.Show("导出数据库", $"{System.IO.Path.GetFileName(saveFileDialog.FileName)} 已导出至 {System.IO.Path.GetDirectoryName(saveFileDialog.FileName)} 下", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
                 }
             }
@@ -339,6 +340,7 @@ namespace SmartLibrary.ViewModels
                     TotalCount = DataGridItems.Count;
                 }
             }
+            WeakReferenceMessenger.Default.Send(string.Empty, "Bookshelf");
         }
 
         [RelayCommand]
@@ -364,6 +366,7 @@ namespace SmartLibrary.ViewModels
                 }
                 TotalCount--;
             }
+            WeakReferenceMessenger.Default.Send(string.Empty, "Bookshelf");
         }
 
         [RelayCommand]
@@ -449,6 +452,7 @@ namespace SmartLibrary.ViewModels
         public void UpdateSimple(BookInfoSimple bookInfo)
         {
             BooksDb.UpdateSimpleAsync(bookInfo.Isbn, bookInfo.BookName, bookInfo.Author, bookInfo.ShelfNumber, bookInfo.IsBorrowed);
+            WeakReferenceMessenger.Default.Send(string.Empty, "Bookshelf");
         }
 
         public void CheckBox_Click(string isbn, bool value)
@@ -496,20 +500,6 @@ namespace SmartLibrary.ViewModels
                 RefreshAsync();
                 PagerAsync();
             }
-        }
-    }
-
-    public record class PageButton
-    {
-        public string Name { get; init; }
-        public bool IsCurrentPage { get; init; }
-        public bool IsEnabled { get; init; }
-
-        public PageButton(string name, bool isCurrentPage = false, bool isEnabled = true)
-        {
-            Name = name;
-            IsCurrentPage = isCurrentPage;
-            IsEnabled = isEnabled;
         }
     }
 }

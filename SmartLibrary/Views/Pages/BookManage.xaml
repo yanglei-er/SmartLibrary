@@ -175,11 +175,14 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <ui:AutoSuggestBox
+            <ui:TextBox
                 Grid.Column="0"
+                Icon="{ui:SymbolIcon Search24}"
+                IconPlacement="Right"
                 IsEnabled="{Binding ViewModel.IsTopbarEnabled, Mode=OneWay}"
-                PlaceholderText="快速查找ISBN、书名、作者、书架号"
-                Text="{Binding ViewModel.AutoSuggestBoxText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                PlaceholderText="快速查找ISBN、书名、作者、书架号..."
+                PreviewKeyDown="TextBox_PreviewKeyDown"
+                Text="{Binding ViewModel.AutoSuggestBoxText, Mode=TwoWay}" />
             <ui:Button
                 Grid.Column="1"
                 Height="35"

@@ -43,13 +43,13 @@ namespace SmartLibrary.Helpers
                     }
                     else
                     {
-                        LoadingCompleted("Error");
+                        LoadingCompleted("pack://application:,,,/Assets/LoadingPictureError.png");
                     }
                 }
             }
             else
             {
-                LoadingCompleted(string.Empty);
+                LoadingCompleted("pack://application:,,,/Assets/PictureEmpty.png");
             }
         }
 
@@ -112,7 +112,7 @@ namespace SmartLibrary.Helpers
         {
             if (string.IsNullOrEmpty(path))
             {
-                LoadingCompleted(string.Empty);
+                LoadingCompleted("pack://application:,,,/Assets/PictureEmpty.png");
             }
             else
             {
@@ -132,13 +132,13 @@ namespace SmartLibrary.Helpers
                         }
                         else
                         {
-                            LoadingCompleted("Error");
+                            LoadingCompleted("pack://application:,,,/Assets/LoadingPictureError.png");
                         }
 
                     }
                     else
                     {
-                        LoadingCompleted("Error");
+                        LoadingCompleted("pack://application:,,,/Assets/LoadingPictureError.png");
                     }
                 }
             }
@@ -148,6 +148,7 @@ namespace SmartLibrary.Helpers
         {
             if (string.IsNullOrEmpty(imageInfo.Url))
             {
+                imageInfo.Url = "pack://application:,,,/Assets/PictureEmpty.png";
                 BookShelfPictureLoadigCompleted(imageInfo);
             }
             else
@@ -170,14 +171,14 @@ namespace SmartLibrary.Helpers
                         }
                         else
                         {
-                            imageInfo.Url = string.Empty;
+                            imageInfo.Url = "pack://application:,,,/Assets/LoadingPictureError.png";
                             BookShelfPictureLoadigCompleted(imageInfo);
                         }
 
                     }
                     else
                     {
-                        imageInfo.Url = string.Empty;
+                        imageInfo.Url = "pack://application:,,,/Assets/LoadingPictureError.png";
                         BookShelfPictureLoadigCompleted(imageInfo);
                     }
                 }

@@ -24,9 +24,6 @@ namespace SmartLibrary.ViewModels
         private bool _isPictureLoading = false;
 
         [ObservableProperty]
-        private string _pictureLoadingText = "添加图片";
-
-        [ObservableProperty]
         private bool _isbnBoxEnabled = true;
 
         [ObservableProperty]
@@ -105,7 +102,7 @@ namespace SmartLibrary.ViewModels
         private string _language = string.Empty;
 
         [ObservableProperty]
-        private string _picture = string.Empty;
+        private string _picture = "pack://application:,,,/Assets/PictureEmpty.png";
 
         private string PictureUrl = string.Empty;
 
@@ -165,7 +162,6 @@ namespace SmartLibrary.ViewModels
                 PictureUrl = bookInfo.Picture ?? string.Empty;
 
                 IsPictureLoading = true;
-                PictureLoadingText = "正在加载图片";
                 localStorage.GetPicture(IsbnText, bookInfo.Picture);
 
                 ShelfNum = bookInfo.ShelfNumber.ToString();
@@ -206,8 +202,8 @@ namespace SmartLibrary.ViewModels
                             BookDesc = dataElement.GetProperty("bookDesc").GetString() ?? string.Empty;
                             Language = dataElement.GetProperty("language").GetString() ?? string.Empty;
                             PictureUrl = (dataElement.GetProperty("pictures").GetString() ?? string.Empty).Replace("[\"", "").Replace("\"]", "");
+                            Picture = string.Empty;
                             IsPictureLoading = true;
-                            PictureLoadingText = "正在加载图片";
                             localStorage.SearchPicture(IsbnText, PictureUrl);
                         }
                         else
@@ -233,16 +229,7 @@ namespace SmartLibrary.ViewModels
 
         private void LoadingCompleted(string path)
         {
-            if (path == "Error")
-            {
-                PictureLoadingText = "图片加载失败";
-                Picture = string.Empty;
-            }
-            else
-            {
-                Picture = path;
-                PictureLoadingText = "添加图片";
-            }
+            Picture = path;
             IsPictureLoading = false;
         }
 
@@ -296,16 +283,19 @@ namespace SmartLibrary.ViewModels
             }
             else
             {
-                if (await _contentDialogService.ShowSimpleDialogAsync(new SimpleContentDialogCreateOptions()
+                if (Picture != "pack://application:,,,/Assets/PictureEmpty.png")
                 {
-                    Title = "更改书籍信息",
-                    Content = "是否将书籍图片设为空？",
-                    PrimaryButtonText = "是",
-                    CloseButtonText = "否",
-                }) == ContentDialogResult.Primary)
-                {
-                    PictureUrl = string.Empty;
-                    Picture = string.Empty;
+                    if (await _contentDialogService.ShowSimpleDialogAsync(new SimpleContentDialogCreateOptions()
+                    {
+                        Title = "更改书籍信息",
+                        Content = "是否将书籍图片设为空？",
+                        PrimaryButtonText = "是",
+                        CloseButtonText = "否",
+                    }) == ContentDialogResult.Primary)
+                    {
+                        PictureUrl = string.Empty;
+                        Picture = "pack://application:,,,/Assets/PictureEmpty.png";
+                    }
                 }
             }
         }
@@ -365,6 +355,7 @@ namespace SmartLibrary.ViewModels
                     _snackbarService.Show("添加成功", $"书籍《{BookName}》已添加到数据库中。", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
                     IsbnText = string.Empty;
                     WeakReferenceMessenger.Default.Send(string.Empty, "BookManage");
+                    WeakReferenceMessenger.Default.Send(string.Empty, "Bookshelf");
                 }
                 else
                 {
@@ -400,7 +391,7 @@ namespace SmartLibrary.ViewModels
             Pages = string.Empty;
             BookDesc = string.Empty;
             Language = string.Empty;
-            Picture = string.Empty;
+            Picture = "pack://application:,,,/Assets/PictureEmpty.png";
             ShelfNum = string.Empty;
             IsBorrowed = false;
         }

@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using SixLabors.ImageSharp;
+using System.Globalization;
 using System.IO;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
@@ -13,20 +14,28 @@ namespace SmartLibrary.Converters
             BitmapImage? bitmapImage = null;
             if (!string.IsNullOrEmpty(path))
             {
-                using BinaryReader reader = new(File.Open(path, FileMode.Open));
-
-                FileInfo fi = new(path);
-                byte[] bytes = reader.ReadBytes((int)fi.Length);
-                reader.Close();
-
-                bitmapImage = new()
+                if (path.StartsWith("pack"))
                 {
-                    CacheOption = BitmapCacheOption.OnLoad
-                };
-
-                bitmapImage.BeginInit();
-                bitmapImage.StreamSource = new MemoryStream(bytes);
-                bitmapImage.EndInit();
+                    bitmapImage = new(new Uri(path));
+                }
+                else
+                {
+                    using BinaryReader reader = new(File.Open(path, FileMode.Open));
+                    FileInfo fi = new(path);
+                    byte[] bytes = reader.ReadBytes((int)fi.Length);
+                    reader.Close();
+                    bitmapImage = new()
+                    {
+                        CacheOption = BitmapCacheOption.OnLoad
+                    };
+                    bitmapImage.BeginInit();
+                    bitmapImage.StreamSource = new MemoryStream(bytes);
+                    bitmapImage.EndInit();
+                }
+                if (bitmapImage.CanFreeze)
+                {
+                    bitmapImage.Freeze();
+                }
             }
             return bitmapImage;
         }

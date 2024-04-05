@@ -22,9 +22,6 @@ namespace SmartLibrary.ViewModels
         private bool _isPictureLoading = false;
 
         [ObservableProperty]
-        private string _pictureLoadingText = "添加图片";
-
-        [ObservableProperty]
         public bool _isEditButtonEnabled = false;
 
         [ObservableProperty]
@@ -110,7 +107,6 @@ namespace SmartLibrary.ViewModels
             PictureUrl = bookInfo.Picture ?? string.Empty;
 
             IsPictureLoading = true;
-            PictureLoadingText = "正在加载图片";
             localStorage.GetPicture(IsbnText, bookInfo.Picture);
 
             ShelfNum = bookInfo.ShelfNumber.ToString();
@@ -120,16 +116,7 @@ namespace SmartLibrary.ViewModels
 
         private void LoadingCompleted(string path)
         {
-            if (path == "Error")
-            {
-                PictureLoadingText = "图片加载失败";
-                Picture = string.Empty;
-            }
-            else
-            {
-                Picture = path;
-                PictureLoadingText = "添加图片";
-            }
+            Picture = path;
             IsPictureLoading = false;
         }
 
@@ -153,18 +140,20 @@ namespace SmartLibrary.ViewModels
             }
             else
             {
-                System.Media.SystemSounds.Asterisk.Play();
-                if (await _contentDialogService.ShowSimpleDialogAsync(new SimpleContentDialogCreateOptions()
+                if (Picture != "pack://application:,,,/Assets/PictureEmpty.png")
                 {
-                    Title = "更改书籍信息",
-                    Content = "是否将书籍图片设为空？",
-                    PrimaryButtonText = "是",
-                    CloseButtonText = "否",
-                }) == ContentDialogResult.Primary)
-                {
-                    Picture = string.Empty;
-                    PictureUrl = string.Empty;
-                    IsEditButtonEnabled = true;
+                    if (await _contentDialogService.ShowSimpleDialogAsync(new SimpleContentDialogCreateOptions()
+                    {
+                        Title = "更改书籍信息",
+                        Content = "是否将书籍图片设为空？",
+                        PrimaryButtonText = "是",
+                        CloseButtonText = "否",
+                    }) == ContentDialogResult.Primary)
+                    {
+                        Picture = "pack://application:,,,/Assets/PictureEmpty.png";
+                        PictureUrl = string.Empty;
+                        IsEditButtonEnabled = true;
+                    }
                 }
             }
         }
@@ -218,6 +207,7 @@ namespace SmartLibrary.ViewModels
                 _snackbarService.Show("更改成功", $"书籍《{BookName}》信息已更新。", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
                 IsEditButtonEnabled = false;
                 WeakReferenceMessenger.Default.Send(string.Empty, "BookManage");
+                WeakReferenceMessenger.Default.Send(string.Empty, "Bookshelf");
             }
             else
             {
