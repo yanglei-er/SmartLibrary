@@ -34,7 +34,7 @@ namespace SmartLibrary.Views
 #if RELEASE
             Loaded += Window_Loaded;
 #endif
-            BluetoothHelper.Instance.BleStateChangedEvent += OnBleStateChanged;
+            BluetoothHelper.BleStateChangedEvent += OnBleStateChanged;
         }
 
         private void LoadingSettings()
@@ -51,7 +51,7 @@ namespace SmartLibrary.Views
         {
             WindowInteropHelper helper = new(this);
             HwndSource hwndSource = HwndSource.FromHwnd(helper.Handle);
-            hwndSource.AddHook(new HwndSourceHook(BluetoothHelper.Instance.HwndHandler));  //挂钩
+            hwndSource.AddHook(new HwndSourceHook(BluetoothHelper.HwndHandler));
         }
 
         private void OnBleStateChanged(bool state)
@@ -69,8 +69,8 @@ namespace SmartLibrary.Views
 
         protected override void OnClosed(EventArgs e)
         {
-            BluetoothHelper.Instance.BleStateChangedEvent -= OnBleStateChanged;
-            BluetoothHelper.Instance.StartDisconnect();
+            BluetoothHelper.BleStateChangedEvent -= OnBleStateChanged;
+            BluetoothHelper.StartDisconnect();
             base.OnClosed(e);
             Application.Current.Shutdown();
         }

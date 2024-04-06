@@ -72,8 +72,9 @@ namespace SmartLibrary.ViewModels
         {
             _navigationService = navigationService;
             _snackbarService = snackbarService;
-            WeakReferenceMessenger.Default.Register<string, string>(this, "BookInfo", OnMessageReceived);
+
             localStorage.LoadingCompleted += LoadingCompleted;
+            WeakReferenceMessenger.Default.Register<string, string>(this, "BookInfo", OnMessageReceived);
         }
 
         private async void OnMessageReceived(object recipient, string message)
@@ -103,6 +104,54 @@ namespace SmartLibrary.ViewModels
         {
             Picture = path;
             IsPictureLoading = false;
+        }
+
+        partial void OnBookNameChanged(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                BookNameText = string.Empty;
+            }
+            else
+            {
+                BookNameText = $"《{value}》";
+            }
+        }
+
+        partial void OnAuthorChanged(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                AuthorText = string.Empty;
+            }
+            else
+            {
+                AuthorText = "作者：" + value;
+            }
+        }
+
+        partial void OnPressChanged(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                PressText = string.Empty;
+            }
+            else
+            {
+                PressText = "出版社：" + value;
+            }
+        }
+
+        [RelayCommand]
+        private void Go()
+        {
+
+        }
+
+        [RelayCommand]
+        private void NavigateBack()
+        {
+            _navigationService.GoBack();
         }
     }
 }

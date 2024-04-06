@@ -2,52 +2,57 @@
 using InTheHand.Net.Bluetooth;
 using InTheHand.Net.Sockets;
 using SmartLibrary.Models;
+using System.IO;
 using System.Net.NetworkInformation;
+using System.Text;
+using System.Timers;
 
 namespace SmartLibrary.Helpers
 {
-    public sealed class BluetoothHelper
+    public static class BluetoothHelper
     {
-        private static BluetoothHelper? _instance;
-        private BluetoothClient? bluetoothClient;
-        private BluetoothRadio? bluetoothRadio;
+        private static BluetoothClient? bluetoothClient;
+        private static BluetoothRadio? bluetoothRadio;
+
+        private static System.Timers.Timer ListenerTimer;
 
         public delegate void ConnectEventHandler(string info);
 
-        public event ConnectEventHandler ConnectEvent = delegate { };
+        public static event ConnectEventHandler ConnectEvent = delegate { };
 
         public delegate void DiscoverDeviceEventHandler(BluetoothDevice deviceInfo);
 
-        public event DiscoverDeviceEventHandler DiscoverDevice = delegate { };
+        public static event DiscoverDeviceEventHandler DiscoverDevice = delegate { };
 
         public delegate void DiscoverCompleteEventHandler(string info);
 
-        public event DiscoverCompleteEventHandler DiscoverComplete = delegate { };
+        public static event DiscoverCompleteEventHandler DiscoverComplete = delegate { };
 
-        public static BluetoothHelper Instance
-        {
-            get
-            {
-                _instance ??= new BluetoothHelper();
-                return _instance;
-            }
-        }
+        public delegate void ReceiveEventHandler(string message);
 
-        private BluetoothHelper()
+        public static event ReceiveEventHandler ReceiveEvent = delegate { };
+
+        static BluetoothHelper()
         {
             _previousBleState = IsPlatformSupportBT();
+            ListenerTimer = new(200)
+            {
+                Enabled = false,
+                AutoReset = true
+            };
+            ListenerTimer.Elapsed += Listener;
         }
 
         #region 蓝牙状态改变
         public delegate void BleStateChangedEventHandler(bool state);
 
-        public event BleStateChangedEventHandler BleStateChangedEvent = delegate { };
+        public static event BleStateChangedEventHandler BleStateChangedEvent = delegate { };
 
-        public const int DBT_DEVNODES_CHANGED = 0x0007;
+        private const int DBT_DEVNODES_CHANGED = 0x0007;
         private const int WM_DEVICECHANGE = 0x0219;
-        public bool _previousBleState;
+        private static bool _previousBleState;
 
-        public IntPtr HwndHandler(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        public static IntPtr HwndHandler(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
             if (msg == WM_DEVICECHANGE)
             {
@@ -65,7 +70,7 @@ namespace SmartLibrary.Helpers
         }
         #endregion 蓝牙状态改变
 
-        public bool IsPlatformSupportBT()
+        public static bool IsPlatformSupportBT()
         {
             NetworkInterface[] network = NetworkInterface.GetAllNetworkInterfaces();
             foreach (NetworkInterface networkInterface in network)
@@ -85,7 +90,7 @@ namespace SmartLibrary.Helpers
             return false;
         }
 
-        public bool IsBleConnected
+        public static bool IsBleConnected
         {
             get
             {
@@ -97,7 +102,7 @@ namespace SmartLibrary.Helpers
             }
         }
 
-        public void StartScan()
+        public static void StartScan()
         {
             BluetoothComponent bluetoothComponent = new(bluetoothClient);
             bluetoothComponent.DiscoverDevicesAsync(255, false, false, true, false, bluetoothComponent);
@@ -105,24 +110,24 @@ namespace SmartLibrary.Helpers
             bluetoothComponent.DiscoverDevicesComplete += BluetoothComponent_DiscoverComplete;
         }
 
-        private void BluetoothComponent_DiscoverDevice(object? sender, DiscoverDevicesEventArgs e)
+        private static void BluetoothComponent_DiscoverDevice(object? sender, DiscoverDevicesEventArgs e)
         {
             BluetoothDevice deviceInfo = new(e.Devices[0].DeviceName, e.Devices[0].DeviceAddress.ToString("C"), e.Devices[0].ClassOfDevice.MajorDevice.ToString(), e.Devices[0].Authenticated
                        );
             DiscoverDevice(deviceInfo);
         }
 
-        private void BluetoothComponent_DiscoverComplete(object? sender, DiscoverDevicesEventArgs e)
+        private static void BluetoothComponent_DiscoverComplete(object? sender, DiscoverDevicesEventArgs e)
         {
             DiscoverComplete("完成");
         }
 
-        public void StartConnect(BluetoothDevice device)
+        public static void StartConnect(BluetoothDevice device)
         {
             Task.Run(() => ConnectAction(device));
         }
 
-        private void ConnectAction(BluetoothDevice device)
+        private static void ConnectAction(BluetoothDevice device)
         {
             BluetoothAddress btAddress = BluetoothAddress.Parse(device.Address);
 
@@ -150,7 +155,7 @@ namespace SmartLibrary.Helpers
             }
         }
 
-        public void StartDisconnect()
+        public static void StartDisconnect()
         {
             if (bluetoothClient != null)
             {
@@ -158,6 +163,44 @@ namespace SmartLibrary.Helpers
                 {
                     bluetoothClient.Close();
                     bluetoothClient = new BluetoothClient();
+                }
+            }
+        }
+
+        public static async void Send(string message)
+        {
+            if (!string.IsNullOrEmpty(message))
+            {
+                if (bluetoothClient != null)
+                {
+                    Stream bluetoothStream = bluetoothClient.GetStream();
+                    byte[] buffer = Encoding.UTF8.GetBytes(message);
+                    await bluetoothStream.WriteAsync(buffer);
+                    await bluetoothStream.FlushAsync();
+                    bluetoothStream.Close();
+
+                    ListenerTimer.Start();
+                }
+            }
+        }
+
+        private static async void Listener(object? obj, ElapsedEventArgs args)
+        {
+            if (bluetoothClient != null)
+            {
+                try
+                {
+                    Stream bluetoothStream = bluetoothClient.GetStream();
+                    byte[] buffer = [255];
+                    await Task.Delay(300);
+                    await bluetoothStream.ReadAsync(buffer);
+                    string message = Encoding.UTF8.GetString(buffer).Replace("\0", "");
+                    ReceiveEvent(message);
+                    ListenerTimer.Stop();
+                }
+                catch
+                {
+
                 }
             }
         }

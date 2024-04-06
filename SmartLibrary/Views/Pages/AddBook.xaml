@@ -153,6 +153,7 @@
                             <ui:Image
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch"
+                                CornerRadius="4"
                                 RenderOptions.BitmapScalingMode="HighQuality"
                                 Source="{Binding ViewModel.Picture, Converter={StaticResource StringToImageSourceConverter}, Mode=OneWay}"
                                 Stretch="UniformToFill" />

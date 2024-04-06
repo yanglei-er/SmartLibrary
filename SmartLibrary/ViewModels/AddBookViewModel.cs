@@ -119,7 +119,7 @@ namespace SmartLibrary.ViewModels
             _contentDialogService = contentDialogService;
             localStorage.LoadingCompleted += LoadingCompleted;
 
-            if (BluetoothHelper.Instance.IsBleConnected)
+            if (BluetoothHelper.IsBleConnected)
             {
                 IsbnBoxPlaceholderText = "请扫描或输入13位ISBN码";
                 IsScanButtonEnabled = true;

@@ -318,7 +318,7 @@ namespace SmartLibrary.ViewModels
         [RelayCommand]
         private void BookInfo(string isbn)
         {
-            _navigationService.Navigate(typeof(Views.Pages.BookInfo));
+            _navigationService.Navigate(typeof(Views.Pages.Borrow_Return_Book));
             WeakReferenceMessenger.Default.Send(isbn, "BookInfo");
         }
     }

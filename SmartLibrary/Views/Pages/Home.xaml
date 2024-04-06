@@ -28,63 +28,55 @@
                     RenderOptions.BitmapScalingMode="HighQuality"
                     Stretch="UniformToFill" />
             </Border.Background>
-            <Border CornerRadius="8,0,0,0">
-                <Border.Background>
-                    <RadialGradientBrush>
-                        <GradientStop Offset="0" Color="#1F000000" />
-                        <GradientStop Offset="1" Color="#4F000000" />
-                    </RadialGradientBrush>
-                </Border.Background>
-                <Grid>
-                    <StackPanel
-                        Margin="48,0"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Center">
-                        <ui:TextBlock
-                            FontSize="48"
-                            FontTypography="TitleLarge"
-                            Foreground="#FFFFFF"
-                            Text="智慧图书馆">
-                            <TextBlock.Effect>
-                                <DropShadowEffect
-                                    BlurRadius="12"
-                                    Direction="240"
-                                    ShadowDepth="4" />
-                            </TextBlock.Effect>
-                        </ui:TextBlock>
-                        <ui:TextBlock
-                            FontTypography="Subtitle"
-                            Foreground="#FFFFFF"
-                            Text="Manage books intelligently">
-                            <TextBlock.Effect>
-                                <DropShadowEffect
-                                    BlurRadius="8"
-                                    Direction="240"
-                                    ShadowDepth="3" />
-                            </TextBlock.Effect>
-                        </ui:TextBlock>
-                        <ui:TextBlock
-                            FontSize="16"
-                            FontTypography="BodyStrong"
-                            Foreground="#FFFFFF"
-                            Text="by using Smart Library System on Windows.">
-                            <TextBlock.Effect>
-                                <DropShadowEffect
-                                    BlurRadius="8"
-                                    Direction="240"
-                                    ShadowDepth="3" />
-                            </TextBlock.Effect>
-                        </ui:TextBlock>
-                    </StackPanel>
+            <Grid>
+                <StackPanel
+                    Margin="48,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center">
                     <ui:TextBlock
-                        Margin="0,0,12,8"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Bottom"
-                        FontTypography="Caption"
-                        Foreground="#57FFFFFF"
-                        Text="Created by Zhao Yanglei" />
-                </Grid>
-            </Border>
+                        FontSize="48"
+                        FontTypography="TitleLarge"
+                        Foreground="#FFFFFF"
+                        Text="未来书海领航员">
+                        <TextBlock.Effect>
+                            <DropShadowEffect
+                                BlurRadius="12"
+                                Direction="240"
+                                ShadowDepth="4" />
+                        </TextBlock.Effect>
+                    </ui:TextBlock>
+                    <ui:TextBlock
+                        FontTypography="Subtitle"
+                        Foreground="#FFFFFF"
+                        Text="Manage books intelligently">
+                        <TextBlock.Effect>
+                            <DropShadowEffect
+                                BlurRadius="8"
+                                Direction="240"
+                                ShadowDepth="3" />
+                        </TextBlock.Effect>
+                    </ui:TextBlock>
+                    <ui:TextBlock
+                        FontSize="16"
+                        FontTypography="BodyStrong"
+                        Foreground="#FFFFFF"
+                        Text="by using Smart Library System everywhere.">
+                        <TextBlock.Effect>
+                            <DropShadowEffect
+                                BlurRadius="8"
+                                Direction="240"
+                                ShadowDepth="3" />
+                        </TextBlock.Effect>
+                    </ui:TextBlock>
+                </StackPanel>
+                <ui:TextBlock
+                    Margin="0,0,12,8"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom"
+                    FontTypography="Caption"
+                    Foreground="#57FFFFFF"
+                    Text="Created by Zhao Yanglei" />
+            </Grid>
         </Border>
         <StackPanel Grid.Row="1" Margin="16,16,16,0">
             <Grid>
@@ -96,7 +88,7 @@
                 <ui:CardAction
                     Grid.Column="0"
                     Margin="0,0,4,0"
-                    Padding="0" 
+                    Padding="0"
                     VerticalAlignment="Stretch"
                     Command="{Binding ViewModel.CardClickCommand, Mode=OneWay}"
                     CommandParameter="我要找书"
