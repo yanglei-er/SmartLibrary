@@ -24,6 +24,7 @@
         <Style BasedOn="{StaticResource MyButtonStyle}" TargetType="ui:Button" />
         <converters:BoolToImageSourceConverter x:Key="BoolToImageSourceConverter" />
         <converters:BookExistedConverter x:Key="BookExistedConverter" />
+        <converters:BoolToPlaceholderTextConverter x:Key="BoolToPlaceholderTextConverter" />
     </Page.Resources>
 
     <Grid Margin="16">
@@ -56,7 +57,7 @@
                 FontSize="20"
                 IsEnabled="{Binding ViewModel.IsbnBoxEnabled, Mode=OneWay}"
                 MaxLength="13"
-                PlaceholderText="{Binding ViewModel.IsbnBoxPlaceholderText, Mode=OneWay}"
+                PlaceholderText="{Binding ViewModel.IsScanButtonEnabled, Converter={StaticResource BoolToPlaceholderTextConverter}, Mode=OneWay}"
                 PreviewKeyDown="IsbnBox_PreviewKeyDown"
                 Text="{Binding ViewModel.IsbnText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <ui:Image

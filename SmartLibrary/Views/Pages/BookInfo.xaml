@@ -133,7 +133,8 @@
                             Appearance="Primary"
                             Command="{Binding ViewModel.GoCommand, Mode=OneTime}"
                             Content="带我去"
-                            FontSize="24" />
+                            FontSize="24"
+                            IsEnabled="{Binding ViewModel.GoButtonEnabled, Mode=OneWay}" />
                         <ui:Button
                             Grid.Column="1"
                             Margin="8,0,0,0"

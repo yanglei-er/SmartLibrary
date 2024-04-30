@@ -27,9 +27,6 @@ namespace SmartLibrary.ViewModels
         private bool _isbnBoxEnabled = true;
 
         [ObservableProperty]
-        private string _isbnBoxPlaceholderText = "请输入13位ISBN码";
-
-        [ObservableProperty]
         private bool _isbnAttitudeVisible = false;
 
         [ObservableProperty]
@@ -121,7 +118,6 @@ namespace SmartLibrary.ViewModels
 
             if (BluetoothHelper.IsBleConnected)
             {
-                IsbnBoxPlaceholderText = "请扫描或输入13位ISBN码";
                 IsScanButtonEnabled = true;
             }
 

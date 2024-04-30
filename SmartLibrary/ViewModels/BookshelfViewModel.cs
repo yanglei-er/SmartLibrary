@@ -82,7 +82,7 @@ namespace SmartLibrary.ViewModels
 
         private void OnMessageReceived(object recipient, string message)
         {
-            if(message == "databaseConnect")
+            if (message == "databaseConnect")
             {
                 IsTopbarEnabled = true;
             }
@@ -318,7 +318,7 @@ namespace SmartLibrary.ViewModels
         [RelayCommand]
         private void BookInfo(string isbn)
         {
-            _navigationService.Navigate(typeof(Views.Pages.Borrow_Return_Book));
+            _navigationService.Navigate(typeof(Views.Pages.BookInfo));
             WeakReferenceMessenger.Default.Send(isbn, "BookInfo");
         }
     }

@@ -28,7 +28,7 @@ namespace SmartLibrary.Views
             RootNavigation.SetServiceProvider(serviceProvider);
             navigationService.SetNavigationControl(RootNavigation);
             snackbarService.SetSnackbarPresenter(SnackbarPresenter);
-            contentDialogService.SetContentPresenter(RootContentDialog);
+            contentDialogService.SetDialogHost(RootContentDialog);
 
             _snackbarService = snackbarService;
 #if RELEASE

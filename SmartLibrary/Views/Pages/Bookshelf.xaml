@@ -36,8 +36,7 @@
             IconPlacement="Right"
             IsEnabled="{Binding ViewModel.IsTopbarEnabled, Mode=OneWay}"
             PlaceholderText="搜索书名，作者、书架号..."
-            PreviewKeyDown="TextBox_PreviewKeyDown"
-            Text="{Binding ViewModel.AutoSuggestBoxText, Mode=TwoWay}" />
+            Text="{Binding ViewModel.AutoSuggestBoxText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Delay=500}" />
         <ItemsControl
             x:Name="BooksList"
             Grid.Row="1"
@@ -206,7 +205,7 @@
                             <ui:Button
                                 Margin="4,0,0,0"
                                 Appearance="{Binding IsCurrentPage, Converter={StaticResource BoolToAppearanceConverter}}"
-                                Command="{Binding ElementName=DataGrid, Path=DataContext.ViewModel.GotoPageCommand, Mode=OneWay}"
+                                Command="{Binding ElementName=BooksList, Path=DataContext.ViewModel.GotoPageCommand, Mode=OneWay}"
                                 CommandParameter="{Binding Name, Mode=OneWay}"
                                 Content="{Binding Name, Mode=OneWay}"
                                 IsEnabled="{Binding IsEnabled, Mode=OneWay}" />

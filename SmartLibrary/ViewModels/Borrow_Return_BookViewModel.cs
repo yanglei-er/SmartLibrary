@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using SmartLibrary.Helpers;
 using Wpf.Ui;
+using Wpf.Ui.Controls;
 
 namespace SmartLibrary.ViewModels
 {
@@ -12,7 +13,13 @@ namespace SmartLibrary.ViewModels
         private readonly ISnackbarService _snackbarService;
 
         [ObservableProperty]
+        private bool _isScanButtonEnabled = false;
+
+        [ObservableProperty]
         private bool _isPictureLoading = false;
+
+        [ObservableProperty]
+        private bool _borrow_Return_ButtonEnabled = false;
 
         [ObservableProperty]
         private string _isbnText = string.Empty;
@@ -74,7 +81,12 @@ namespace SmartLibrary.ViewModels
             _snackbarService = snackbarService;
 
             localStorage.LoadingCompleted += LoadingCompleted;
-            WeakReferenceMessenger.Default.Register<string, string>(this, "BookInfo", OnMessageReceived);
+            WeakReferenceMessenger.Default.Register<string, string>(this, "Borrow_Return_Book", OnMessageReceived);
+
+            if (BluetoothHelper.IsBleConnected)
+            {
+                IsScanButtonEnabled = true;
+            }
         }
 
         private async void OnMessageReceived(object recipient, string message)
@@ -98,12 +110,20 @@ namespace SmartLibrary.ViewModels
 
             ShelfNum = bookInfo.ShelfNumber.ToString();
             IsBorrowed = bookInfo.IsBorrowed;
+
+            Borrow_Return_ButtonEnabled = true;
         }
 
         private void LoadingCompleted(string path)
         {
             Picture = path;
             IsPictureLoading = false;
+        }
+
+        [RelayCommand]
+        private void OnScanButtonClick()
+        {
+            _snackbarService.Show("正在扫描", $"请将书置于亚克力板上", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(2));
         }
 
         partial void OnBookNameChanged(string value)
@@ -143,9 +163,28 @@ namespace SmartLibrary.ViewModels
         }
 
         [RelayCommand]
-        private void Go()
+        private void BorrowOrReturn()
         {
-
+            if (IsBorrowed)
+            {
+                if (BluetoothHelper.IsBleConnected)
+                {
+                    _snackbarService.Show("操作成功", $"{BookNameText}已还，小车即将启动，把书送回{ShelfNum}号书架。", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
+                    BluetoothHelper.Send("");
+                }
+                else
+                {
+                    _snackbarService.Show("操作成功", $"{BookNameText}已还，蓝牙未连接，小车无法自动将书送回", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
+                }
+                BooksDb.ReturnBookAsync(IsbnText);
+            }
+            else
+            {
+                _snackbarService.Show("操作成功", $"{BookNameText}已借出", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
+                BooksDb.BorrowBookAsync(IsbnText);
+            }
+            IsBorrowed = !IsBorrowed;
+            WeakReferenceMessenger.Default.Send("refresh", "BookInfo");
         }
 
         [RelayCommand]

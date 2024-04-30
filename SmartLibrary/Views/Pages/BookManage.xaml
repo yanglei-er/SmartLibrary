@@ -181,8 +181,7 @@
                 IconPlacement="Right"
                 IsEnabled="{Binding ViewModel.IsTopbarEnabled, Mode=OneWay}"
                 PlaceholderText="快速查找ISBN、书名、作者、书架号..."
-                PreviewKeyDown="TextBox_PreviewKeyDown"
-                Text="{Binding ViewModel.AutoSuggestBoxText, Mode=TwoWay}" />
+                Text="{Binding ViewModel.AutoSuggestBoxText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Delay=500}" />
             <ui:Button
                 Grid.Column="1"
                 Height="35"

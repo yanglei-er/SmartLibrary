@@ -22,6 +22,8 @@
     <Page.Resources>
         <Style BasedOn="{StaticResource MyButtonStyle}" TargetType="ui:Button" />
         <converters:BoolToImageSourceConverter x:Key="BoolToImageSourceConverter" />
+        <converters:BoolToBorrowOrReturnTextConverter x:Key="BoolToBorrowOrReturnTextConverter" />
+        <converters:BoolToPlaceholderTextConverter x:Key="BoolToPlaceholderTextConverter" />
     </Page.Resources>
 
     <Grid Margin="16">
@@ -30,11 +32,29 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <TextBox Name="XuNiBox" Width="0" />
-        <ui:TextBox
-            Grid.Row="0"
-            FontSize="24"
-            IsReadOnly="True"
-            Text="{Binding ViewModel.IsbnText, Mode=OneWay}" />
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <ui:Button
+                Grid.Column="0"
+                MinWidth="130"
+                Margin="0,0,8,0"
+                Appearance="Primary"
+                Command="{Binding ViewModel.ScanButtonClickCommand, Mode=OneWay}"
+                Content="扫描"
+                FontSize="24"
+                Visibility="{Binding ViewModel.IsScanButtonEnabled, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            <ui:TextBox
+                Grid.Column="1"
+                extensions:TextBoxAttachedProperties.IsOnlyNumber="True"
+                FontSize="24"
+                MaxLength="13"
+                PlaceholderText="{Binding ViewModel.IsScanButtonEnabled, Converter={StaticResource BoolToPlaceholderTextConverter}, Mode=OneWay}"
+                PreviewKeyDown="IsbnBox_PreviewKeyDown"
+                Text="{Binding ViewModel.IsbnText, Mode=TwoWay}" />
+        </Grid>
         <Grid Grid.Row="1" Margin="0,8,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="0.5*" />
@@ -131,9 +151,10 @@
                             Margin="0,0,8,0"
                             HorizontalAlignment="Stretch"
                             Appearance="Primary"
-                            Command="{Binding ViewModel.GoCommand, Mode=OneTime}"
-                            Content="返还"
-                            FontSize="24" />
+                            Command="{Binding ViewModel.BorrowOrReturnCommand, Mode=OneTime}"
+                            Content="{Binding ViewModel.IsBorrowed, Converter={StaticResource BoolToBorrowOrReturnTextConverter}, Mode=OneWay}"
+                            FontSize="24"
+                            IsEnabled="{Binding ViewModel.Borrow_Return_ButtonEnabled, Mode=OneWay}" />
                         <ui:Button
                             Grid.Column="1"
                             Margin="8,0,0,0"

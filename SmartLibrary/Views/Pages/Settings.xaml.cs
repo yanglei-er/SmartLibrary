@@ -19,7 +19,7 @@ namespace SmartLibrary.Views.Pages
 
             AppVersion.Text = Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? string.Empty;
             DotNetVersion.Content = ".Net " + Environment.Version.ToString();
-            WpfUIVersion.Content = "WPF-UI " + "3.0.3";
+            WpfUIVersion.Content = "WPF-UI " + "3.0.4";
         }
 
         private void FileOccupancyExpander_Expanded(object sender, RoutedEventArgs e)
