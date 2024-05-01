@@ -130,7 +130,7 @@ namespace SmartLibrary.ViewModels
         [RelayCommand]
         private void OnScanButtonClick()
         {
-
+            BluetoothHelper.Send("");
         }
 
         [RelayCommand]
@@ -350,8 +350,8 @@ namespace SmartLibrary.ViewModels
                     System.Media.SystemSounds.Asterisk.Play();
                     _snackbarService.Show("添加成功", $"书籍《{BookName}》已添加到数据库中。", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
                     IsbnText = string.Empty;
-                    WeakReferenceMessenger.Default.Send(string.Empty, "BookManage");
-                    WeakReferenceMessenger.Default.Send(string.Empty, "Bookshelf");
+                    WeakReferenceMessenger.Default.Send("refresh", "BookManage");
+                    WeakReferenceMessenger.Default.Send("refresh", "Bookshelf");
                 }
                 else
                 {

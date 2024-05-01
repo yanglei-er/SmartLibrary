@@ -268,7 +268,7 @@ namespace SmartLibrary.ViewModels
                     {
                         RefreshAsync();
                         PagerAsync();
-                        WeakReferenceMessenger.Default.Send(string.Empty, "Bookshelf");
+                        WeakReferenceMessenger.Default.Send("refresh", "Bookshelf");
                     }
                     _snackbarService.Show("导入数据库", $"{fileNames.Count} 个数据库已导入，共 {mergedResult[0] + mergedResult[1]} 条数据，导入 {mergedResult[0]} 条，重复 {mergedResult[1]} 条。", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
                 }
@@ -340,7 +340,9 @@ namespace SmartLibrary.ViewModels
                     TotalCount = DataGridItems.Count;
                 }
             }
-            WeakReferenceMessenger.Default.Send(string.Empty, "Bookshelf");
+            WeakReferenceMessenger.Default.Send("refresh", "Bookshelf");
+            WeakReferenceMessenger.Default.Send("refresh", "BookInfo");
+            WeakReferenceMessenger.Default.Send("refresh", "Borrow_Return_Book");
         }
 
         [RelayCommand]
@@ -366,7 +368,9 @@ namespace SmartLibrary.ViewModels
                 }
                 TotalCount--;
             }
-            WeakReferenceMessenger.Default.Send(string.Empty, "Bookshelf");
+            WeakReferenceMessenger.Default.Send("refresh", "Bookshelf");
+            WeakReferenceMessenger.Default.Send("." + isbn, "BookInfo");
+            WeakReferenceMessenger.Default.Send("." + isbn, "Borrow_Return_Book");
         }
 
         [RelayCommand]
@@ -452,7 +456,9 @@ namespace SmartLibrary.ViewModels
         public void UpdateSimple(BookInfoSimple bookInfo)
         {
             BooksDb.UpdateSimpleAsync(bookInfo.Isbn, bookInfo.BookName, bookInfo.Author, bookInfo.ShelfNumber, bookInfo.IsBorrowed);
-            WeakReferenceMessenger.Default.Send(string.Empty, "Bookshelf");
+            WeakReferenceMessenger.Default.Send("refresh", "Bookshelf");
+            WeakReferenceMessenger.Default.Send("." + bookInfo.Isbn, "BookInfo");
+            WeakReferenceMessenger.Default.Send("." + bookInfo.Isbn, "Borrow_Return_Book");
         }
 
         public void CheckBox_Click(string isbn, bool value)
@@ -465,6 +471,8 @@ namespace SmartLibrary.ViewModels
             {
                 BooksDb.ReturnBookAsync(isbn);
             }
+            WeakReferenceMessenger.Default.Send("." + isbn, "BookInfo");
+            WeakReferenceMessenger.Default.Send("." + isbn, "Borrow_Return_Book");
         }
 
         partial void OnAutoSuggestBoxTextChanged(string value)

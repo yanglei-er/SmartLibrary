@@ -83,7 +83,14 @@ namespace SmartLibrary.ViewModels
 
         private async void OnMessageReceived(object recipient, string message)
         {
-            if (message == "refresh")
+            if (message.StartsWith('.'))
+            {
+                if (IsbnText != message.Remove(0, 1))
+                {
+                    return;
+                }
+            }
+            else if (message == "refresh")
             {
 
             }
@@ -91,26 +98,33 @@ namespace SmartLibrary.ViewModels
             {
                 IsbnText = message;
             }
-            Models.BookInfo bookInfo = await BooksDb.GetOneBookInfoAsync(IsbnText);
-            BookName = bookInfo.BookName;
-            Author = bookInfo.Author;
-            Press = bookInfo.Press ?? string.Empty;
-            PressDate = bookInfo.PressDate ?? string.Empty;
-            PressPlace = bookInfo.PressPlace ?? string.Empty;
-            Price = bookInfo.Price ?? string.Empty;
-            ClcName = bookInfo.ClcName ?? string.Empty;
-            Words = bookInfo.Words ?? string.Empty;
-            Pages = bookInfo.Pages ?? string.Empty;
-            BookDesc = bookInfo.BookDesc ?? string.Empty;
-            Language = bookInfo.Language ?? string.Empty;
+            if (await BooksDb.ExistsAsync(IsbnText))
+            {
+                Models.BookInfo bookInfo = await BooksDb.GetOneBookInfoAsync(IsbnText);
+                BookName = bookInfo.BookName;
+                Author = bookInfo.Author;
+                Press = bookInfo.Press ?? string.Empty;
+                PressDate = bookInfo.PressDate ?? string.Empty;
+                PressPlace = bookInfo.PressPlace ?? string.Empty;
+                Price = bookInfo.Price ?? string.Empty;
+                ClcName = bookInfo.ClcName ?? string.Empty;
+                Words = bookInfo.Words ?? string.Empty;
+                Pages = bookInfo.Pages ?? string.Empty;
+                BookDesc = bookInfo.BookDesc ?? string.Empty;
+                Language = bookInfo.Language ?? string.Empty;
 
-            IsPictureLoading = true;
-            localStorage.GetPicture(IsbnText, bookInfo.Picture);
+                IsPictureLoading = true;
+                localStorage.GetPicture(IsbnText, bookInfo.Picture);
 
-            ShelfNum = bookInfo.ShelfNumber.ToString();
-            IsBorrowed = bookInfo.IsBorrowed;
+                ShelfNum = bookInfo.ShelfNumber.ToString();
+                IsBorrowed = bookInfo.IsBorrowed;
 
-            GoButtonEnabled = true;
+                GoButtonEnabled = true;
+            }
+            else
+            {
+                CleanAll();
+            }
         }
 
         private void LoadingCompleted(string path)
@@ -159,7 +173,6 @@ namespace SmartLibrary.ViewModels
         private void Go()
         {
             _navigationService.Navigate(typeof(Views.Pages.Borrow_Return_Book));
-            WeakReferenceMessenger.Default.Send(IsbnText, "Borrow_Return_Book");
 
             if (BluetoothHelper.IsBleConnected)
             {
@@ -176,6 +189,25 @@ namespace SmartLibrary.ViewModels
         private void NavigateBack()
         {
             _navigationService.GoBack();
+        }
+
+        private void CleanAll()
+        {
+            BookName = string.Empty;
+            Author = string.Empty;
+            Press = string.Empty;
+            PressDate = string.Empty;
+            PressPlace = string.Empty;
+            Price = string.Empty;
+            ClcName = string.Empty;
+            Words = string.Empty;
+            Pages = string.Empty;
+            BookDesc = string.Empty;
+            Language = string.Empty;
+            Picture = "pack://application:,,,/Assets/PictureEmpty.png";
+            ShelfNum = string.Empty;
+            IsBorrowed = false;
+            GoButtonEnabled = false;
         }
     }
 }

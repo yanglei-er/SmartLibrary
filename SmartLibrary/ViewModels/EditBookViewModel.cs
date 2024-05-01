@@ -206,8 +206,10 @@ namespace SmartLibrary.ViewModels
                 System.Media.SystemSounds.Asterisk.Play();
                 _snackbarService.Show("更改成功", $"书籍《{BookName}》信息已更新。", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
                 IsEditButtonEnabled = false;
-                WeakReferenceMessenger.Default.Send(string.Empty, "BookManage");
-                WeakReferenceMessenger.Default.Send(string.Empty, "Bookshelf");
+                WeakReferenceMessenger.Default.Send("refresh", "BookManage");
+                WeakReferenceMessenger.Default.Send("refresh", "Bookshelf");
+                WeakReferenceMessenger.Default.Send("." + IsbnText, "BookInfo");
+                WeakReferenceMessenger.Default.Send("." + IsbnText, "Borrow_Return_Book");
             }
             else
             {
