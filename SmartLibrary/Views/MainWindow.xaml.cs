@@ -37,7 +37,7 @@ namespace SmartLibrary.Views
             BluetoothHelper.BleStateChangedEvent += OnBleStateChanged;
         }
 
-        private void LoadingSettings()
+        private static void LoadingSettings()
         {
             ApplicationTheme theme = Helpers.Utils.GetUserApplicationTheme(SettingsHelper.GetConfig("Theme"));
             ApplicationThemeManager.Apply(theme);

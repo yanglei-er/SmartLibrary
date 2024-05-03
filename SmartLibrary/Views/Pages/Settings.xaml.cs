@@ -1,4 +1,5 @@
 ﻿using SmartLibrary.ViewModels;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using Wpf.Ui.Controls;
@@ -19,7 +20,7 @@ namespace SmartLibrary.Views.Pages
 
             AppVersion.Text = Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? string.Empty;
             DotNetVersion.Content = ".Net " + Environment.Version.ToString();
-            WpfUIVersion.Content = "WPF-UI " + "3.0.4";
+            WpfUIVersion.Content = "WPF-UI " + (FileVersionInfo.GetVersionInfo("./Wpf.Ui.dll").ProductVersion ?? string.Empty).Split("+")[0];
         }
 
         private void FileOccupancyExpander_Expanded(object sender, RoutedEventArgs e)
@@ -34,28 +35,28 @@ namespace SmartLibrary.Views.Pages
 
         private void AppFolderButton_Click(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start("explorer.exe", Environment.CurrentDirectory);
+            Process.Start("explorer.exe", Environment.CurrentDirectory);
         }
 
         private void BooksDataButton_Click(object sender, RoutedEventArgs e)
         {
             string path = Environment.CurrentDirectory + @".\database\";
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
-            System.Diagnostics.Process.Start("explorer.exe", path);
+            Process.Start("explorer.exe", path);
         }
 
         private void PictureCacheButton_Click(object sender, RoutedEventArgs e)
         {
             string path = Environment.CurrentDirectory + @".\pictures\";
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
-            System.Diagnostics.Process.Start("explorer.exe", path);
+            Process.Start("explorer.exe", path);
         }
 
         private void TempButton_Click(object sender, RoutedEventArgs e)
         {
             string path = Environment.CurrentDirectory + @".\temp\";
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
-            System.Diagnostics.Process.Start("explorer.exe", path);
+            Process.Start("explorer.exe", path);
         }
     }
 }

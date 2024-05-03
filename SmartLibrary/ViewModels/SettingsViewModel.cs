@@ -24,11 +24,11 @@ namespace SmartLibrary.ViewModels
         [ObservableProperty]
         private bool _isFileOccupancyExpanded = false;
         [ObservableProperty]
-        private string _dataCount = string.Empty;
+        private string _dataCount = "正在计算";
         [ObservableProperty]
-        private string _pictureCacheCount = string.Empty;
+        private string _pictureCacheCount = "正在计算";
         [ObservableProperty]
-        private string _tempCount = string.Empty;
+        private string _tempCount = "正在计算";
         #endregion FileOccupancy
 
         [ObservableProperty]
@@ -75,6 +75,7 @@ namespace SmartLibrary.ViewModels
         partial void OnAutoStartChanged(bool value)
         {
             SettingsHelper.SetConfig("AutoStart", value.ToString());
+            AutoStartSettings.SetMeAutoStart(value);
         }
 
         partial void OnAutoStartMinimizedChanged(bool value)
