@@ -49,7 +49,8 @@
                 Command="{Binding ViewModel.ScanButtonClickCommand, Mode=OneWay}"
                 Content="扫描"
                 FontSize="24"
-                Visibility="{Binding ViewModel.IsScanButtonEnabled, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                IsEnabled="{Binding ViewModel.IsScanButtonEnabled, Mode=OneWay}"
+                Visibility="{Binding ViewModel.IsScanButtonVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
             <ui:TextBox
                 Name="IsbnBox"
                 Grid.Column="1"

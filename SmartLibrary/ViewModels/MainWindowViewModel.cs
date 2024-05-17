@@ -1,5 +1,5 @@
-﻿using System.Collections.ObjectModel;
-using Wpf.Ui;
+﻿using SmartLibrary.Helpers;
+using System.Collections.ObjectModel;
 using Wpf.Ui.Controls;
 
 namespace SmartLibrary.ViewModels
@@ -12,7 +12,7 @@ namespace SmartLibrary.ViewModels
         [ObservableProperty]
         private ObservableCollection<object> _navigationFooter = [];
 
-        public MainWindowViewModel(INavigationService navigationService)
+        public MainWindowViewModel()
         {
             NavigationItems =
                 [
@@ -42,27 +42,30 @@ namespace SmartLibrary.ViewModels
                     }
                 ];
 
-            NavigationFooter =
-                [
-                    new NavigationViewItem()
-                    {
-                        Content = "管理",
-                        Icon = new SymbolIcon { Symbol = SymbolRegular.Apps24 },
-                        TargetPageType = typeof(Views.Pages.BookManage)
-                    },
-                    new NavigationViewItem()
-                    {
-                        Content = "蓝牙",
-                        Icon = new SymbolIcon { Symbol = SymbolRegular.Bluetooth24 },
-                        TargetPageType = typeof(Views.Pages.BluetoothSettings)
-                    },
-                    new NavigationViewItem()
-                    {
-                        Content = "设置",
-                        Icon = new SymbolIcon { Symbol = SymbolRegular.Settings24 },
-                        TargetPageType = typeof(Views.Pages.Settings)
-                    }
-                ];
+            if (Convert.ToBoolean(SettingsHelper.GetConfig("IsAdministrator")))
+            {
+                NavigationFooter.Add(new NavigationViewItem()
+                {
+                    Content = "管理",
+                    Icon = new SymbolIcon { Symbol = SymbolRegular.Apps24 },
+                    TargetPageType = typeof(Views.Pages.BookManage)
+                });
+            }
+
+
+            NavigationFooter.Add(new NavigationViewItem()
+            {
+                Content = "蓝牙",
+                Icon = new SymbolIcon { Symbol = SymbolRegular.Bluetooth24 },
+                TargetPageType = typeof(Views.Pages.BluetoothSettings)
+            });
+
+            NavigationFooter.Add(new NavigationViewItem()
+            {
+                Content = "设置",
+                Icon = new SymbolIcon { Symbol = SymbolRegular.Settings24 },
+                TargetPageType = typeof(Views.Pages.Settings)
+            });
         }
     }
 }

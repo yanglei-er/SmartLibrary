@@ -466,6 +466,26 @@
                 <ui:TextBlock
                     Margin="0,12,0,0"
                     FontTypography="Subtitle"
+                    Text="高级设置" />
+                <ui:CardControl Margin="0,8,0,0" Icon="{ui:SymbolIcon Crown20}">
+                    <ui:CardControl.Header>
+                        <StackPanel>
+                            <ui:TextBlock FontSize="16" Text="管理员模式" />
+                            <ui:TextBlock
+                                FontSize="13"
+                                Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                Text="获取管理员权限以进行书籍添加、删除等操作" />
+                        </StackPanel>
+                    </ui:CardControl.Header>
+                    <ui:ToggleSwitch
+                        Margin="0,0,8,0"
+                        IsChecked="{Binding ViewModel.IsAdministrator, Mode=TwoWay}"
+                        OffContent="关"
+                        OnContent="开" />
+                </ui:CardControl>
+                <ui:TextBlock
+                    Margin="0,12,0,0"
+                    FontTypography="Subtitle"
                     Text="关于" />
                 <ui:CardExpander Margin="0,8,0,0" ContentPadding="0">
                     <ui:CardExpander.Icon>

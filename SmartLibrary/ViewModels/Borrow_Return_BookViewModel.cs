@@ -14,7 +14,19 @@ namespace SmartLibrary.ViewModels
         private readonly ISnackbarService _snackbarService;
 
         [ObservableProperty]
-        private bool _isScanButtonEnabled = false;
+        private bool _isScanButtonEnabled = true;
+
+        [ObservableProperty]
+        private bool _isScanButtonVisible = false;
+
+        [ObservableProperty]
+        private bool _isSearchButtonEnabled = false;
+
+        [ObservableProperty]
+        private bool _isbnAttitudeVisible = false;
+
+        [ObservableProperty]
+        private string _isbnAttitudeImage = "pack://application:,,,/Assets/pic/wrong.png";
 
         [ObservableProperty]
         private bool _isPictureLoading = false;
@@ -82,11 +94,12 @@ namespace SmartLibrary.ViewModels
             _snackbarService = snackbarService;
 
             localStorage.LoadingCompleted += LoadingCompleted;
+            BluetoothHelper.ReceiveEvent += OnBluetoothReceived;
             WeakReferenceMessenger.Default.Register<string, string>(this, "Borrow_Return_Book", OnMessageReceived);
 
             if (BluetoothHelper.IsBleConnected)
             {
-                IsScanButtonEnabled = true;
+                IsScanButtonVisible = true;
             }
         }
 
@@ -132,7 +145,7 @@ namespace SmartLibrary.ViewModels
             }
             else
             {
-                CleanAll();
+                CleanExceptIsbn();
             }
         }
 
@@ -146,21 +159,43 @@ namespace SmartLibrary.ViewModels
         private void OnScanButtonClick()
         {
             _snackbarService.Show("正在扫描", $"请将书置于亚克力板上", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(2));
+            BluetoothHelper.Send("scan");
+            IsScanButtonEnabled = false;
         }
 
-        partial void OnIsbnTextChanged(string? oldValue, string newValue)
+        private void OnBluetoothReceived(string info)
         {
-            if (string.IsNullOrEmpty(newValue))
+            IsScanButtonEnabled = true;
+        }
+
+        [RelayCommand]
+        public void OnSearchButtonClick()
+        {
+            OnMessageReceived(this, IsbnText);
+        }
+
+        partial void OnIsbnTextChanged(string value)
+        {
+            if (string.IsNullOrEmpty(value))
             {
-                OnMessageReceived(this, newValue);
-            }
-            else if (newValue.Length != 13)
-            {
-                IsbnText = oldValue ?? string.Empty;
+                IsbnAttitudeVisible = false;
+                IsSearchButtonEnabled = false;
+                CleanExceptIsbn();
             }
             else
             {
-                OnMessageReceived(this, newValue);
+                IsbnAttitudeVisible = true;
+                if (value.Length == 13)
+                {
+                    IsbnAttitudeImage = "pack://application:,,,/Assets/pic/right.png";
+                    IsSearchButtonEnabled = true;
+                }
+                else
+                {
+                    IsbnAttitudeImage = "pack://application:,,,/Assets/pic/wrong.png";
+                    IsSearchButtonEnabled = false;
+                    CleanExceptIsbn();
+                }
             }
         }
 
@@ -232,7 +267,7 @@ namespace SmartLibrary.ViewModels
             _navigationService.Navigate(typeof(Views.Pages.Bookshelf));
         }
 
-        private void CleanAll()
+        private void CleanExceptIsbn()
         {
             BookName = string.Empty;
             Author = string.Empty;

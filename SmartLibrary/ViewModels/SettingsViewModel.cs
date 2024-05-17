@@ -1,5 +1,6 @@
 ﻿using SmartLibrary.Helpers;
 using System.Windows.Media;
+using Wpf.Ui;
 using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
 using Wpf.Ui.Extensions;
@@ -8,6 +9,8 @@ namespace SmartLibrary.ViewModels
 {
     public partial class SettingsViewModel : ObservableObject, INavigationAware
     {
+        private readonly INavigationService _navigationService;
+
         [ObservableProperty]
         private bool _autoStart = Convert.ToBoolean(SettingsHelper.GetConfig("AutoStart"));
 
@@ -57,9 +60,12 @@ namespace SmartLibrary.ViewModels
         [ObservableProperty]
         private int _currentBackdropIndex = Helpers.Utils.GetCurrentBackdropIndex(SettingsHelper.GetConfig("Backdrop"));
 
-        public SettingsViewModel()
-        {
+        [ObservableProperty]
+        private bool _isAdministrator = Convert.ToBoolean(SettingsHelper.GetConfig("IsAdministrator"));
 
+        public SettingsViewModel(INavigationService navigationService)
+        {
+            _navigationService = navigationService;
         }
 
         public void OnNavigatedTo()
@@ -202,6 +208,24 @@ namespace SmartLibrary.ViewModels
             else
             {
                 SettingsHelper.SetConfig("Backdrop", "Tabbed");
+            }
+        }
+
+        partial void OnIsAdministratorChanged(bool value)
+        {
+            SettingsHelper.SetConfig("IsAdministrator", value.ToString());
+            if (value)
+            {
+                _navigationService.GetNavigationControl().FooterMenuItems.Insert(0, new NavigationViewItem()
+                {
+                    Content = "管理",
+                    Icon = new SymbolIcon { Symbol = SymbolRegular.Apps24 },
+                    TargetPageType = typeof(Views.Pages.BookManage)
+                });
+            }
+            else
+            {
+                _navigationService.GetNavigationControl().FooterMenuItems.RemoveAt(0);
             }
         }
     }

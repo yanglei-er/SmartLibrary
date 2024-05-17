@@ -21,9 +21,14 @@ namespace SmartLibrary.Views.Pages
             {
                 if (sender is TextBox isbnBox)
                 {
-                    if (isbnBox.Text.Length == 13 || string.IsNullOrEmpty(isbnBox.Text))
+                    if(string.IsNullOrEmpty(isbnBox.Text))
                     {
                         XuNiBox.Focus();
+                    }
+                    else if (isbnBox.Text.Length == 13)
+                    {
+                        XuNiBox.Focus();
+                        ViewModel.OnSearchButtonClick();
                     }
                 }
             }

@@ -33,7 +33,10 @@ namespace SmartLibrary.ViewModels
         private string _isbnAttitudeImage = "pack://application:,,,/Assets/pic/wrong.png";
 
         [ObservableProperty]
-        private bool _isScanButtonEnabled = false;
+        private bool _isScanButtonEnabled = true;
+
+        [ObservableProperty]
+        private bool _isScanButtonVisible = false;
 
         [ObservableProperty]
         private bool _isSearchButtonEnabled = false;
@@ -115,10 +118,11 @@ namespace SmartLibrary.ViewModels
             _snackbarService = snackbarService;
             _contentDialogService = contentDialogService;
             localStorage.LoadingCompleted += LoadingCompleted;
+            BluetoothHelper.ReceiveEvent += OnBluetoothReceived;
 
             if (BluetoothHelper.IsBleConnected)
             {
-                IsScanButtonEnabled = true;
+                IsScanButtonVisible = true;
             }
 
             if (!network.IsInternetConnected)
@@ -130,7 +134,14 @@ namespace SmartLibrary.ViewModels
         [RelayCommand]
         private void OnScanButtonClick()
         {
-            BluetoothHelper.Send("");
+            _snackbarService.Show("正在扫描", $"请将书置于亚克力板上", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(2));
+            BluetoothHelper.Send("scan");
+            IsScanButtonEnabled = false;
+        }
+
+        private void OnBluetoothReceived(string info)
+        {
+            IsScanButtonEnabled = true;
         }
 
         [RelayCommand]
