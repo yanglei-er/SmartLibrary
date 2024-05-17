@@ -6,7 +6,7 @@ using Wpf.Ui.Controls;
 
 namespace SmartLibrary.ViewModels
 {
-    public partial class Borrow_Return_BookViewModel : ObservableObject
+    public partial class Borrow_Return_BookViewModel : ObservableObject, INavigationAware
     {
         private readonly SQLiteHelper BooksDb = SQLiteHelper.GetDatabase("books.smartlibrary");
         private readonly LocalStorage localStorage = new();
@@ -96,11 +96,23 @@ namespace SmartLibrary.ViewModels
             localStorage.LoadingCompleted += LoadingCompleted;
             BluetoothHelper.ReceiveEvent += OnBluetoothReceived;
             WeakReferenceMessenger.Default.Register<string, string>(this, "Borrow_Return_Book", OnMessageReceived);
+        }
 
+        public void OnNavigatedTo()
+        {
             if (BluetoothHelper.IsBleConnected)
             {
                 IsScanButtonVisible = true;
             }
+            else
+            {
+                IsScanButtonVisible = false;
+            }
+        }
+
+        public void OnNavigatedFrom()
+        {
+
         }
 
         private async void OnMessageReceived(object recipient, string message)
@@ -166,6 +178,20 @@ namespace SmartLibrary.ViewModels
         private void OnBluetoothReceived(string info)
         {
             IsScanButtonEnabled = true;
+            if (info.StartsWith("978") && info.Length == 13)
+            {
+                IsbnText = info;
+                OnMessageReceived(this, IsbnText);
+            }
+            else if (info == "over")
+            {
+                _snackbarService.Show("操作成功", $"{BookNameText}已还至{ShelfNum}号书架", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
+            }
+            else
+            {
+                _snackbarService.Show("条码错误", $"请重新扫描", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(2));
+                System.Media.SystemSounds.Asterisk.Play();
+            }
         }
 
         [RelayCommand]

@@ -58,7 +58,7 @@
                 FontSize="20"
                 IsEnabled="{Binding ViewModel.IsbnBoxEnabled, Mode=OneWay}"
                 MaxLength="13"
-                PlaceholderText="{Binding ViewModel.IsScanButtonEnabled, Converter={StaticResource BoolToPlaceholderTextConverter}, Mode=OneWay}"
+                PlaceholderText="{Binding ViewModel.IsScanButtonVisible, Converter={StaticResource BoolToPlaceholderTextConverter}, Mode=OneWay}"
                 PreviewKeyDown="IsbnBox_PreviewKeyDown"
                 Text="{Binding ViewModel.IsbnText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <ui:Image

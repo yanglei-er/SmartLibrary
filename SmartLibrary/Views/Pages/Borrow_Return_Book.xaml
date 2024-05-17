@@ -7,7 +7,7 @@
     xmlns:extensions="clr-namespace:SmartLibrary.Extensions"
     xmlns:local="clr-namespace:SmartLibrary.Views.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml" 
     Title="Borrow_Return_Book"
     d:DataContext="{d:DesignInstance local:Borrow_Return_Book,
                                      IsDesignTimeCreatable=False}"
@@ -54,7 +54,7 @@
                 extensions:TextBoxAttachedProperties.IsOnlyNumber="True"
                 FontSize="20"
                 MaxLength="13"
-                PlaceholderText="{Binding ViewModel.IsScanButtonEnabled, Converter={StaticResource BoolToPlaceholderTextConverter}, Mode=OneWay}"
+                PlaceholderText="{Binding ViewModel.IsScanButtonVisible, Converter={StaticResource BoolToPlaceholderTextConverter}, Mode=OneWay}"
                 PreviewKeyDown="IsbnBox_PreviewKeyDown"
                 Text="{Binding ViewModel.IsbnText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <ui:Image

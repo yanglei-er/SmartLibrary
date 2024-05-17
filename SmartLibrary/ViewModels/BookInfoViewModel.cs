@@ -5,12 +5,27 @@ using Wpf.Ui.Controls;
 
 namespace SmartLibrary.ViewModels
 {
-    public partial class BookInfoViewModel : ObservableObject
+    public partial class BookInfoViewModel : ObservableObject, INavigationAware
     {
         private readonly SQLiteHelper BooksDb = SQLiteHelper.GetDatabase("books.smartlibrary");
         private readonly LocalStorage localStorage = new();
         private readonly INavigationService _navigationService;
         private readonly ISnackbarService _snackbarService;
+
+        [ObservableProperty]
+        private bool _isScanButtonEnabled = true;
+
+        [ObservableProperty]
+        private bool _isScanButtonVisible = false;
+
+        [ObservableProperty]
+        private bool _isSearchButtonEnabled = false;
+
+        [ObservableProperty]
+        private bool _isbnAttitudeVisible = false;
+
+        [ObservableProperty]
+        private string _isbnAttitudeImage = "pack://application:,,,/Assets/pic/wrong.png";
 
         [ObservableProperty]
         private bool _isPictureLoading = false;
@@ -77,8 +92,26 @@ namespace SmartLibrary.ViewModels
             _navigationService = navigationService;
             _snackbarService = snackbarService;
 
+            BluetoothHelper.ReceiveEvent += OnBluetoothReceived;
             localStorage.LoadingCompleted += LoadingCompleted;
             WeakReferenceMessenger.Default.Register<string, string>(this, "BookInfo", OnMessageReceived);
+        }
+
+        public void OnNavigatedTo()
+        {
+            if (BluetoothHelper.IsBleConnected)
+            {
+                IsScanButtonVisible = true;
+            }
+            else
+            {
+                IsScanButtonVisible = false;
+            }
+        }
+
+        public void OnNavigatedFrom()
+        {
+
         }
 
         private async void OnMessageReceived(object recipient, string message)
@@ -123,7 +156,7 @@ namespace SmartLibrary.ViewModels
             }
             else
             {
-                CleanAll();
+                CleanExceptIsbn();
             }
         }
 
@@ -131,6 +164,64 @@ namespace SmartLibrary.ViewModels
         {
             Picture = path;
             IsPictureLoading = false;
+        }
+
+        [RelayCommand]
+        private void OnScanButtonClick()
+        {
+            _snackbarService.Show("正在扫描", $"请将书置于亚克力板上", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(2));
+            BluetoothHelper.Send("scan");
+            IsScanButtonEnabled = false;
+        }
+
+        private void OnBluetoothReceived(string info)
+        {
+            IsScanButtonEnabled = true;
+            if (info.StartsWith("978") && info.Length == 13)
+            {
+                IsbnText = info;
+                OnMessageReceived(this, IsbnText);
+            }
+            else if (info == "over")
+            {
+                _snackbarService.Show("操作成功", $"{BookNameText}已还至{ShelfNum}号书架", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(2));
+            }
+            else
+            {
+                _snackbarService.Show("条码错误", $"请重新扫描", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
+                System.Media.SystemSounds.Asterisk.Play();
+            }
+        }
+
+        [RelayCommand]
+        public void OnSearchButtonClick()
+        {
+            OnMessageReceived(this, IsbnText);
+        }
+
+        partial void OnIsbnTextChanged(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                IsbnAttitudeVisible = false;
+                IsSearchButtonEnabled = false;
+                CleanExceptIsbn();
+            }
+            else
+            {
+                IsbnAttitudeVisible = true;
+                if (value.Length == 13)
+                {
+                    IsbnAttitudeImage = "pack://application:,,,/Assets/pic/right.png";
+                    IsSearchButtonEnabled = true;
+                }
+                else
+                {
+                    IsbnAttitudeImage = "pack://application:,,,/Assets/pic/wrong.png";
+                    IsSearchButtonEnabled = false;
+                    CleanExceptIsbn();
+                }
+            }
         }
 
         partial void OnBookNameChanged(string value)
@@ -177,7 +268,7 @@ namespace SmartLibrary.ViewModels
             if (BluetoothHelper.IsBleConnected)
             {
                 _snackbarService.Show("小车已启动", $"请前往{ShelfNum}号书架", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
-                BluetoothHelper.Send("");
+                BluetoothHelper.SendOnly($"带我去,{ShelfNum}");
             }
             else
             {
@@ -191,7 +282,7 @@ namespace SmartLibrary.ViewModels
             _navigationService.GoBack();
         }
 
-        private void CleanAll()
+        private void CleanExceptIsbn()
         {
             BookName = string.Empty;
             Author = string.Empty;

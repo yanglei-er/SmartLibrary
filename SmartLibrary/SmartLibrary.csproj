@@ -13,7 +13,7 @@
     <PropertyGroup>
 	    <ApplicationIcon>applicationIcon.ico</ApplicationIcon>
 		<Description>Smart library</Description>
-		<Version>0.2.4.2</Version>
+		<Version>0.2.4.3</Version>
 		<Copyright>Copyright © 2024 赵杨磊.All Rights Reserved.</Copyright>
 		<SignAssembly>False</SignAssembly>
 	</PropertyGroup>
@@ -86,7 +86,7 @@
     <Resource Include="Assets\wpfui-48x48.png" />
   </ItemGroup>
 
-	<ItemGroup>
+    <ItemGroup>
 		<PackageReference Include="32feet.NET" Version="3.5.0" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />

@@ -142,6 +142,16 @@ namespace SmartLibrary.ViewModels
         private void OnBluetoothReceived(string info)
         {
             IsScanButtonEnabled = true;
+            if (info.StartsWith("978") && info.Length == 13)
+            {
+                IsbnText = info;
+                _ = OnSearchButtonClick();
+            }
+            else
+            {
+                _snackbarService.Show("条码错误", $"请重新扫描", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(2));
+                System.Media.SystemSounds.Asterisk.Play();
+            }
         }
 
         [RelayCommand]

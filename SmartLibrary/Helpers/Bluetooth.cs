@@ -14,7 +14,7 @@ namespace SmartLibrary.Helpers
         private static BluetoothClient? bluetoothClient;
         private static BluetoothRadio? bluetoothRadio;
 
-        private static System.Timers.Timer ListenerTimer;
+        private static readonly System.Timers.Timer ListenerTimer;
 
         public delegate void ConnectEventHandler(string info);
 
@@ -35,7 +35,8 @@ namespace SmartLibrary.Helpers
         static BluetoothHelper()
         {
             _previousBleState = IsPlatformSupportBT();
-            ListenerTimer = new(200)
+
+            ListenerTimer = new(1000)
             {
                 Enabled = false,
                 AutoReset = true
@@ -144,8 +145,7 @@ namespace SmartLibrary.Helpers
             }
             try
             {
-                // "00001124-0000-1000-8000-00805f9b34fb"
-                bluetoothClient?.Connect(btAddress, BluetoothService.Handsfree);
+                bluetoothClient?.Connect(btAddress, BluetoothService.SerialPort);
                 ConnectEvent("连接成功");
             }
             catch (Exception ex)
@@ -177,12 +177,30 @@ namespace SmartLibrary.Helpers
                     byte[] buffer = Encoding.UTF8.GetBytes(message);
                     await bluetoothStream.WriteAsync(buffer);
                     await bluetoothStream.FlushAsync();
-                    bluetoothStream.Close();
 
-                    ListenerTimer.Start();
+                    await Task.Delay(6000);
+                    byte[] bu = new byte[1024];
+                    bluetoothStream.Read(bu,0,1024);
+                    string m = Encoding.UTF8.GetString(bu).Replace("\0", "");
+                    ReceiveEvent(m);
+                    await bluetoothStream.FlushAsync();
                 }
             }
         }
+        public static async void SendOnly(string message)
+        {
+            if (!string.IsNullOrEmpty(message))
+            {
+                if (bluetoothClient != null)
+                {
+                    Stream bluetoothStream = bluetoothClient.GetStream();
+                    byte[] buffer = Encoding.UTF8.GetBytes(message);
+                    await bluetoothStream.WriteAsync(buffer);
+                    await bluetoothStream.FlushAsync();
+                }
+            }
+        }
+
 
         private static async void Listener(object? obj, ElapsedEventArgs args)
         {
@@ -195,6 +213,7 @@ namespace SmartLibrary.Helpers
                     await Task.Delay(300);
                     await bluetoothStream.ReadAsync(buffer);
                     string message = Encoding.UTF8.GetString(buffer).Replace("\0", "");
+                    MessageBox.Show(message);
                     ReceiveEvent(message);
                     ListenerTimer.Stop();
                 }

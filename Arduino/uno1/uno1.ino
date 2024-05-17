@@ -20,8 +20,8 @@ void setup()
   //舵机归位
   servo_left.attach(LEFT_SERVO_PIN);
   servo_right.attach(RIGHT_SERVO_PIN);
-  servo_left.write(86);
-  servo_right.write(94);
+  servo_left.write(0);
+  servo_right.write(0);
 
   Serial.begin(9600);
   barcode.begin(9600);
@@ -56,6 +56,7 @@ void loop()
     digitalWrite(bar_trig, HIGH);  
     String isbn = barcode.readString();
     ble.print(isbn);
+    Serial.println(isbn);
     //扫描完成，再次监听蓝牙
     ble.listen();
   }
