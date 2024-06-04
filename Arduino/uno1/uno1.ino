@@ -2,13 +2,7 @@
 SoftwareSerial ble(4, 5); // (RX, TX)
 SoftwareSerial barcode(9, 6); //RX, TX
 SoftwareSerial uno2(2, 3); //RX, TX
-
-//舵机设置
-#include <Servo.h>
-Servo servo_left;
-Servo servo_right;
-#define LEFT_SERVO_PIN 12
-#define RIGHT_SERVO_PIN 13
+SoftwareSerial uno0(12, 13); //RX, TX
 
 #define bar_trig 10
 
@@ -16,12 +10,6 @@ void setup()
 {
   pinMode(bar_trig, OUTPUT);
   digitalWrite(bar_trig, HIGH);
-
-  //舵机归位
-  servo_left.attach(LEFT_SERVO_PIN);
-  servo_right.attach(RIGHT_SERVO_PIN);
-  servo_left.write(0);
-  servo_right.write(0);
 
   Serial.begin(9600);
   barcode.begin(9600);
@@ -67,8 +55,9 @@ void loop()
     if(data == "servo_turn")
     {
       //执行转动命令
-      servocontrol();
+      uno0.print("servo_turn");
       //发送返回指令至uno2
+      delay(6000);
       uno2.print("return");
     }
     else if(data == "over")
@@ -79,21 +68,4 @@ void loop()
     }
   }
   delay(200);
-}
-
-void servocontrol()
-{
-  for(int angle = 0; angle <=40; angle++)
-  {
-    servo_left.write(86-angle);
-    servo_right.write(94+angle);
-    delay(20);
-  }
-  delay(5000);
-  for (int angle = 0; angle <=40; angle++)
-  {
-    servo_left.write(56+angle);
-    servo_right.write(124-angle);
-    delay(20);
-  }
 }

@@ -20,6 +20,8 @@ namespace SmartLibrary.ViewModels
         private readonly LocalStorage localStorage = new();
         private readonly Network network = Network.Instance;
 
+        private readonly string APIKey = SettingsHelper.GetConfig("APIKey");
+
         [ObservableProperty]
         private bool _isPictureLoading = false;
 
@@ -129,6 +131,13 @@ namespace SmartLibrary.ViewModels
             {
                 IsNetwrokError = true;
             }
+
+            if (string.IsNullOrEmpty(APIKey))
+            {
+                IsNetwrokError = true;
+                NetworkErrorText = "API Key 填写错误！";
+                IsbnBoxEnabled = false;
+            }
         }
 
         [RelayCommand]
@@ -192,7 +201,7 @@ namespace SmartLibrary.ViewModels
                     IsLoading = true;
                     IsbnBoxEnabled = false;
                     IsNetwrokError = false;
-                    string result = await network.GetAsync($"http://openapi.daohe168.com.cn/api/library/isbn/query?isbn={IsbnText}&appKey=d7c6c07a0a04ba4e65921e2f90726384");
+                    string result = await network.GetAsync($"http://api.tanshuapi.com/api/isbn/v1/index?key={APIKey}&isbn={IsbnText}");
 
                     if (result.StartsWith("Error"))
                     {
@@ -204,21 +213,21 @@ namespace SmartLibrary.ViewModels
                     {
                         using JsonDocument jsondocument = JsonDocument.Parse(result);
                         JsonElement rootElement = jsondocument.RootElement;
-                        if (rootElement.GetProperty("success").GetBoolean())
+                        if (rootElement.GetProperty("code").GetInt32() == 1)
                         {
                             JsonElement dataElement = rootElement.GetProperty("data");
-                            BookName = dataElement.GetProperty("bookName").GetString() ?? string.Empty;
+                            BookName = dataElement.GetProperty("title").GetString() ?? string.Empty;
                             Author = dataElement.GetProperty("author").GetString() ?? string.Empty;
-                            Press = dataElement.GetProperty("press").GetString() ?? string.Empty;
-                            PressDate = dataElement.GetProperty("pressDate").GetString() ?? string.Empty;
-                            PressPlace = dataElement.GetProperty("pressPlace").GetString() ?? string.Empty;
-                            Price = (dataElement.GetProperty("price").GetDouble() / 100).ToString();
-                            ClcName = dataElement.GetProperty("clcName").GetString() ?? string.Empty;
-                            Words = dataElement.GetProperty("words").GetString() ?? string.Empty;
+                            Press = dataElement.GetProperty("publisher").GetString() ?? string.Empty;
+                            PressDate = dataElement.GetProperty("pubdate").GetString() ?? string.Empty;
+                            PressPlace = dataElement.GetProperty("pubplace").GetString() ?? string.Empty;
+                            Price = dataElement.GetProperty("price").GetString() ?? string.Empty;
+                            ClcName = dataElement.GetProperty("class").GetString() ?? string.Empty;
+                            Words = dataElement.GetProperty("keyword").GetString() ?? string.Empty;
                             Pages = dataElement.GetProperty("pages").GetString() ?? string.Empty;
-                            BookDesc = dataElement.GetProperty("bookDesc").GetString() ?? string.Empty;
+                            BookDesc = dataElement.GetProperty("summary").GetString() ?? string.Empty;
                             Language = dataElement.GetProperty("language").GetString() ?? string.Empty;
-                            PictureUrl = (dataElement.GetProperty("pictures").GetString() ?? string.Empty).Replace("[\"", "").Replace("\"]", "");
+                            PictureUrl = dataElement.GetProperty("img").GetString() ?? string.Empty;
                             Picture = string.Empty;
                             IsPictureLoading = true;
                             localStorage.SearchPicture(IsbnText, PictureUrl);

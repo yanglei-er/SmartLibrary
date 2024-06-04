@@ -51,11 +51,12 @@
     </Page.Resources>
 
     <Grid Margin="16,16,4,16">
+        <TextBox Name="XuNiBox" Width="0" />
         <ScrollViewer
             extensions:ScrollAnimationBehavior.IsEnabled="True"
             extensions:ScrollAnimationBehavior.PointsToScroll="16"
             extensions:ScrollAnimationBehavior.TimeDuration="00:00:00.20">
-            <StackPanel Margin="0,0,12,0">
+            <StackPanel MaxWidth="1180" Margin="0,0,12,0">
                 <ui:TextBlock FontTypography="Subtitle" Text="通用设置" />
                 <ui:CardControl Margin="0,8,0,0" Icon="{ui:SymbolIcon Laptop24}">
                     <ui:CardControl.Header>
@@ -482,6 +483,22 @@
                         IsChecked="{Binding ViewModel.IsAdministrator, Mode=TwoWay}"
                         OffContent="关"
                         OnContent="开" />
+                </ui:CardControl>
+                <ui:CardControl Margin="0,8,0,0" Icon="{ui:SymbolIcon KeyMultiple20}">
+                    <ui:CardControl.Header>
+                        <StackPanel>
+                            <ui:TextBlock FontSize="16" Text="API Key" />
+                            <ui:TextBlock
+                                FontSize="13"
+                                Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                Text="填写您的ISBN查询API秘钥" />
+                        </StackPanel>
+                    </ui:CardControl.Header>
+                    <ui:TextBox
+                        MinWidth="220"
+                        Margin="0,0,8,0"
+                        PreviewKeyDown="IsbnBox_PreviewKeyDown"
+                        Text="{Binding ViewModel.ApiKey, Mode=TwoWay}" />
                 </ui:CardControl>
                 <ui:TextBlock
                     Margin="0,12,0,0"

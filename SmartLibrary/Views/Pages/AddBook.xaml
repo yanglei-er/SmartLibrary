@@ -466,7 +466,7 @@
                                     <ui:TextBlock
                                         Grid.Column="0"
                                         FontSize="24"
-                                        Text="字数：" />
+                                        Text="关键词：" />
                                     <ui:TextBox
                                         Grid.Column="1"
                                         BorderThickness="0"

@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Windows.Input;
 using Wpf.Ui.Controls;
 
 namespace SmartLibrary.Views.Pages
@@ -21,6 +22,14 @@ namespace SmartLibrary.Views.Pages
             AppVersion.Text = Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? string.Empty;
             DotNetVersion.Content = ".Net " + Environment.Version.ToString();
             WpfUIVersion.Content = "WPF-UI " + (FileVersionInfo.GetVersionInfo("./Wpf.Ui.dll").ProductVersion ?? string.Empty).Split("+")[0];
+        }
+
+        private void IsbnBox_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                XuNiBox.Focus();
+            }
         }
 
         private void FileOccupancyExpander_Expanded(object sender, RoutedEventArgs e)

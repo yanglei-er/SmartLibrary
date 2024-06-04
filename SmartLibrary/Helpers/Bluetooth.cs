@@ -174,16 +174,21 @@ namespace SmartLibrary.Helpers
                 if (bluetoothClient != null)
                 {
                     Stream bluetoothStream = bluetoothClient.GetStream();
-                    byte[] buffer = Encoding.UTF8.GetBytes(message);
-                    await bluetoothStream.WriteAsync(buffer);
-                    await bluetoothStream.FlushAsync();
+                    await bluetoothStream.WriteAsync(Encoding.UTF8.GetBytes(message));
 
                     await Task.Delay(6000);
-                    byte[] bu = new byte[1024];
-                    bluetoothStream.Read(bu,0,1024);
-                    string m = Encoding.UTF8.GetString(bu).Replace("\0", "");
-                    ReceiveEvent(m);
-                    await bluetoothStream.FlushAsync();
+                    if (bluetoothStream.CanRead)
+                    {
+                        byte[] buffer = new byte[1024];
+                        bluetoothStream.Read(buffer, 0, 1024);
+                        string info = Encoding.UTF8.GetString(buffer).Replace("\0", "");
+                        ReceiveEvent(info);
+                        bluetoothStream.Flush();
+                    }
+                    else
+                    {
+                        ReceiveEvent("!ERR");
+                    }
                 }
             }
         }
@@ -196,7 +201,6 @@ namespace SmartLibrary.Helpers
                     Stream bluetoothStream = bluetoothClient.GetStream();
                     byte[] buffer = Encoding.UTF8.GetBytes(message);
                     await bluetoothStream.WriteAsync(buffer);
-                    await bluetoothStream.FlushAsync();
                 }
             }
         }
@@ -206,20 +210,16 @@ namespace SmartLibrary.Helpers
         {
             if (bluetoothClient != null)
             {
-                try
+                Stream bluetoothStream = bluetoothClient.GetStream();
+                if (bluetoothStream.CanRead)
                 {
-                    Stream bluetoothStream = bluetoothClient.GetStream();
-                    byte[] buffer = [255];
-                    await Task.Delay(300);
-                    await bluetoothStream.ReadAsync(buffer);
+                    await Task.Delay(500);
+                    byte[] buffer = new byte[1024];
+                    bluetoothStream.Read(buffer, 0, 1024);
                     string message = Encoding.UTF8.GetString(buffer).Replace("\0", "");
-                    MessageBox.Show(message);
                     ReceiveEvent(message);
+                    bluetoothStream.Flush();
                     ListenerTimer.Stop();
-                }
-                catch
-                {
-
                 }
             }
         }
