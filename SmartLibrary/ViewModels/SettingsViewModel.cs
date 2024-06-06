@@ -64,7 +64,10 @@ namespace SmartLibrary.ViewModels
         private bool _isAdministrator = Convert.ToBoolean(SettingsHelper.GetConfig("IsAdministrator"));
 
         [ObservableProperty]
-        private string _apiKey = SettingsHelper.GetConfig("APIKey");
+        private string _apiKey = string.Empty;
+
+        [ObservableProperty]
+        private string _apiKeyText = Helpers.Utils.GetAPIKey();
 
         public SettingsViewModel(INavigationService navigationService)
         {
@@ -232,9 +235,9 @@ namespace SmartLibrary.ViewModels
             }
         }
 
-        partial void OnApiKeyChanged(string value)
+        partial void OnApiKeyTextChanged(string value)
         {
-            SettingsHelper.SetConfig("APIKey", value);
+            Helpers.Utils.SetAPIKey(ApiKey);
         }
     }
 }

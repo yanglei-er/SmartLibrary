@@ -24,7 +24,7 @@
         <converters:BoolToAppearanceConverter x:Key="BoolToAppearanceConverter" />
     </Page.Resources>
 
-    <Grid Margin="8">
+    <Grid Margin="16">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -34,9 +34,45 @@
             Grid.Row="0"
             Icon="{ui:SymbolIcon Search24}"
             IconPlacement="Right"
-            IsEnabled="{Binding ViewModel.IsTopbarEnabled, Mode=OneWay}"
+            IsEnabled="{Binding ViewModel.DatabaseEmpty, Converter={StaticResource InverseBooleanConverter}, Mode=OneWay}"
             PlaceholderText="搜索书名，作者、书架号..."
             Text="{Binding ViewModel.AutoSuggestBoxText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Delay=500}" />
+        <Grid Grid.Row="1" Visibility="{Binding ViewModel.MissingDatabase, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <StackPanel
+                Margin="0,0,0,20"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center">
+                <ui:Image
+                    Width="168"
+                    Height="168"
+                    RenderOptions.BitmapScalingMode="HighQuality"
+                    Source="pack://application:,,,/Assets/warning.png" />
+                <ui:TextBlock
+                    HorizontalAlignment="Center"
+                    FontSize="36"
+                    FontTypography="Title"
+                    Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                    Text="糟糕！数据库找不到了w(ﾟДﾟ)w" />
+            </StackPanel>
+        </Grid>
+        <Grid Grid.Row="1" Visibility="{Binding ViewModel.DatabaseEmpty, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <StackPanel
+                Margin="0,0,0,8"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center">
+                <ui:Image
+                    Width="148"
+                    Height="148"
+                    RenderOptions.BitmapScalingMode="HighQuality"
+                    Source="pack://application:,,,/Assets/databaseEmpty.png" />
+                <ui:TextBlock
+                    Margin="0,12,0,0"
+                    FontSize="36"
+                    FontTypography="Title"
+                    Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                    Text="什么都没有 ┑(￣Д ￣)┍" />
+            </StackPanel>
+        </Grid>
         <ItemsControl
             x:Name="BooksList"
             Grid.Row="1"
@@ -110,8 +146,8 @@
                                     Grid.Row="1"
                                     Width="65"
                                     Height="25"
-                                    Margin="0,0,8,8"
-                                    HorizontalAlignment="Right"
+                                    Margin="156,0,8,8"
+                                    HorizontalAlignment="Left"
                                     VerticalAlignment="Bottom"
                                     Background="{ui:ThemeResource ControlFillColorDefaultBrush}"
                                     CornerRadius="4">
@@ -131,7 +167,7 @@
                 <ItemsPanelTemplate>
                     <ui:VirtualizingWrapPanel
                         IsItemsHost="True"
-                        ItemSize="360,185"
+                        ItemSize="358,185"
                         Orientation="Vertical"
                         SpacingMode="Uniform"
                         StretchItems="True" />

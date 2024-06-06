@@ -136,6 +136,7 @@ namespace SmartLibrary.ViewModels
             MissingDatabase = false;
             IsTopbarEnabled = true;
             RefreshAsync();
+            WeakReferenceMessenger.Default.Send("databaseCreat", "Bookshelf");
         }
 
         [RelayCommand]

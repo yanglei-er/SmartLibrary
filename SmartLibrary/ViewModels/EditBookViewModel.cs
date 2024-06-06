@@ -58,7 +58,7 @@ namespace SmartLibrary.ViewModels
         private string _pages = string.Empty;
 
         [ObservableProperty]
-        private string _words = string.Empty;
+        private string _keyword = string.Empty;
 
         [ObservableProperty]
         private string _clcName = string.Empty;
@@ -100,7 +100,7 @@ namespace SmartLibrary.ViewModels
             PressPlace = bookInfo.PressPlace ?? string.Empty;
             Price = bookInfo.Price ?? string.Empty;
             ClcName = bookInfo.ClcName ?? string.Empty;
-            Words = bookInfo.Words ?? string.Empty;
+            Keyword = bookInfo.Keyword ?? string.Empty;
             Pages = bookInfo.Pages ?? string.Empty;
             BookDesc = bookInfo.BookDesc ?? string.Empty;
             Language = bookInfo.Language ?? string.Empty;
@@ -194,7 +194,7 @@ namespace SmartLibrary.ViewModels
                     PressPlace = PressPlace,
                     Price = Price,
                     ClcName = ClcName,
-                    Words = Words,
+                    Keyword = Keyword,
                     Pages = Pages,
                     BookDesc = BookDesc,
                     Language = Language,

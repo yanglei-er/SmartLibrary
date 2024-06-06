@@ -17,10 +17,6 @@
 		<Copyright>Copyright © 2024 赵杨磊.All Rights Reserved.</Copyright>
 	</PropertyGroup>
 
-    <ItemGroup>
-	    <Content Include="applicationIcon.ico" />
-    </ItemGroup>
-
   <ItemGroup>
     <None Remove="Assets\.net-48x48.png" />
     <None Remove="Assets\applicationIcon-512.png" />

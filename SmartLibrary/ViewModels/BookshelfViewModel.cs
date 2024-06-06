@@ -26,9 +26,6 @@ namespace SmartLibrary.ViewModels
         private bool _databaseEmpty = false;
 
         [ObservableProperty]
-        private bool _isTopbarEnabled = true;
-
-        [ObservableProperty]
         private bool _isBottombarEnabled = true;
 
         [ObservableProperty]
@@ -76,7 +73,6 @@ namespace SmartLibrary.ViewModels
             else
             {
                 MissingDatabase = true;
-                IsTopbarEnabled = false;
                 IsBottombarEnabled = false;
             }
 
@@ -86,9 +82,9 @@ namespace SmartLibrary.ViewModels
 
         private void OnMessageReceived(object recipient, string message)
         {
-            if (message == "databaseConnect")
+            if (message == "databaseCreat")
             {
-                IsTopbarEnabled = true;
+                MissingDatabase = false;
             }
             needRefresh = true;
         }

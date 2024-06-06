@@ -68,7 +68,7 @@ namespace SmartLibrary.Helpers
                 sbr.AppendLine("'clcName' TEXT,");
                 sbr.AppendLine("'bookDesc' TEXT,");
                 sbr.AppendLine("'pages' TEXT,");
-                sbr.AppendLine("'words' TEXT,");
+                sbr.AppendLine("'keyword' TEXT,");
                 sbr.AppendLine("'language' TEXT,");
                 sbr.AppendLine("'picture' TEXT,");
                 sbr.AppendLine("'shelfNumber' INTEGER NOT NULL,");
@@ -278,7 +278,7 @@ namespace SmartLibrary.Helpers
 
         public async void UpdateAsync(BookInfo book)
         {
-            string sqlStr = $"UPDATE main SET bookName = '{book.BookName}', author = '{book.Author}', press = '{book.Press}', pressDate = '{book.PressDate}', pressPlace = '{book.PressPlace}', price = '{book.Price}', clcName = '{book.ClcName}', bookDesc = '{book.BookDesc}', pages = '{book.Pages}', words = '{book.Words}', language = '{book.Language}', picture = '{book.Picture}', shelfNumber = @shelfNumber, isBorrowed = @isBorrowed WHERE isbn = '{book.Isbn}'";
+            string sqlStr = $"UPDATE main SET bookName = '{book.BookName}', author = '{book.Author}', press = '{book.Press}', pressDate = '{book.PressDate}', pressPlace = '{book.PressPlace}', price = '{book.Price}', clcName = '{book.ClcName}', bookDesc = '{book.BookDesc}', pages = '{book.Pages}', words = '{book.Keyword}', language = '{book.Language}', picture = '{book.Picture}', shelfNumber = @shelfNumber, isBorrowed = @isBorrowed WHERE isbn = '{book.Isbn}'";
             SQLiteParameter[] parameters = [
                         new SQLiteParameter("@shelfNumber", book.ShelfNumber),
                         new SQLiteParameter("@isBorrowed", book.IsBorrowed),
@@ -370,7 +370,7 @@ namespace SmartLibrary.Helpers
                 book.ClcName = reader.GetString(7);
                 book.BookDesc = reader.GetString(8);
                 book.Pages = reader.GetString(9);
-                book.Words = reader.GetString(10);
+                book.Keyword = reader.GetString(10);
                 book.Language = reader.GetString(11);
                 book.Picture = reader.GetString(12);
                 book.ShelfNumber = reader.GetInt64(13);
@@ -383,7 +383,7 @@ namespace SmartLibrary.Helpers
 
         public async void AddBookAsync(BookInfo book)
         {
-            string sqlStr = $"INSERT INTO main VALUES ('{book.Isbn}','{book.BookName}','{book.Author}','{book.Press}','{book.PressDate}','{book.PressPlace}','{book.Price}','{book.ClcName}','{book.BookDesc}','{book.Pages}','{book.Words}','{book.Language}','{book.Picture}',@shelfNumber,@isBorrowed)";
+            string sqlStr = $"INSERT INTO main VALUES ('{book.Isbn}','{book.BookName}','{book.Author}','{book.Press}','{book.PressDate}','{book.PressPlace}','{book.Price}','{book.ClcName}','{book.BookDesc}','{book.Pages}','{book.Keyword}','{book.Language}','{book.Picture}',@shelfNumber,@isBorrowed)";
             SQLiteParameter[] parameters = [
                         new SQLiteParameter("@shelfNumber", book.ShelfNumber),
                         new SQLiteParameter("@isBorrowed", book.IsBorrowed),

@@ -24,7 +24,7 @@ namespace SmartLibrary.Views.Pages
             WpfUIVersion.Content = "WPF-UI " + (FileVersionInfo.GetVersionInfo("./Wpf.Ui.dll").ProductVersion ?? string.Empty).Split("+")[0];
         }
 
-        private void IsbnBox_PreviewKeyDown(object sender, KeyEventArgs e)
+        private void TextBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {

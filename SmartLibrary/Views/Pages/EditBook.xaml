@@ -385,7 +385,7 @@
                                         Grid.Column="1"
                                         BorderThickness="0"
                                         FontSize="18"
-                                        Text="{Binding ViewModel.Words, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        Text="{Binding ViewModel.Keyword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                 </Grid>
                             </StackPanel>
                         </ui:CardExpander.Content>

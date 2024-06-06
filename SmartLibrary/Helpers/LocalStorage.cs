@@ -174,7 +174,6 @@ namespace SmartLibrary.Helpers
                             imageInfo.Url = "pack://application:,,,/Assets/LoadingPictureError.png";
                             BookShelfPictureLoadigCompleted(imageInfo);
                         }
-
                     }
                     else
                     {

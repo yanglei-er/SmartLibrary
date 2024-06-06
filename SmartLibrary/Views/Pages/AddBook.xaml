@@ -88,14 +88,14 @@
             Severity="Warning"
             Visibility="{Binding ViewModel.IsBookExisted, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
         <ui:InfoBar
-            Title="错误"
+            Title="{Binding ViewModel.ErrorTitle, Mode=OneWay}"
             Grid.Row="1"
             Margin="0,8,0,0"
             FontSize="16"
-            IsOpen="{Binding ViewModel.IsNetwrokError, Mode=TwoWay}"
-            Message="{Binding ViewModel.NetworkErrorText, Mode=OneWay}"
-            Severity="Error"
-            Visibility="{Binding ViewModel.IsNetwrokError, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            IsOpen="{Binding ViewModel.IsError, Mode=TwoWay}"
+            Message="{Binding ViewModel.ErrorText, Mode=OneWay}"
+            Severity="{Binding ViewModel.ErrorSeverity, Mode=OneWay}"
+            Visibility="{Binding ViewModel.IsError, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
         <Border
             Grid.Row="2"
             Margin="0,8,0,0"
@@ -471,7 +471,7 @@
                                         Grid.Column="1"
                                         BorderThickness="0"
                                         FontSize="18"
-                                        Text="{Binding ViewModel.Words, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        Text="{Binding ViewModel.Keyword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                 </Grid>
                             </StackPanel>
                         </ui:CardExpander.Content>

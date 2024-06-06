@@ -20,7 +20,7 @@ namespace SmartLibrary.ViewModels
         private readonly LocalStorage localStorage = new();
         private readonly Network network = Network.Instance;
 
-        private readonly string APIKey = SettingsHelper.GetConfig("APIKey");
+        private readonly string APIKey = Helpers.Utils.GetAPIKey();
 
         [ObservableProperty]
         private bool _isPictureLoading = false;
@@ -47,10 +47,16 @@ namespace SmartLibrary.ViewModels
         private bool _isLoading = false;
 
         [ObservableProperty]
-        private bool _isNetwrokError = false;
+        private bool _isError = false;
 
         [ObservableProperty]
-        private string _networkErrorText = "网络未连接！无法查询联网数据库，请手动录入书籍信息或连接网络后重试。";
+        private string _errorTitle = string.Empty;
+
+        [ObservableProperty]
+        private string _errorText = string.Empty;
+
+        [ObservableProperty]
+        private InfoBarSeverity _errorSeverity = InfoBarSeverity.Error;
 
         [ObservableProperty]
         private bool _isBookExisted = false;
@@ -92,7 +98,7 @@ namespace SmartLibrary.ViewModels
         private string _pages = string.Empty;
 
         [ObservableProperty]
-        private string _words = string.Empty;
+        private string _keyword = string.Empty;
 
         [ObservableProperty]
         private string _clcName = string.Empty;
@@ -127,16 +133,22 @@ namespace SmartLibrary.ViewModels
                 IsScanButtonVisible = true;
             }
 
-            if (!network.IsInternetConnected)
+            if (network.IsInternetConnected)
             {
-                IsNetwrokError = true;
+                if (string.IsNullOrEmpty(APIKey))
+                {
+                    IsError = true;
+                    ErrorTitle = "提示";
+                    ErrorText = "API Key未设置，若需获取网络图书数据，请转到设置界面填写API Key";
+                    ErrorSeverity = InfoBarSeverity.Warning;
+                }
             }
-
-            if (string.IsNullOrEmpty(APIKey))
+            else
             {
-                IsNetwrokError = true;
-                NetworkErrorText = "API Key 填写错误！";
-                IsbnBoxEnabled = false;
+                IsError = true;
+                ErrorTitle = "提示";
+                ErrorText = "网络未连接！无法查询联网数据库，请手动录入书籍信息或连接网络后重试。";
+                ErrorSeverity = InfoBarSeverity.Warning;
             }
         }
 
@@ -181,7 +193,7 @@ namespace SmartLibrary.ViewModels
                 PressPlace = bookInfo.PressPlace ?? string.Empty;
                 Price = bookInfo.Price ?? string.Empty;
                 ClcName = bookInfo.ClcName ?? string.Empty;
-                Words = bookInfo.Words ?? string.Empty;
+                Keyword = bookInfo.Keyword ?? string.Empty;
                 Pages = bookInfo.Pages ?? string.Empty;
                 BookDesc = bookInfo.BookDesc ?? string.Empty;
                 Language = bookInfo.Language ?? string.Empty;
@@ -198,55 +210,72 @@ namespace SmartLibrary.ViewModels
                 IsSearchButtonEnabled = false;
                 if (network.IsInternetConnected)
                 {
-                    IsLoading = true;
-                    IsbnBoxEnabled = false;
-                    IsNetwrokError = false;
-                    string result = await network.GetAsync($"http://api.tanshuapi.com/api/isbn/v1/index?key={APIKey}&isbn={IsbnText}");
-
-                    if (result.StartsWith("Error"))
+                    if (string.IsNullOrEmpty(APIKey))
                     {
                         System.Media.SystemSounds.Asterisk.Play();
-                        NetworkErrorText = "连接服务器失败，错误代码：" + result.Split(":")[1];
-                        IsNetwrokError = true;
+                        IsError = true;
+                        ErrorTitle = "错误";
+                        ErrorText = "API Key未设置，无法进行查询！";
+                        ErrorSeverity = InfoBarSeverity.Error;
                     }
                     else
                     {
-                        using JsonDocument jsondocument = JsonDocument.Parse(result);
-                        JsonElement rootElement = jsondocument.RootElement;
-                        if (rootElement.GetProperty("code").GetInt32() == 1)
+                        IsLoading = true;
+                        IsbnBoxEnabled = false;
+                        IsError = false;
+                        string result = await network.GetAsync($"http://api.tanshuapi.com/api/isbn/v1/index?key={APIKey}&isbn={IsbnText}");
+
+                        if (result.StartsWith("Error"))
                         {
-                            JsonElement dataElement = rootElement.GetProperty("data");
-                            BookName = dataElement.GetProperty("title").GetString() ?? string.Empty;
-                            Author = dataElement.GetProperty("author").GetString() ?? string.Empty;
-                            Press = dataElement.GetProperty("publisher").GetString() ?? string.Empty;
-                            PressDate = dataElement.GetProperty("pubdate").GetString() ?? string.Empty;
-                            PressPlace = dataElement.GetProperty("pubplace").GetString() ?? string.Empty;
-                            Price = dataElement.GetProperty("price").GetString() ?? string.Empty;
-                            ClcName = dataElement.GetProperty("class").GetString() ?? string.Empty;
-                            Words = dataElement.GetProperty("keyword").GetString() ?? string.Empty;
-                            Pages = dataElement.GetProperty("pages").GetString() ?? string.Empty;
-                            BookDesc = dataElement.GetProperty("summary").GetString() ?? string.Empty;
-                            Language = dataElement.GetProperty("language").GetString() ?? string.Empty;
-                            PictureUrl = dataElement.GetProperty("img").GetString() ?? string.Empty;
-                            Picture = string.Empty;
-                            IsPictureLoading = true;
-                            localStorage.SearchPicture(IsbnText, PictureUrl);
+                            System.Media.SystemSounds.Asterisk.Play();
+                            IsError = true;
+                            ErrorTitle = "错误";
+                            ErrorText = "连接服务器失败，错误代码：" + result.Split(":")[1];
+                            ErrorSeverity = InfoBarSeverity.Error;
                         }
                         else
                         {
-                            System.Media.SystemSounds.Asterisk.Play();
-                            NetworkErrorText = rootElement.GetProperty("message").GetString() + ". 您可以手动录入书籍信息。" ?? "查询失败，原因未知。您可以手动录入书籍信息。";
-                            IsNetwrokError = true;
+                            using JsonDocument jsondocument = JsonDocument.Parse(result);
+                            JsonElement rootElement = jsondocument.RootElement;
+                            if (rootElement.GetProperty("code").GetInt32() == 1)
+                            {
+                                JsonElement dataElement = rootElement.GetProperty("data");
+                                BookName = dataElement.GetProperty("title").GetString() ?? string.Empty;
+                                Author = dataElement.GetProperty("author").GetString() ?? string.Empty;
+                                Press = dataElement.GetProperty("publisher").GetString() ?? string.Empty;
+                                PressDate = dataElement.GetProperty("pubdate").GetString() ?? string.Empty;
+                                PressPlace = dataElement.GetProperty("pubplace").GetString() ?? string.Empty;
+                                Price = dataElement.GetProperty("price").GetString() ?? string.Empty;
+                                ClcName = dataElement.GetProperty("class").GetString() ?? string.Empty;
+                                Keyword = dataElement.GetProperty("keyword").GetString() ?? string.Empty;
+                                Pages = dataElement.GetProperty("pages").GetString() ?? string.Empty;
+                                BookDesc = dataElement.GetProperty("summary").GetString() ?? string.Empty;
+                                Language = dataElement.GetProperty("language").GetString() ?? string.Empty;
+                                PictureUrl = dataElement.GetProperty("img").GetString() ?? string.Empty;
+                                Picture = string.Empty;
+                                IsPictureLoading = true;
+                                localStorage.SearchPicture(IsbnText, PictureUrl);
+                            }
+                            else
+                            {
+                                System.Media.SystemSounds.Asterisk.Play();
+                                IsError = true;
+                                ErrorTitle = "错误";
+                                ErrorText = $"代码:{rootElement.GetProperty("code").GetInt32()}，{rootElement.GetProperty("msg").GetString()}。";
+                                ErrorSeverity = InfoBarSeverity.Error;
+                            }
                         }
+                        IsLoading = false;
                     }
-                    IsLoading = false;
                 }
                 else
                 {
                     IsSearchButtonEnabled = true;
                     System.Media.SystemSounds.Asterisk.Play();
-                    NetworkErrorText = "网络未连接！无法查询联网数据库，请手动录入书籍信息或连接网络后重试。";
-                    IsNetwrokError = true;
+                    IsError = true;
+                    ErrorTitle = "提示";
+                    ErrorText = "网络未连接！无法查询联网数据库，请手动录入书籍信息或连接网络后重试。";
+                    ErrorSeverity = InfoBarSeverity.Warning;
                 }
             }
             IsbnBoxEnabled = true;
@@ -268,7 +297,6 @@ namespace SmartLibrary.ViewModels
                 IsAddButtonEnabled = false;
                 CleanExceptIsbn();
                 IsBookExisted = false;
-                IsNetwrokError = false;
             }
             else
             {
@@ -285,7 +313,6 @@ namespace SmartLibrary.ViewModels
                     IsAddButtonEnabled = false;
                     CleanExceptIsbn();
                     IsBookExisted = false;
-                    IsNetwrokError = false;
                 }
             }
         }
@@ -368,7 +395,7 @@ namespace SmartLibrary.ViewModels
                         PressPlace = PressPlace,
                         Price = Price,
                         ClcName = ClcName,
-                        Words = Words,
+                        Keyword = Keyword,
                         Pages = Pages,
                         BookDesc = BookDesc,
                         Language = Language,
@@ -413,7 +440,7 @@ namespace SmartLibrary.ViewModels
             PressPlace = string.Empty;
             Price = string.Empty;
             ClcName = string.Empty;
-            Words = string.Empty;
+            Keyword = string.Empty;
             Pages = string.Empty;
             BookDesc = string.Empty;
             Language = string.Empty;

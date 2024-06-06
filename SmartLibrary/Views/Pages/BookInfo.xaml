@@ -414,7 +414,7 @@
                                         BorderThickness="0"
                                         FontSize="18"
                                         IsReadOnly="True"
-                                        Text="{Binding ViewModel.Words, Mode=OneWay}" />
+                                        Text="{Binding ViewModel.Keyword, Mode=OneWay}" />
                                 </Grid>
                             </StackPanel>
                         </ui:CardExpander.Content>
