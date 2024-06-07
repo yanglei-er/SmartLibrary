@@ -90,13 +90,10 @@ namespace SmartLibrary.Helpers
 
         public static void Queue(Image img, string isbn, string url)
         {
-            if (!string.IsNullOrEmpty(url))
+            lock (Stacks)
             {
-                lock (Stacks)
-                {
-                    Stacks.Enqueue(new ImageQueueInfo { Url = url, Isbn = isbn, Image = img });
-                    autoEvent.Set();
-                }
+                Stacks.Enqueue(new ImageQueueInfo { Url = url, Isbn = isbn, Image = img });
+                autoEvent.Set();
             }
         }
     }

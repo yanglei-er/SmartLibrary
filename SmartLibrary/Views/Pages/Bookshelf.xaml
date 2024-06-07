@@ -24,7 +24,7 @@
         <converters:BoolToAppearanceConverter x:Key="BoolToAppearanceConverter" />
     </Page.Resources>
 
-    <Grid Margin="16">
+    <Grid Margin="16,16,16,12">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />

@@ -284,6 +284,7 @@ namespace SmartLibrary.ViewModels
                 };
                 if (saveFileDialog.ShowDialog() == true)
                 {
+                    System.Media.SystemSounds.Asterisk.Play();
                     File.Copy(@".\database\books.smartlibrary", saveFileDialog.FileName, true);
                     _snackbarService.Show("导出数据库", $"{System.IO.Path.GetFileName(saveFileDialog.FileName)} 已导出至 {System.IO.Path.GetDirectoryName(saveFileDialog.FileName)} 下", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
                 }
@@ -293,6 +294,7 @@ namespace SmartLibrary.ViewModels
         [RelayCommand]
         private async Task DelBooks(IList selectedItems)
         {
+            System.Media.SystemSounds.Asterisk.Play();
             ContentDialogResult result = await _contentDialogService.ShowSimpleDialogAsync(new SimpleContentDialogCreateOptions()
             {
                 Title = "删除图书",

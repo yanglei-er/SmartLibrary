@@ -144,7 +144,7 @@
                             </StackPanel>
                             <ui:Button
                                 Grid.Column="1"
-                                Margin="0,0,32,0"
+                                Margin="0,0,24,0"
                                 BorderThickness="0"
                                 Click="AppFolderButton_Click"
                                 Content="打开 App 文件夹" />
@@ -220,7 +220,7 @@
                             HorizontalAlignment="Stretch"
                             HorizontalContentAlignment="Stretch"
                             Background="Transparent"
-                            BorderThickness="0,1,0,0"
+                            BorderThickness="0,1,0,1"
                             Click="TempButton_Click"
                             CornerRadius="0">
                             <Grid>
@@ -247,6 +247,42 @@
                                     Symbol="Open24" />
                             </Grid>
                         </ui:Button>
+                        <ui:Card Background="{StaticResource SystemFillColorCriticalBackgroundBrush}" BorderThickness="0">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <ui:TextBlock
+                                    Grid.Column="0"
+                                    Margin="8,0,0,0"
+                                    VerticalAlignment="Center"
+                                    FontSize="16"
+                                    Text="危险操作" />
+                                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                    <ui:Button
+                                        Width="108"
+                                        BorderThickness="0"
+                                        Command="{Binding ViewModel.CleanFileOccupancyButtonClickCommand}"
+                                        CommandParameter="CleanDatabase"
+                                        Content="重置数据库"
+                                        IsEnabled="{Binding ViewModel.IsCleanDatabaseEnabled, Mode=OneWay}" />
+                                    <ui:Button
+                                        Margin="12,0,12,0"
+                                        BorderThickness="0"
+                                        Command="{Binding ViewModel.CleanFileOccupancyButtonClickCommand}"
+                                        CommandParameter="CleanPictureCache"
+                                        Content="清除图片缓存"
+                                        IsEnabled="{Binding ViewModel.IsCleanPictureCacheEnabled, Mode=OneWay}" />
+                                    <ui:Button
+                                        BorderThickness="0"
+                                        Command="{Binding ViewModel.CleanFileOccupancyButtonClickCommand}"
+                                        CommandParameter="CleanTemp"
+                                        Content="清除临时数据"
+                                        IsEnabled="{Binding ViewModel.IsCleanTempEnabled, Mode=OneWay}" />
+                                </StackPanel>
+                            </Grid>
+                        </ui:Card>
                     </StackPanel>
                 </ui:CardExpander>
                 <ui:TextBlock
@@ -485,7 +521,10 @@
                         OffContent="关"
                         OnContent="开" />
                 </ui:CardControl>
-                <ui:CardControl Margin="0,8,0,0" Icon="{ui:SymbolIcon KeyMultiple20}">
+                <ui:CardControl
+                    Margin="0,4,0,0"
+                    Icon="{ui:SymbolIcon KeyMultiple20}"
+                    Visibility="{Binding ViewModel.IsAdministrator, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                     <ui:CardControl.Header>
                         <StackPanel>
                             <ui:TextBlock FontSize="16" Text="API Key" />

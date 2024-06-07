@@ -78,7 +78,7 @@ namespace SmartLibrary.Helpers
             }
         }
 
-        public SQLiteConnection GetSQLiteConnection()
+        private SQLiteConnection GetSQLiteConnection()
         {
             string connStr = string.Format("Data Source={0}", DataSource);
             var con = new SQLiteConnection(connStr);
@@ -219,6 +219,27 @@ namespace SmartLibrary.Helpers
             sbr.AppendLine(" OFFSET ");
             sbr.AppendLine((pageIndex - 1 * pageSize).ToString());
             return await ExecuteDataTableAsync(sbr.ToString());
+        }
+
+        public async void CleanDatabaseAsync()
+        {
+            using SQLiteConnection conn = GetSQLiteConnection();
+            var cmd = new SQLiteCommand();
+
+            if (conn.State != ConnectionState.Open)
+            {
+                await conn.OpenAsync();
+            }
+            cmd.Parameters.Clear();
+            cmd.Connection = conn;
+            cmd.CommandText = "DELETE FROM main;";
+            cmd.CommandType = CommandType.Text;
+            cmd.CommandTimeout = 30;
+            await cmd.ExecuteNonQueryAsync();
+
+            cmd.Parameters.Clear();
+            cmd.CommandText = "vacuum";
+            await cmd.ExecuteNonQueryAsync();
         }
 
         public async void ResetDataBassAsync()

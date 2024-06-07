@@ -1,4 +1,6 @@
-﻿using SmartLibrary.Helpers;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using SmartLibrary.Helpers;
+using System.IO;
 using System.Windows.Media;
 using Wpf.Ui;
 using Wpf.Ui.Appearance;
@@ -10,6 +12,9 @@ namespace SmartLibrary.ViewModels
     public partial class SettingsViewModel : ObservableObject, INavigationAware
     {
         private readonly INavigationService _navigationService;
+        private readonly ISnackbarService _snackbarService;
+        private readonly IContentDialogService _contentDialogService;
+        private readonly SQLiteHelper BooksDb = SQLiteHelper.GetDatabase("books.smartlibrary");
 
         [ObservableProperty]
         private bool _autoStart = Convert.ToBoolean(SettingsHelper.GetConfig("AutoStart"));
@@ -32,6 +37,12 @@ namespace SmartLibrary.ViewModels
         private string _pictureCacheCount = "正在计算";
         [ObservableProperty]
         private string _tempCount = "正在计算";
+        [ObservableProperty]
+        private bool _isCleanDatabaseEnabled = true;
+        [ObservableProperty]
+        private bool _isCleanPictureCacheEnabled = true;
+        [ObservableProperty]
+        private bool _isCleanTempEnabled = true;
         #endregion FileOccupancy
 
         [ObservableProperty]
@@ -69,9 +80,11 @@ namespace SmartLibrary.ViewModels
         [ObservableProperty]
         private string _apiKeyText = Helpers.Utils.GetAPIKey();
 
-        public SettingsViewModel(INavigationService navigationService)
+        public SettingsViewModel(INavigationService navigationService, IContentDialogService contentDialogService, ISnackbarService snackbarService)
         {
             _navigationService = navigationService;
+            _contentDialogService = contentDialogService;
+            _snackbarService = snackbarService;
         }
 
         public void OnNavigatedTo()
@@ -112,6 +125,74 @@ namespace SmartLibrary.ViewModels
                 DataCount = "数据库文件已占用 " + FileOccupancy.GetFileSize(Environment.CurrentDirectory + @".\database\books.smartlibrary");
                 PictureCacheCount = "缓存文件已占用 " + FileOccupancy.GetDirectorySize(Environment.CurrentDirectory + @".\pictures\");
                 TempCount = "临时文件已占用 " + FileOccupancy.GetDirectorySize(Environment.CurrentDirectory + @".\temp\");
+
+                IsCleanDatabaseEnabled = true;
+                IsCleanPictureCacheEnabled = true;
+                IsCleanTempEnabled = true;
+            }
+        }
+
+        [RelayCommand]
+        private async Task OnCleanFileOccupancyButtonClick(string parameter)
+        {
+            if (parameter == "CleanDatabase")
+            {
+                System.Media.SystemSounds.Asterisk.Play();
+                if (SQLiteHelper.IsDatabaseConnected("books.smartlibrary"))
+                {
+                    ContentDialogResult result = await _contentDialogService.ShowSimpleDialogAsync(new SimpleContentDialogCreateOptions()
+                    {
+                        Title = "重置数据库",
+                        Content = "您的所有图书数据将被删除，且无法恢复，您确定要继续吗?",
+                        PrimaryButtonText = "是",
+                        CloseButtonText = "否",
+                    });
+                    if (result == ContentDialogResult.Primary)
+                    {
+                        BooksDb.CleanDatabaseAsync();
+                        DataCount = "数据库文件已占用 " + FileOccupancy.GetFileSize(Environment.CurrentDirectory + @".\database\books.smartlibrary");
+                        WeakReferenceMessenger.Default.Send("refresh", "BookManage");
+                        WeakReferenceMessenger.Default.Send("refresh", "Bookshelf");
+                        _snackbarService.Show("重置成功", "所有图书数据已清除。", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
+                        IsCleanDatabaseEnabled = false;
+                    }
+                }
+                else
+                {
+                    _snackbarService.Show("重置失败", "当前未连接任何数据库。", ControlAppearance.Danger, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
+                }
+            }
+            else if (parameter == "CleanPictureCache")
+            {
+                string path = Environment.CurrentDirectory + @".\pictures\";
+                if (Directory.Exists(path))
+                {
+                    Directory.Delete(path, true);
+                    PictureCacheCount = "缓存文件已占用 " + FileOccupancy.GetDirectorySize(Environment.CurrentDirectory + @".\pictures\");
+                    _snackbarService.Show("清除成功", $"已清除所有图书图片缓存。", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
+                }
+                else
+                {
+                    System.Media.SystemSounds.Asterisk.Play();
+                    _snackbarService.Show("清除失败", "图书图片缓存文件夹不存在。", ControlAppearance.Danger, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
+                }
+                IsCleanPictureCacheEnabled = false;
+            }
+            else
+            {
+                string path = Environment.CurrentDirectory + @".\temp\";
+                if (Directory.Exists(path))
+                {
+                    Directory.Delete(path, true);
+                    TempCount = "临时文件已占用 " + FileOccupancy.GetDirectorySize(Environment.CurrentDirectory + @".\temp\");
+                    _snackbarService.Show("清除成功", $"已清除所有临时缓存。", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
+                }
+                else
+                {
+                    System.Media.SystemSounds.Asterisk.Play();
+                    _snackbarService.Show("清除失败", "临时缓存文件夹不存在。", ControlAppearance.Danger, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
+                }
+                IsCleanTempEnabled = false;
             }
         }
 

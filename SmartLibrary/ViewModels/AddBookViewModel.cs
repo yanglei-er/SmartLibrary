@@ -215,7 +215,7 @@ namespace SmartLibrary.ViewModels
                         System.Media.SystemSounds.Asterisk.Play();
                         IsError = true;
                         ErrorTitle = "错误";
-                        ErrorText = "API Key未设置，无法进行查询！";
+                        ErrorText = "API Key未设置，无法进行查询！您可以手动录入书籍信息或转到设置填写API Key后重试。";
                         ErrorSeverity = InfoBarSeverity.Error;
                     }
                     else
@@ -305,6 +305,7 @@ namespace SmartLibrary.ViewModels
                 {
                     IsbnAttitudeImage = "pack://application:,,,/Assets/pic/right.png";
                     IsSearchButtonEnabled = true;
+                    IsAddButtonEnabled = true;
                 }
                 else
                 {
