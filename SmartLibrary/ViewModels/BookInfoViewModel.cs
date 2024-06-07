@@ -25,7 +25,7 @@ namespace SmartLibrary.ViewModels
         private bool _isbnAttitudeVisible = false;
 
         [ObservableProperty]
-        private string _isbnAttitudeImage = "pack://application:,,,/Assets/pic/wrong.png";
+        private string _isbnAttitudeImage = "pack://application:,,,/Assets/wrong.png";
 
         [ObservableProperty]
         private bool _isPictureLoading = false;
@@ -212,12 +212,12 @@ namespace SmartLibrary.ViewModels
                 IsbnAttitudeVisible = true;
                 if (value.Length == 13)
                 {
-                    IsbnAttitudeImage = "pack://application:,,,/Assets/pic/right.png";
+                    IsbnAttitudeImage = "pack://application:,,,/Assets/right.png";
                     IsSearchButtonEnabled = true;
                 }
                 else
                 {
-                    IsbnAttitudeImage = "pack://application:,,,/Assets/pic/wrong.png";
+                    IsbnAttitudeImage = "pack://application:,,,/Assets/wrong.png";
                     IsSearchButtonEnabled = false;
                     CleanExceptIsbn();
                 }
@@ -295,7 +295,7 @@ namespace SmartLibrary.ViewModels
             Pages = string.Empty;
             BookDesc = string.Empty;
             Language = string.Empty;
-            Picture = "pack://application:,,,/Assets/PictureEmpty.png";
+            Picture = ResourceManager.EmptyImage;
             ShelfNum = string.Empty;
             IsBorrowed = false;
             GoButtonEnabled = false;

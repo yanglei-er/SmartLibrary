@@ -32,7 +32,7 @@ namespace SmartLibrary.ViewModels
         private bool _isbnAttitudeVisible = false;
 
         [ObservableProperty]
-        private string _isbnAttitudeImage = "pack://application:,,,/Assets/pic/wrong.png";
+        private string _isbnAttitudeImage = "pack://application:,,,/Assets/wrong.png";
 
         [ObservableProperty]
         private bool _isScanButtonEnabled = true;
@@ -110,7 +110,7 @@ namespace SmartLibrary.ViewModels
         private string _language = string.Empty;
 
         [ObservableProperty]
-        private string _picture = "pack://application:,,,/Assets/PictureEmpty.png";
+        private string _picture = ResourceManager.EmptyImage;
 
         private string PictureUrl = string.Empty;
 
@@ -303,13 +303,13 @@ namespace SmartLibrary.ViewModels
                 IsbnAttitudeVisible = true;
                 if (value.Length == 13)
                 {
-                    IsbnAttitudeImage = "pack://application:,,,/Assets/pic/right.png";
+                    IsbnAttitudeImage = "pack://application:,,,/Assets/right.png";
                     IsSearchButtonEnabled = true;
                     IsAddButtonEnabled = true;
                 }
                 else
                 {
-                    IsbnAttitudeImage = "pack://application:,,,/Assets/pic/wrong.png";
+                    IsbnAttitudeImage = "pack://application:,,,/Assets/wrong.png";
                     IsSearchButtonEnabled = false;
                     IsAddButtonEnabled = false;
                     CleanExceptIsbn();
@@ -325,7 +325,6 @@ namespace SmartLibrary.ViewModels
             {
                 Title = "选择图书封面图片",
                 Filter = "图像文件|*.jpg;*.png;*.jpeg;*.bmp|所有文件|*.*",
-                InitialDirectory = Environment.CurrentDirectory + @".\pictures\"
             };
             if (openFileDialog.ShowDialog() == true)
             {
@@ -337,7 +336,7 @@ namespace SmartLibrary.ViewModels
             }
             else
             {
-                if (Picture != "pack://application:,,,/Assets/PictureEmpty.png")
+                if (Picture != ResourceManager.EmptyImage)
                 {
                     if (await _contentDialogService.ShowSimpleDialogAsync(new SimpleContentDialogCreateOptions()
                     {
@@ -348,7 +347,7 @@ namespace SmartLibrary.ViewModels
                     }) == ContentDialogResult.Primary)
                     {
                         PictureUrl = string.Empty;
-                        Picture = "pack://application:,,,/Assets/PictureEmpty.png";
+                        Picture = ResourceManager.EmptyImage;
                     }
                 }
             }
@@ -445,7 +444,7 @@ namespace SmartLibrary.ViewModels
             Pages = string.Empty;
             BookDesc = string.Empty;
             Language = string.Empty;
-            Picture = "pack://application:,,,/Assets/PictureEmpty.png";
+            Picture = ResourceManager.EmptyImage;
             ShelfNum = string.Empty;
             IsBorrowed = false;
         }

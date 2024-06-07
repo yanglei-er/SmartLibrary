@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using SmartLibrary.Helpers;
+using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
 
@@ -10,11 +11,11 @@ namespace SmartLibrary.Converters
         {
             if ((bool)value)
             {
-                return new BitmapImage(new Uri("pack://application:,,,/Assets/pic/cross.png", UriKind.Absolute));
+                return new BitmapImage(new Uri($"pack://application:,,,/Assets/DynamicPic/{ResourceManager.CurrentTheme}/cross.png", UriKind.Absolute));
             }
             else
             {
-                return new BitmapImage(new Uri("pack://application:,,,/Assets/pic/tick.png", UriKind.Absolute));
+                return new BitmapImage(new Uri($"pack://application:,,,/Assets/DynamicPic/{ResourceManager.CurrentTheme}/tick.png", UriKind.Absolute));
             }
         }
 

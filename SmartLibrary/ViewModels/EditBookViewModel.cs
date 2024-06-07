@@ -127,7 +127,6 @@ namespace SmartLibrary.ViewModels
             {
                 Title = "选择图书封面图片",
                 Filter = "图像文件|*.jpg;*.png;*.jpeg;*.bmp|所有文件|*.*",
-                InitialDirectory = Environment.CurrentDirectory + @".\pictures\"
             };
             if (openFileDialog.ShowDialog() == true)
             {
@@ -140,7 +139,7 @@ namespace SmartLibrary.ViewModels
             }
             else
             {
-                if (Picture != "pack://application:,,,/Assets/PictureEmpty.png")
+                if (Picture != ResourceManager.EmptyImage)
                 {
                     if (await _contentDialogService.ShowSimpleDialogAsync(new SimpleContentDialogCreateOptions()
                     {
@@ -150,7 +149,7 @@ namespace SmartLibrary.ViewModels
                         CloseButtonText = "否",
                     }) == ContentDialogResult.Primary)
                     {
-                        Picture = "pack://application:,,,/Assets/PictureEmpty.png";
+                        Picture = ResourceManager.EmptyImage;
                         PictureUrl = string.Empty;
                         IsEditButtonEnabled = true;
                     }

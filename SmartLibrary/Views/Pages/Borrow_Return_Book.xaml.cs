@@ -21,7 +21,7 @@ namespace SmartLibrary.Views.Pages
             {
                 if (sender is TextBox isbnBox)
                 {
-                    if(string.IsNullOrEmpty(isbnBox.Text))
+                    if (string.IsNullOrEmpty(isbnBox.Text))
                     {
                         XuNiBox.Focus();
                     }

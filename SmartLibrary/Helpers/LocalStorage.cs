@@ -43,13 +43,13 @@ namespace SmartLibrary.Helpers
                     }
                     else
                     {
-                        LoadingCompleted("pack://application:,,,/Assets/LoadingPictureError.png");
+                        LoadingCompleted($"pack://application:,,,/Assets/DynamicPic/{ResourceManager.CurrentTheme}/LoadingPictureError.png");
                     }
                 }
             }
             else
             {
-                LoadingCompleted("pack://application:,,,/Assets/PictureEmpty.png");
+                LoadingCompleted(ResourceManager.EmptyImage);
             }
         }
 
@@ -112,7 +112,7 @@ namespace SmartLibrary.Helpers
         {
             if (string.IsNullOrEmpty(path))
             {
-                LoadingCompleted("pack://application:,,,/Assets/PictureEmpty.png");
+                LoadingCompleted(ResourceManager.EmptyImage);
             }
             else
             {
@@ -132,13 +132,13 @@ namespace SmartLibrary.Helpers
                         }
                         else
                         {
-                            LoadingCompleted("pack://application:,,,/Assets/LoadingPictureError.png");
+                            LoadingCompleted($"pack://application:,,,/Assets/DynamicPic/{ResourceManager.CurrentTheme}/LoadingPictureError.png");
                         }
 
                     }
                     else
                     {
-                        LoadingCompleted("pack://application:,,,/Assets/LoadingPictureError.png");
+                        LoadingCompleted($"pack://application:,,,/Assets/DynamicPic/{ResourceManager.CurrentTheme}/LoadingPictureError.png");
                     }
                 }
             }
@@ -148,7 +148,7 @@ namespace SmartLibrary.Helpers
         {
             if (string.IsNullOrEmpty(imageInfo.Url))
             {
-                imageInfo.Url = "pack://application:,,,/Assets/PictureEmpty.png";
+                imageInfo.Url = ResourceManager.EmptyImage;
                 BookShelfPictureLoadigCompleted(imageInfo);
             }
             else
@@ -171,13 +171,13 @@ namespace SmartLibrary.Helpers
                         }
                         else
                         {
-                            imageInfo.Url = "pack://application:,,,/Assets/LoadingPictureError.png";
+                            imageInfo.Url = $"pack://application:,,,/Assets/DynamicPic/{ResourceManager.CurrentTheme}/LoadingPictureError.png";
                             BookShelfPictureLoadigCompleted(imageInfo);
                         }
                     }
                     else
                     {
-                        imageInfo.Url = "pack://application:,,,/Assets/LoadingPictureError.png";
+                        imageInfo.Url = $"pack://application:,,,/Assets/DynamicPic/{ResourceManager.CurrentTheme}/LoadingPictureError.png";
                         BookShelfPictureLoadigCompleted(imageInfo);
                     }
                 }

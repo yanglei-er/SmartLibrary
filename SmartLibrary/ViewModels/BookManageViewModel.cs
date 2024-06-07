@@ -279,6 +279,7 @@ namespace SmartLibrary.ViewModels
                 SaveFileDialog saveFileDialog = new()
                 {
                     Title = "导出数据库",
+                    FileName = "智慧图书馆" + DateTime.Now.ToString("yyyyMMdd-HHmmss"),
                     Filter = "SmartLibrary数据库 (*.smartlibrary)|*.smartlibrary",
                     InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop)
                 };
@@ -286,7 +287,7 @@ namespace SmartLibrary.ViewModels
                 {
                     System.Media.SystemSounds.Asterisk.Play();
                     File.Copy(@".\database\books.smartlibrary", saveFileDialog.FileName, true);
-                    _snackbarService.Show("导出数据库", $"{System.IO.Path.GetFileName(saveFileDialog.FileName)} 已导出至 {System.IO.Path.GetDirectoryName(saveFileDialog.FileName)} 下", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
+                    _snackbarService.Show("导出数据库", $"{Path.GetFileName(saveFileDialog.FileName)} 已导出至 {Path.GetDirectoryName(saveFileDialog.FileName)} 下", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
                 }
             }
         }

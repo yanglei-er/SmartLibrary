@@ -13,7 +13,7 @@
     <PropertyGroup>
 	    <ApplicationIcon>applicationIcon.ico</ApplicationIcon>
 		<Description>Smart library</Description>
-		<Version>0.2.7</Version>
+		<Version>0.2.8</Version>
 		<Copyright>Copyright © 2024 赵杨磊.All Rights Reserved.</Copyright>
 	</PropertyGroup>
 
@@ -28,6 +28,10 @@
     <None Remove="Assets\borrowbook-512x512.png" />
     <None Remove="Assets\database.png" />
     <None Remove="Assets\databaseEmpty.png" />
+    <None Remove="Assets\DynamicPic\light\cross.png" />
+    <None Remove="Assets\DynamicPic\light\LoadingPictureError.png" />
+    <None Remove="Assets\DynamicPic\light\PictureEmpty.png" />
+    <None Remove="Assets\DynamicPic\light\tick.png" />
     <None Remove="Assets\findbook-512x512.png" />
     <None Remove="Assets\gplv3-127x51.png" />
     <None Remove="Assets\homeBluetooth.png" />
@@ -35,28 +39,20 @@
     <None Remove="Assets\loading.gif" />
     <None Remove="Assets\LoadingPictureError.png" />
     <None Remove="Assets\PictureEmpty.png" />
-    <None Remove="Assets\pic\cross.png" />
-    <None Remove="Assets\pic\right.png" />
-    <None Remove="Assets\pic\tick.png" />
-    <None Remove="Assets\pic\wrong.png" />
+    <None Remove="Assets\DynamicPic\cross.png" />
+    <None Remove="Assets\DynamicPic\right.png" />
+    <None Remove="Assets\DynamicPic\tick.png" />
+    <None Remove="Assets\DynamicPic\wrong.png" />
     <None Remove="Assets\warning.png" />
     <None Remove="Assets\wpfui-48x48.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <COMReference Include="IWshRuntimeLibrary">
-      <WrapperTool>tlbimp</WrapperTool>
-      <VersionMinor>0</VersionMinor>
-      <VersionMajor>1</VersionMajor>
-      <Guid>f935dc20-1cf0-11d0-adb9-00c04fd58a0b</Guid>
-      <Lcid>0</Lcid>
-      <Isolated>false</Isolated>
-      <EmbedInteropTypes>true</EmbedInteropTypes>
-    </COMReference>
-  </ItemGroup>
-
-  <ItemGroup>
     <Resource Include="Assets\databaseEmpty.png" />
+    <Resource Include="Assets\DynamicPic\light\cross.png" />
+    <Resource Include="Assets\DynamicPic\light\LoadingPictureError.png" />
+    <Resource Include="Assets\DynamicPic\light\PictureEmpty.png" />
+    <Resource Include="Assets\DynamicPic\light\tick.png" />
     <Resource Include="Assets\loading.gif" />
     <Resource Include="Assets\bluetooth-disabled.png" />
     <Resource Include="Assets\database.png" />
@@ -71,15 +67,27 @@
     <Resource Include="Assets\gplv3-127x51.png" />
     <Resource Include="Assets\homeBluetooth.png" />
     <Resource Include="Assets\homeSetting.png" />
-    <Resource Include="Assets\LoadingPictureError.png" />
-    <Resource Include="Assets\PictureEmpty.png" />
-    <Resource Include="Assets\pic\cross.png" />
-    <Resource Include="Assets\pic\right.png" />
-    <Resource Include="Assets\pic\tick.png" />
-    <Resource Include="Assets\pic\wrong.png" />
+    <Resource Include="Assets\DynamicPic\dark\LoadingPictureError.png" />
+    <Resource Include="Assets\DynamicPic\dark\PictureEmpty.png" />
+    <Resource Include="Assets\DynamicPic\dark\cross.png" />
+    <Resource Include="Assets\right.png" />
+    <Resource Include="Assets\DynamicPic\dark\tick.png" />
+    <Resource Include="Assets\wrong.png" />
     <Resource Include="Assets\warning.png" />
     <Resource Include="Assets\wpfui-48x48.png" />
   </ItemGroup>
+
+	<ItemGroup>
+		<COMReference Include="IWshRuntimeLibrary">
+			<WrapperTool>tlbimp</WrapperTool>
+			<VersionMinor>0</VersionMinor>
+			<VersionMajor>1</VersionMajor>
+			<Guid>f935dc20-1cf0-11d0-adb9-00c04fd58a0b</Guid>
+			<Lcid>0</Lcid>
+			<Isolated>false</Isolated>
+			<EmbedInteropTypes>true</EmbedInteropTypes>
+		</COMReference>
+	</ItemGroup>
 
     <ItemGroup>
 		<PackageReference Include="32feet.NET" Version="3.5.0" />
