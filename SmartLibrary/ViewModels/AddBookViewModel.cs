@@ -139,7 +139,7 @@ namespace SmartLibrary.ViewModels
                 {
                     IsError = true;
                     ErrorTitle = "提示";
-                    ErrorText = "API Key未设置，若需获取网络图书数据，请转到设置界面填写API Key";
+                    ErrorText = "API Key未设置，若需获取网络图书数据，请转到设置界面填写API Key。";
                     ErrorSeverity = InfoBarSeverity.Warning;
                 }
             }

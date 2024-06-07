@@ -29,6 +29,14 @@
                     Stretch="UniformToFill" />
             </Border.Background>
             <Grid>
+                <Border>
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0.6,0.6" EndPoint="1,1">
+                            <GradientStop Offset="0" Color="Transparent" />
+                            <GradientStop Offset="1.3" Color="#AA000000" />
+                        </LinearGradientBrush>
+                    </Border.Background>
+                </Border>
                 <StackPanel
                     Margin="48,0"
                     HorizontalAlignment="Left"
@@ -37,13 +45,13 @@
                         FontSize="48"
                         FontTypography="TitleLarge"
                         Foreground="#FFFFFF"
-                        Text="未来书海领航员">
-                        <TextBlock.Effect>
+                        Text="智慧图书馆">
+                        <ui:TextBlock.Effect>
                             <DropShadowEffect
                                 BlurRadius="12"
                                 Direction="240"
                                 ShadowDepth="4" />
-                        </TextBlock.Effect>
+                        </ui:TextBlock.Effect>
                     </ui:TextBlock>
                     <ui:TextBlock
                         FontTypography="Subtitle"

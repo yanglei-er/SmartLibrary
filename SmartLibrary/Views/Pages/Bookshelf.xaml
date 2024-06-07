@@ -146,7 +146,7 @@
                                     Grid.Row="1"
                                     Width="65"
                                     Height="25"
-                                    Margin="156,0,8,8"
+                                    Margin="152,0,8,8"
                                     HorizontalAlignment="Left"
                                     VerticalAlignment="Bottom"
                                     Background="{ui:ThemeResource ControlFillColorDefaultBrush}"
