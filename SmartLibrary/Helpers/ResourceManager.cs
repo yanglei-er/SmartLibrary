@@ -2,13 +2,25 @@
 {
     public static class ResourceManager
     {
-        private readonly static string currentTheme = Utils.GetUserApplicationTheme(SettingsHelper.GetConfig("Theme")).ToString().ToLower();
+        private static string currentTheme = string.Empty;
+        private static ResourceDictionary? currentThemeResource;
 
-        public readonly static string EmptyImage = $"pack://application:,,,/Assets/DynamicPic/{currentTheme}/PictureEmpty.png";
+        public static void UpdateTheme(string theme)
+        {
+            currentTheme = theme.ToLower();
+            Application.Current.Resources.MergedDictionaries.Remove(currentThemeResource);
+            currentThemeResource = new ResourceDictionary { Source = new Uri($"pack://application:,,,/Style/{currentTheme}.xaml") };
+            Application.Current.Resources.MergedDictionaries.Add(currentThemeResource);
+        }
 
         public static string CurrentTheme
         {
             get { return currentTheme; }
+        }
+
+        public static string EmptyImage
+        {
+            get { return $"pack://application:,,,/Assets/DynamicPic/{currentTheme}/PictureEmpty.png"; }
         }
     }
 }

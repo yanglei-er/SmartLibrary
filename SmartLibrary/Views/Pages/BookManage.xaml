@@ -53,11 +53,11 @@
             </Setter>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#673AB7" />
+                    <Setter Property="Background" Value="{DynamicResource EditButtonIsMouseOverBackground}" />
                 </Trigger>
                 <Trigger Property="IsPressed" Value="True">
-                    <Setter Property="Background" Value="#FF5B34A2" />
-                    <Setter Property="Foreground" Value="#BDBDBD" />
+                    <Setter Property="Background" Value="{DynamicResource EditButtonIsPressedBackground}" />
+                    <Setter Property="Foreground" Value="{DynamicResource ButtonForegroundPressed}" />
                 </Trigger>
             </Style.Triggers>
         </Style>
@@ -81,11 +81,11 @@
             </Setter>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#F44336" />
+                    <Setter Property="Background" Value="{DynamicResource RemoveButtonIsMouseOverBackground}" />
                 </Trigger>
                 <Trigger Property="IsPressed" Value="True">
-                    <Setter Property="Background" Value="#FFBF2E23" />
-                    <Setter Property="Foreground" Value="#FFBDBDBD" />
+                    <Setter Property="Background" Value="{DynamicResource RemoveButtonIsPressedBackground}" />
+                    <Setter Property="Foreground" Value="{DynamicResource ButtonForegroundPressed}" />
                 </Trigger>
             </Style.Triggers>
         </Style>
@@ -93,7 +93,7 @@
             x:Key="AddButton"
             BasedOn="{StaticResource EditButton}"
             TargetType="ui:Button">
-            <Setter Property="Background" Value="#FF7047ED" />
+            <Setter Property="Background" Value="{DynamicResource AddButtonBackground}" />
             <Setter Property="Height" Value="37" />
             <Setter Property="Width" Value="50" />
             <Setter Property="Template">
@@ -112,14 +112,14 @@
             </Setter>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#7B5CD6" />
+                    <Setter Property="Background" Value="{DynamicResource AddButtonIsMouseOverBackground}" />
                 </Trigger>
                 <Trigger Property="IsPressed" Value="True">
-                    <Setter Property="Background" Value="#FF6045B4" />
-                    <Setter Property="Foreground" Value="#FFBDBDBD" />
+                    <Setter Property="Background" Value="{DynamicResource AddButtonIsPressedBackground}" />
+                    <Setter Property="Foreground" Value="{DynamicResource ButtonForegroundPressed}" />
                 </Trigger>
                 <Trigger Property="IsEnabled" Value="False">
-                    <Setter Property="Background" Value="#FF4415CB" />
+                    <Setter Property="Background" Value="{DynamicResource AddButtonIsEnabledBackground}" />
                     <Setter Property="Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
                 </Trigger>
             </Style.Triggers>
@@ -128,7 +128,7 @@
             x:Key="DelButton"
             BasedOn="{StaticResource EditButton}"
             TargetType="ui:Button">
-            <Setter Property="Background" Value="#FFDD3232" />
+            <Setter Property="Background" Value="{DynamicResource DelButtonBackground}" />
             <Setter Property="Height" Value="37" />
             <Setter Property="Width" Value="50" />
             <Setter Property="Template">
@@ -147,15 +147,15 @@
             </Setter>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#F44336" />
+                    <Setter Property="Background" Value="{DynamicResource DelButtonIsMouseOverBackground}" />
                 </Trigger>
                 <Trigger Property="IsPressed" Value="True">
-                    <Setter Property="Background" Value="#FFBF2E23" />
-                    <Setter Property="Foreground" Value="#FFBDBDBD" />
+                    <Setter Property="Background" Value="{DynamicResource DelButtonIsPressedBackground}" />
+                    <Setter Property="Foreground" Value="{DynamicResource ButtonForegroundPressed}" />
                 </Trigger>
                 <Trigger Property="IsEnabled" Value="False">
-                    <Setter Property="Background" Value="#FF87150C" />
-                    <Setter Property="Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
+                    <Setter Property="Background" Value="{DynamicResource DelButtonIsEnabledBackground}" />
+                    <Setter Property="Foreground" Value="{DynamicResource ButtonForegroundDisabled}" />
                 </Trigger>
             </Style.Triggers>
         </Style>
@@ -248,7 +248,7 @@
                 <Style BasedOn="{StaticResource DefaultDataGridRowStyle}" TargetType="DataGridRow">
                     <Style.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Foreground" Value="#FFB9E1FF" />
+                            <Setter Property="Foreground" Value="{DynamicResource DataGridRowIsMouseOverForeground}" />
                         </Trigger>
                         <Trigger Property="IsSelected" Value="True">
                             <Setter Property="Foreground" Value="{StaticResource AccentTextFillColorTertiaryBrush}" />

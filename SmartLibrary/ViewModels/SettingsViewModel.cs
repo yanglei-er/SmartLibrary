@@ -198,17 +198,25 @@ namespace SmartLibrary.ViewModels
 
         partial void OnCurrentApplicationThemeIndexChanged(int value)
         {
+            //在不重启的情况下，咱不能完全更换主题
             if (value == 0)
             {
                 SettingsHelper.SetConfig("Theme", "System");
+                //ApplicationTheme theme = Helpers.Utils.GetUserApplicationTheme("System");
+                //ApplicationThemeManager.Apply(theme, Helpers.Utils.GetUserBackdrop(SettingsHelper.GetConfig("Backdrop")));
+                //ResourceManager.UpdateTheme(theme.ToString());
             }
             else if (value == 1)
             {
                 SettingsHelper.SetConfig("Theme", "Light");
+                //ApplicationThemeManager.Apply(ApplicationTheme.Light, Helpers.Utils.GetUserBackdrop(SettingsHelper.GetConfig("Backdrop")));
+                //ResourceManager.UpdateTheme("Light");
             }
             else
             {
                 SettingsHelper.SetConfig("Theme", "Dark");
+                //ApplicationThemeManager.Apply(ApplicationTheme.Dark, Helpers.Utils.GetUserBackdrop(SettingsHelper.GetConfig("Backdrop")));
+                //ResourceManager.UpdateTheme("Dark");
             }
         }
 
