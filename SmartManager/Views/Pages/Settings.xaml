@@ -330,7 +330,7 @@
                                     <ui:TextBlock
                                         VerticalAlignment="Center"
                                         FontTypography="Body"
-                                        Text="SmartLibrary is licensed under GPLv3 license. " />
+                                        Text="SmartManage is licensed under GPLv3 license. " />
                                     <ui:Image
                                         Grid.Column="1"
                                         Width="42"

@@ -123,7 +123,7 @@ namespace SmartLibrary.Helpers
                 }
                 else
                 {
-                    if (ValidHttpURL(path, out _))
+                    if (ValidImageURL(path, out _))
                     {
                         if (await SavePictureAsync(localFilePath, path))
                         {
@@ -161,7 +161,7 @@ namespace SmartLibrary.Helpers
                 }
                 else
                 {
-                    if (ValidHttpURL(imageInfo.Url, out _))
+                    if (ValidImageURL(imageInfo.Url, out _))
                     {
                         if (await SavePictureAsync(localFilePath, imageInfo.Url))
                         {
@@ -184,7 +184,7 @@ namespace SmartLibrary.Helpers
             }
         }
 
-        private static bool ValidHttpURL(string s, out Uri? resultURI)
+        private static bool ValidImageURL(string s, out Uri? resultURI)
         {
             if (!UriRegex().IsMatch(s))
             {
@@ -192,7 +192,21 @@ namespace SmartLibrary.Helpers
             }
             if (Uri.TryCreate(s, UriKind.Absolute, out resultURI))
             {
-                return (resultURI.Scheme == Uri.UriSchemeHttp || resultURI.Scheme == Uri.UriSchemeHttps);
+                if (resultURI.Scheme == Uri.UriSchemeHttp || resultURI.Scheme == Uri.UriSchemeHttps)
+                {
+                    if(s.EndsWith("jpg") || s.EndsWith("png"))
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
             }
             else
             {

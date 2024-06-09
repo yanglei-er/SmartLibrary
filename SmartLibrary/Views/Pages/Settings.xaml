@@ -12,7 +12,7 @@
     Title="Settings"
     d:DataContext="{d:DesignInstance local:Settings,
                                      IsDesignTimeCreatable=False}"
-    d:DesignHeight="950"
+    d:DesignHeight="1050"
     d:DesignWidth="800"
     ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
     ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
@@ -258,7 +258,7 @@
                                     Margin="8,0,0,0"
                                     VerticalAlignment="Center"
                                     FontSize="16"
-                                    Text="危险操作" />
+                                    Text="谨慎操作" />
                                 <StackPanel Grid.Column="1" Orientation="Horizontal">
                                     <ui:Button
                                         Width="108"
@@ -521,28 +521,61 @@
                         OffContent="关"
                         OnContent="开" />
                 </ui:CardControl>
-                <ui:CardControl
+                <ui:CardExpander
                     Margin="0,4,0,0"
+                    ContentPadding="0"
                     Icon="{ui:SymbolIcon KeyMultiple20}"
                     Visibility="{Binding ViewModel.IsAdministrator, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
-                    <ui:CardControl.Header>
-                        <StackPanel>
-                            <ui:TextBlock FontSize="16" Text="API Key" />
-                            <ui:TextBlock
-                                FontSize="13"
-                                Foreground="{StaticResource TextFillColorSecondaryBrush}"
-                                Text="填写您的ISBN查询API秘钥" />
-                        </StackPanel>
-                    </ui:CardControl.Header>
-                    <ui:PasswordBox
-                        MinWidth="220"
-                        Margin="0,0,4,0"
-                        input:InputMethod.IsInputMethodEnabled="False"
-                        MaxLength="48"
-                        Password="{Binding ViewModel.ApiKey, Mode=TwoWay}"
-                        PreviewKeyDown="TextBox_PreviewKeyDown"
-                        Text="{Binding ViewModel.ApiKeyText, Mode=TwoWay}" />
-                </ui:CardControl>
+                    <ui:CardExpander.Header>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <ui:TextBlock FontSize="16" Text="API Key" />
+                                <ui:TextBlock
+                                    FontSize="13"
+                                    Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                    Text="填写您的个人ISBN查询API秘钥" />
+                            </StackPanel>
+                            <ui:PasswordBox
+                                Grid.Column="1"
+                                MinWidth="220"
+                                Margin="0,0,24,0"
+                                input:InputMethod.IsInputMethodEnabled="False"
+                                MaxLength="48"
+                                Password="{Binding ViewModel.ApiKey, Mode=TwoWay}"
+                                PreviewKeyDown="TextBox_PreviewKeyDown"
+                                Text="{Binding ViewModel.ApiKeyText, Mode=TwoWay}" />
+                        </Grid>
+                    </ui:CardExpander.Header>
+                    <ui:Card Background="{StaticResource SystemFillColorCautionBackgroundBrush}" BorderThickness="0">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Margin="8,0,0,0">
+                                <ui:TextBlock FontSize="16" Text="打开API Key获取网址" />
+                                <ui:TextBlock
+                                    Margin="0,4,0,0"
+                                    FontSize="12"
+                                    Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                    Text="注意：本程序使用的API接口仅作为示例，不含任何广告推广，请勿随意付费购买，您可自行更换其他接口使用。所有数据皆加密保存在本地，不会上传云端。"
+                                    TextWrapping="Wrap" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                <ui:Anchor
+                                    Width="108"
+                                    BorderThickness="0"
+                                    Content="打开网址"
+                                    NavigateUri="https://www.tanshuapi.com/market/detail-78"
+                                    ToolTipService.ToolTip="https://www.tanshuapi.com/market/detail-78" />
+                            </StackPanel>
+                        </Grid>
+                    </ui:Card>
+                </ui:CardExpander>
                 <ui:TextBlock
                     Margin="0,12,0,0"
                     FontTypography="Subtitle"

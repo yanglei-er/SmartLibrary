@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
+using Shared.Helpers;
 using SmartLibrary.Helpers;
 using SmartLibrary.Models;
 using SmartLibrary.Views.Pages;
@@ -35,7 +36,7 @@ namespace SmartLibrary.ViewModels
         private int _totalCount = 0;
 
         [ObservableProperty]
-        private int _currentIndex = 0;
+        private int _displayIndex = int.Parse(SettingsHelper.GetConfig("BookshelfDisplayIndex"));
 
         [ObservableProperty]
         private ObservableCollection<PageButton> _pageButtonList = [];
@@ -126,7 +127,7 @@ namespace SmartLibrary.ViewModels
                 DatabaseEmpty = false;
                 IsBottombarEnabled = true;
             }
-            TotalPageCount = TotalCount / PageCountList[CurrentIndex] + ((TotalCount % PageCountList[CurrentIndex]) == 0 ? 0 : 1);
+            TotalPageCount = TotalCount / PageCountList[DisplayIndex] + ((TotalCount % PageCountList[DisplayIndex]) == 0 ? 0 : 1);
             if (CurrentPage > TotalPageCount) CurrentPage = TotalPageCount;
             if (TotalPageCount == 1) { IsPageUpEnabled = false; IsPageDownEnabled = false; return; }
             if (CurrentPage != 1) { IsPageUpEnabled = true; }
@@ -136,7 +137,7 @@ namespace SmartLibrary.ViewModels
         private async void PagerAsync()
         {
             BookListItems.Clear();
-            foreach (DataRow row in (await BooksDb.GetBookList(CurrentPage, PageCountList[CurrentIndex])).Rows)
+            foreach (DataRow row in (await BooksDb.GetBookList(CurrentPage, PageCountList[DisplayIndex])).Rows)
             {
                 BookShelfInfo book = new((string)row[0], (string)row[1], (string)row[2], row[3].ToString() ?? string.Empty, row[4].ToString() ?? string.Empty);
                 BookListItems.Add(book);
@@ -184,8 +185,9 @@ namespace SmartLibrary.ViewModels
             }
         }
 
-        partial void OnCurrentIndexChanged(int value)
+        partial void OnDisplayIndexChanged(int value)
         {
+            SettingsHelper.SetConfig("BookshelfDisplayIndex", value.ToString());
             RefreshAsync();
             if (CurrentPage == 1) PagerAsync();
             CurrentPage = 1;

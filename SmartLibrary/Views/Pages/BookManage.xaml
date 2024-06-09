@@ -420,7 +420,7 @@
                     VerticalAlignment="Center"
                     IsEnabled="{Binding ViewModel.IsBottombarEnabled, Mode=OneWay}"
                     ItemsSource="{Binding ViewModel.PageCountList, Mode=OneTime}"
-                    SelectedIndex="{Binding ViewModel.CurrentIndex, Mode=TwoWay}" />
+                    SelectedIndex="{Binding ViewModel.DisplayIndex, Mode=TwoWay}" />
                 <ui:TextBlock
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"

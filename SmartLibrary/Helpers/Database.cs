@@ -217,7 +217,8 @@ namespace SmartLibrary.Helpers
             sbr.AppendLine("SELECT isbn,bookName,author,shelfNumber,isBorrowed FROM main LIMIT ");
             sbr.AppendLine(pageSize.ToString());
             sbr.AppendLine(" OFFSET ");
-            sbr.AppendLine((pageIndex - 1 * pageSize).ToString());
+            int OffsetIndex = (pageIndex - 1) * pageSize;
+            sbr.AppendLine(OffsetIndex.ToString());
             return await ExecuteDataTableAsync(sbr.ToString());
         }
 
@@ -277,6 +278,7 @@ namespace SmartLibrary.Helpers
 
         public async ValueTask<bool> ExistsAsync(string isbn)
         {
+            if(string.IsNullOrEmpty(isbn)) return false;
             object? result = await ExecuteScalarAsync($"SELECT COUNT(*) FROM main WHERE isbn = {isbn}", null);
             if (Convert.ToInt32(result) > 0)
             {

@@ -9,12 +9,17 @@
     Title="FaceManage"
     d:DataContext="{d:DesignInstance local:FaceManage,
                                      IsDesignTimeCreatable=False}"
-    d:DesignHeight="630"
-    d:DesignWidth="900"
+    d:DesignHeight="520"
+    d:DesignWidth="800"
     ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
     ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
     Foreground="{DynamicResource TextFillColorPrimaryBrush}"
     mc:Ignorable="d">
 
-    <Grid />
+    <Grid Margin="16">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+    </Grid>
 </Page>

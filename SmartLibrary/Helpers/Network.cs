@@ -1,11 +1,13 @@
 ﻿using System.Net.Http;
+using System.Security.Authentication;
 
 namespace SmartLibrary.Helpers
 {
     public sealed partial class Network
     {
         private static Network? _instance;
-        private static readonly HttpClient httpClient = new();
+        private static readonly HttpClientHandler clientHandler = new();
+        private static readonly HttpClient httpClient = new(clientHandler);
 
         public static Network Instance
         {
@@ -21,6 +23,8 @@ namespace SmartLibrary.Helpers
         private Network()
         {
             System.Net.NetworkInformation.NetworkChange.NetworkAvailabilityChanged += (_, e) => IsInternetConnected = e.IsAvailable;
+            clientHandler.ServerCertificateCustomValidationCallback += (sender, cert, chain, sslPolicyErrors) => { return true; };
+            clientHandler.SslProtocols = SslProtocols.None;
         }
 
         #region UAPool
