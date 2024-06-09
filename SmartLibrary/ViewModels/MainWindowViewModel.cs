@@ -1,4 +1,4 @@
-﻿using SmartLibrary.Helpers;
+﻿using Shared.Helpers;
 using System.Collections.ObjectModel;
 using Wpf.Ui.Controls;
 

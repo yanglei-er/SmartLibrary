@@ -1,10 +1,11 @@
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using SamrtManager.Views;
+using SamrtManager.Views.Pages;
 using Shared.Services.Contracts;
-using SmartLibrary.Views;
-using SmartLibrary.Views.Pages;
+using System.Windows;
 
-namespace SmartLibrary.Services
+namespace SamrtManager.Services
 {
     public class ApplicationHostService : IHostedService
     {
@@ -33,6 +34,7 @@ namespace SmartLibrary.Services
             }
 
             IWindow mainWindow = _serviceProvider.GetRequiredService<IWindow>();
+
             mainWindow.Loaded += (sender, _) => { if (sender is MainWindow mainWindow) { mainWindow.RootNavigation.Navigate(typeof(Home)); } };
             mainWindow?.Show();
             return Task.CompletedTask;

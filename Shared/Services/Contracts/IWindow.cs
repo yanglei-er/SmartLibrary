@@ -1,4 +1,6 @@
-namespace SmartLibrary.Services.Contracts
+﻿using System.Windows;
+
+namespace Shared.Services.Contracts
 {
     public interface IWindow
     {

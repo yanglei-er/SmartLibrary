@@ -1,13 +1,14 @@
 ﻿using System.Globalization;
 using System.Windows.Data;
+using System.Windows.Media;
 
-namespace SmartLibrary.Converters
+namespace Shared.Converters
 {
-    public sealed class InverseBooleanConverter : IValueConverter
+    public sealed class StringToBrushConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return !(bool)value;
+            return new SolidColorBrush((Color)ColorConverter.ConvertFromString((string)value));
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

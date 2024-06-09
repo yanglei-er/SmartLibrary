@@ -1,8 +1,9 @@
 ﻿using System.Text.RegularExpressions;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace SmartLibrary.Extensions
+namespace Shared.Extensions
 {
     public partial class TextBoxAttachedProperties
     {

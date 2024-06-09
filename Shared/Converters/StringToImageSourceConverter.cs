@@ -3,9 +3,9 @@ using System.IO;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
 
-namespace SmartLibrary.Converters
+namespace Shared.Converters
 {
-    internal sealed class StringToImageSourceConverter : IValueConverter
+    public sealed class StringToImageSourceConverter : IValueConverter
     {
         public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

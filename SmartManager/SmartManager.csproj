@@ -1,0 +1,57 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	
+  <PropertyGroup>
+	  <OutputType>WinExe</OutputType>
+	  <TargetFramework>net8.0-windows10.0.22621.0</TargetFramework>
+	  <SupportedOSPlatformVersion>10.0.18362.0</SupportedOSPlatformVersion>
+	  <ImplicitUsings>enable</ImplicitUsings>
+	  <UseWPF>true</UseWPF>
+	  <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	  <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+	<PropertyGroup>
+		<ApplicationIcon>applicationIcon.ico</ApplicationIcon>
+		<Description>Smart Manage</Description>
+		<Copyright>Copyright © 2024 赵杨磊.All Rights Reserved.</Copyright>
+		<AssemblyVersion>0.3.0.24161</AssemblyVersion>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Shared\Shared.csproj" />
+	</ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Assets\applicationIcon-512.png" />
+    <None Remove="Assets\applicationIcon.ico" />
+    <None Remove="Assets\background.jpg" />
+    <None Remove="Assets\face-scan.png" />
+    <None Remove="Assets\rfid.png" />
+  </ItemGroup>
+
+	<ItemGroup>
+		<Resource Include="applicationIcon.ico" />
+		<Resource Include="Assets\applicationIcon-512.png" />
+		<Resource Include="Assets\background.jpg" />
+		<Resource Include="Assets\face-scan.png" />
+		<Resource Include="Assets\rfid.png" />
+	</ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="ViewFaceCore" Version="0.3.8" />
+    <PackageReference Include="ViewFaceCore.Extension.ImageSharp" Version="0.3.7" />
+    <PackageReference Include="ViewFaceCore.model.face_landmarker_pts68" Version="6.0.7" />
+    <PackageReference Include="ViewFaceCore.model.face_recognizer" Version="6.0.7" />
+    <PackageReference Include="ViewFaceCore.runtime.win.x64" Version="6.0.7" />
+    <PackageReference Include="WPF-UI" Version="3.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Helpers\" />
+    <Folder Include="Converters\" />
+  </ItemGroup>
+
+</Project>

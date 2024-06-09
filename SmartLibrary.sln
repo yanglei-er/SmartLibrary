@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34511.84
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartLibrary", "SmartLibrary\SmartLibrary.csproj", "{FB308821-2A80-4258-BD6F-916DB1FB8E1A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmartLibrary", "SmartLibrary\SmartLibrary.csproj", "{FB308821-2A80-4258-BD6F-916DB1FB8E1A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmartManager", "SmartManager\SmartManager.csproj", "{68F0285D-D3ED-4494-8267-1107261A1092}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared", "Shared\Shared.csproj", "{1B5E8380-4839-4DC8-83BE-BC2D40C3CCAF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{FB308821-2A80-4258-BD6F-916DB1FB8E1A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FB308821-2A80-4258-BD6F-916DB1FB8E1A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FB308821-2A80-4258-BD6F-916DB1FB8E1A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{68F0285D-D3ED-4494-8267-1107261A1092}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68F0285D-D3ED-4494-8267-1107261A1092}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68F0285D-D3ED-4494-8267-1107261A1092}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68F0285D-D3ED-4494-8267-1107261A1092}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B5E8380-4839-4DC8-83BE-BC2D40C3CCAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B5E8380-4839-4DC8-83BE-BC2D40C3CCAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B5E8380-4839-4DC8-83BE-BC2D40C3CCAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B5E8380-4839-4DC8-83BE-BC2D40C3CCAF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

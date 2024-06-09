@@ -13,12 +13,15 @@
     <PropertyGroup>
 	    <ApplicationIcon>applicationIcon.ico</ApplicationIcon>
 		<Description>Smart library</Description>
-		<Version>0.2.9</Version>
 		<Copyright>Copyright © 2024 赵杨磊.All Rights Reserved.</Copyright>
+		<AssemblyVersion>0.3.0.24161</AssemblyVersion>
 	</PropertyGroup>
 
+	<ItemGroup>
+		<ProjectReference Include="..\Shared\Shared.csproj" />
+	</ItemGroup>
+
   <ItemGroup>
-    <None Remove="Assets\.net-48x48.png" />
     <None Remove="Assets\applicationIcon-512.png" />
     <None Remove="Assets\background.jpg" />
     <None Remove="Assets\bluetooth-connected.png" />
@@ -33,9 +36,7 @@
     <None Remove="Assets\DynamicPic\light\PictureEmpty.png" />
     <None Remove="Assets\DynamicPic\light\tick.png" />
     <None Remove="Assets\findbook-512x512.png" />
-    <None Remove="Assets\gplv3-127x51.png" />
     <None Remove="Assets\homeBluetooth.png" />
-    <None Remove="Assets\homeSetting.png" />
     <None Remove="Assets\loading.gif" />
     <None Remove="Assets\LoadingPictureError.png" />
     <None Remove="Assets\PictureEmpty.png" />
@@ -44,7 +45,6 @@
     <None Remove="Assets\DynamicPic\tick.png" />
     <None Remove="Assets\DynamicPic\wrong.png" />
     <None Remove="Assets\warning.png" />
-    <None Remove="Assets\wpfui-48x48.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -56,7 +56,6 @@
     <Resource Include="Assets\loading.gif" />
     <Resource Include="Assets\bluetooth-disabled.png" />
     <Resource Include="Assets\database.png" />
-    <Resource Include="Assets\.net-48x48.png" />
     <Resource Include="Assets\applicationIcon-512.png" />
     <Resource Include="Assets\background.jpg" />
     <Resource Include="Assets\bluetooth-connected.png" />
@@ -64,9 +63,7 @@
     <Resource Include="Assets\bookinfo-512x512.png" />
     <Resource Include="Assets\borrowbook-512x512.png" />
     <Resource Include="Assets\findbook-512x512.png" />
-    <Resource Include="Assets\gplv3-127x51.png" />
     <Resource Include="Assets\homeBluetooth.png" />
-    <Resource Include="Assets\homeSetting.png" />
     <Resource Include="Assets\DynamicPic\dark\LoadingPictureError.png" />
     <Resource Include="Assets\DynamicPic\dark\PictureEmpty.png" />
     <Resource Include="Assets\DynamicPic\dark\cross.png" />
@@ -74,7 +71,6 @@
     <Resource Include="Assets\DynamicPic\dark\tick.png" />
     <Resource Include="Assets\wrong.png" />
     <Resource Include="Assets\warning.png" />
-    <Resource Include="Assets\wpfui-48x48.png" />
   </ItemGroup>
 
 	<ItemGroup>

@@ -1,13 +1,14 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using SamrtManager.Services;
 using Shared.Services;
 using Shared.Services.Contracts;
-using SmartLibrary.Services;
+using System.Windows;
 using System.Windows.Threading;
 using Wpf.Ui;
 
-namespace SmartLibrary
+namespace SamrtManager
 {
     public partial class App : Application
     {
@@ -33,23 +34,13 @@ namespace SmartLibrary
                     // Views and ViewModels
                     services.AddSingleton<Views.Pages.Home>();
                     services.AddSingleton<ViewModels.HomeViewModel>();
-                    services.AddSingleton<Views.Pages.Bookshelf>();
-                    services.AddSingleton<ViewModels.BookshelfViewModel>();
-                    services.AddSingleton<Views.Pages.Borrow_Return_Book>();
-                    services.AddSingleton<ViewModels.Borrow_Return_BookViewModel>();
-                    services.AddSingleton<Views.Pages.BookInfo>();
-                    services.AddSingleton<ViewModels.BookInfoViewModel>();
-                    services.AddSingleton<Views.Pages.BookManage>();
-                    services.AddSingleton<ViewModels.BookManageViewModel>();
-                    services.AddSingleton<Views.Pages.BluetoothSettings>();
-                    services.AddSingleton<ViewModels.BluetoothSettingsViewModel>();
+                    services.AddSingleton<Views.Pages.FaceManage>();
+                    services.AddSingleton<ViewModels.FaceManageViewModel>();
+                    services.AddSingleton<Views.Pages.RFIDManage>();
+                    services.AddSingleton<ViewModels.RFIDManageViewModel>();
+
                     services.AddSingleton<Views.Pages.Settings>();
                     services.AddSingleton<ViewModels.SettingsViewModel>();
-
-                    services.AddTransient<Views.Pages.AddBook>();
-                    services.AddTransient<ViewModels.AddBookViewModel>();
-                    services.AddTransient<Views.Pages.EditBook>();
-                    services.AddTransient<ViewModels.EditBookViewModel>();
                 }
             ).Build();
 

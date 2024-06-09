@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	<TargetFramework>net8.0-windows10.0.22621.0</TargetFramework>
+	<SupportedOSPlatformVersion>10.0.18362.0</SupportedOSPlatformVersion>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+	<PropertyGroup>
+		<Description>Smart library共享资源库</Description>
+		<Copyright>Copyright © 2024 赵杨磊.All Rights Reserved.</Copyright>
+		<AssemblyVersion>0.3.0.24161</AssemblyVersion>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <None Remove="Assets\.net-48x48.png" />
+	  <None Remove="Assets\gplv3-127x51.png" />
+	  <None Remove="Assets\homeSetting.png" />
+	  <None Remove="Assets\wpfui-48x48.png" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Resource Include="Assets\.net-48x48.png" />
+		<Resource Include="Assets\gplv3-127x51.png" />
+		<Resource Include="Assets\homeSetting.png" />
+		<Resource Include="Assets\wpfui-48x48.png" />
+	</ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+    <PackageReference Include="WPF-UI" Version="3.0.4" />
+  </ItemGroup>
+
+</Project>

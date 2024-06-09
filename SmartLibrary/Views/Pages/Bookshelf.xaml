@@ -8,6 +8,7 @@
     xmlns:local="clr-namespace:SmartLibrary.Views.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="clr-namespace:SmartLibrary.Models"
+    xmlns:sharedExtensions="clr-namespace:Shared.Extensions;assembly=Shared"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     Title="Bookshelf"
     d:DataContext="{d:DesignInstance local:Bookshelf,
@@ -82,9 +83,9 @@
             <ItemsControl.Template>
                 <ControlTemplate TargetType="ItemsControl">
                     <ScrollViewer
-                        extensions:ScrollAnimationBehavior.IsEnabled="True"
-                        extensions:ScrollAnimationBehavior.PointsToScroll="16"
-                        extensions:ScrollAnimationBehavior.TimeDuration="00:00:00.20">
+                        sharedExtensions:ScrollAnimationBehavior.IsEnabled="True"
+                        sharedExtensions:ScrollAnimationBehavior.PointsToScroll="16"
+                        sharedExtensions:ScrollAnimationBehavior.TimeDuration="00:00:00.20">
                         <ItemsPresenter Margin="-12,0,16,0" />
                     </ScrollViewer>
                 </ControlTemplate>
@@ -287,7 +288,7 @@
                     x:Name="textBox"
                     Height="32"
                     Margin="4,0,4,0"
-                    extensions:TextBoxAttachedProperties.IsOnlyNumber="True"
+                    sharedExtensions:TextBoxAttachedProperties.IsOnlyNumber="True"
                     IsEnabled="{Binding ViewModel.IsBottombarEnabled, Mode=OneWay}"
                     PreviewKeyDown="TextBox_PreviewKeyDown"
                     Text="{Binding ViewModel.TargetPage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />

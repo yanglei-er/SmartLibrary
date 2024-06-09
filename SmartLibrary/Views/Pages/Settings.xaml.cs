@@ -19,7 +19,7 @@ namespace SmartLibrary.Views.Pages
             InitializeComponent();
             AccentColor.ItemsSource = SystemAccentColor;
 
-            AppVersion.Text = Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? string.Empty;
+            AppVersion.Text = Assembly.GetExecutingAssembly().GetName().Version?.ToString();
             DotNetVersion.Content = ".Net " + Environment.Version.ToString();
             WpfUIVersion.Content = "WPF-UI " + (FileVersionInfo.GetVersionInfo("./Wpf.Ui.dll").ProductVersion ?? string.Empty).Split("+")[0];
         }

@@ -1,5 +1,6 @@
-﻿using SmartLibrary.Helpers;
-using SmartLibrary.Services.Contracts;
+﻿using Shared.Helpers;
+using Shared.Services.Contracts;
+using SmartLibrary.Helpers;
 using SmartLibrary.ViewModels;
 using System.Windows.Interop;
 using Wpf.Ui;
@@ -39,12 +40,12 @@ namespace SmartLibrary.Views
 
         private static void LoadingSettings()
         {
-            ApplicationTheme theme = Helpers.Utils.GetUserApplicationTheme(SettingsHelper.GetConfig("Theme"));
+            ApplicationTheme theme = Shared.Helpers.Utils.GetUserApplicationTheme(SettingsHelper.GetConfig("Theme"));
             ResourceManager.UpdateTheme(theme.ToString());
-            ApplicationThemeManager.Apply(theme, Helpers.Utils.GetUserBackdrop(SettingsHelper.GetConfig("Backdrop")));
+            ApplicationThemeManager.Apply(theme, Shared.Helpers.Utils.GetUserBackdrop(SettingsHelper.GetConfig("Backdrop")));
             if (Convert.ToBoolean(SettingsHelper.GetConfig("IsCustomizedAccentColor")))
             {
-                ApplicationAccentColorManager.Apply(Helpers.Utils.StringToColor(SettingsHelper.GetConfig("CustomizedAccentColor")), theme);
+                ApplicationAccentColorManager.Apply(Shared.Helpers.Utils.StringToColor(SettingsHelper.GetConfig("CustomizedAccentColor")), theme);
             }
         }
 

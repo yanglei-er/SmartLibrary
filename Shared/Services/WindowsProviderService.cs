@@ -1,6 +1,7 @@
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System.Windows;
 
-namespace SmartLibrary.Services
+namespace Shared.Services
 {
     public class WindowsProviderService
     {
@@ -24,5 +25,4 @@ namespace SmartLibrary.Services
             windowInstance.Show();
         }
     }
-
 }

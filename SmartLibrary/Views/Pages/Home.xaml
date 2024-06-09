@@ -242,7 +242,7 @@
                 </ui:CardAction>
                 <ui:CardAction
                     Grid.Column="2"
-                    Margin="8,0,4,0"
+                    Margin="8,0,0,0"
                     Padding="0"
                     VerticalAlignment="Stretch"
                     Command="{Binding ViewModel.CardClickCommand, Mode=OneWay}"
@@ -257,7 +257,7 @@
                             Width="50"
                             Margin="24,0,0,0"
                             RenderOptions.BitmapScalingMode="HighQuality"
-                            Source="pack://application:,,,/Assets/homeSetting.png"
+                            Source="/Shared;Component/Assets/homeSetting.png"
                             Stretch="UniformToFill" />
                         <ui:TextBlock
                             Grid.Column="1"

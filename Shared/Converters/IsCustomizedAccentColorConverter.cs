@@ -1,9 +1,9 @@
 ﻿using System.Globalization;
 using System.Windows.Data;
 
-namespace SmartLibrary.Converters
+namespace Shared.Converters
 {
-    internal sealed class IsCustomizedAccentColorConverter : IValueConverter
+    public sealed class IsCustomizedAccentColorConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

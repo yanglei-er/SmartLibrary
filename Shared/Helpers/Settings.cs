@@ -1,6 +1,6 @@
 ﻿using System.Configuration;
 
-namespace SmartLibrary.Helpers
+namespace Shared.Helpers
 {
     public sealed class SettingsHelper
     {

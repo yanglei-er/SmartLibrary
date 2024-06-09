@@ -46,16 +46,16 @@
      - [Windows 11 版本 21H2 或更高版本：家庭版、专业版、专业教育版、专业工作站版、企业版和教育版](https://learn.microsoft.com/zh-cn/visualstudio/releases/2022/system-requirements)
 
 - 工作负荷
-     - .NET 桌面开发
+     - .NET 桌面开发（.Net 8）
 
 - 插件
      -  [XAML Styler for Visual Studio 2022(可选)](https://marketplace.visualstudio.com/items?itemName=TeamXavalon.XAMLStyler2022)
 
 
-## 引用
--   [🔗WPF UI](https://github.com/lepoco/wpfui)
--   [🔗32feet.NET](https://github.com/inthehand/32feet)
--   [🔗.NET Community Toolkit](https://github.com/CommunityToolkit/dotnet)
+## 🔗引用
+-   [WPF UI](https://github.com/lepoco/wpfui)
+-   [32feet.NET](https://github.com/inthehand/32feet)
+-   [.NET Community Toolkit](https://github.com/CommunityToolkit/dotnet)
 
 ## 图标
 <a href="https://www.flaticon.com/free-icons/reading" title="reading icons">Reading icons created by Freepik - Flaticon</a>
@@ -67,6 +67,10 @@
 <a href="https://www.flaticon.com/free-icons/database" title="database icons">Database icons created by Freepik - Flaticon</a>
 
 <a href="https://www.flaticon.com/free-icons/warning" title="warning icons">Warning icons created by Freepik - Flaticon</a>
+
+<a href="https://www.flaticon.com/free-icons/face-recognition" title="face recognition icons">Face recognition icons created by Hilmy Abiyyu A. - Flaticon</a>
+
+<a href="https://www.flaticon.com/free-icons/rfid-chip" title="rfid chip icons">Rfid chip icons created by Freepik - Flaticon</a>
 
 ## License
 SmartLibrary is licensed under [GPLv3](./LICENSE).
