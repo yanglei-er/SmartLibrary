@@ -18,7 +18,8 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="2*" />
+            <RowDefinition Height="4.2*" />
+            <RowDefinition Height="*" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Border Grid.Row="0" CornerRadius="8,0,0,0">
@@ -86,189 +87,192 @@
                     Text="Created by Zhao Yanglei" />
             </Grid>
         </Border>
-        <StackPanel Grid.Row="1" Margin="16,16,16,0">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <ui:CardAction
-                    Grid.Column="0"
-                    Margin="0,0,4,0"
-                    Padding="0"
-                    VerticalAlignment="Stretch"
-                    Command="{Binding ViewModel.CardClickCommand, Mode=OneWay}"
-                    CommandParameter="我要找书"
-                    IsChevronVisible="False">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <ui:Image
-                            Width="60"
-                            Margin="24,0,0,0"
-                            RenderOptions.BitmapScalingMode="HighQuality"
-                            Source="pack://application:,,,/Assets/findbook-512x512.png"
-                            Stretch="UniformToFill" />
-                        <ui:TextBlock
-                            Grid.Column="1"
-                            Margin="24"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            FontSize="22"
-                            Text="我要找书" />
-                    </Grid>
-                </ui:CardAction>
-                <ui:CardAction
-                    Grid.Column="1"
-                    Margin="8,0,4,0"
-                    Padding="0"
-                    VerticalAlignment="Stretch"
-                    Command="{Binding ViewModel.CardClickCommand, Mode=OneWay}"
-                    CommandParameter="我要借/还书"
-                    IsChevronVisible="False">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <ui:Image
-                            Width="60"
-                            Margin="24,0,0,0"
-                            RenderOptions.BitmapScalingMode="HighQuality"
-                            Source="pack://application:,,,/Assets/borrowbook-512x512.png"
-                            Stretch="UniformToFill" />
-                        <ui:TextBlock
-                            Grid.Column="1"
-                            Margin="14"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            FontSize="22"
-                            Text="我要借/还书" />
-                    </Grid>
-                </ui:CardAction>
-                <ui:CardAction
-                    Grid.Column="2"
-                    Margin="8,0,0,0"
-                    Padding="0"
-                    VerticalAlignment="Stretch"
-                    Command="{Binding ViewModel.CardClickCommand, Mode=OneWay}"
-                    CommandParameter="图书信息查询"
-                    IsChevronVisible="False">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <ui:Image
-                            Width="50"
-                            Margin="24,0,0,0"
-                            RenderOptions.BitmapScalingMode="HighQuality"
-                            Source="pack://application:,,,/Assets/bookinfo-512x512.png"
-                            Stretch="UniformToFill" />
-                        <ui:TextBlock
-                            Grid.Column="1"
-                            Margin="12"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            FontSize="22"
-                            Text="图书信息查询" />
-                    </Grid>
-                </ui:CardAction>
-            </Grid>
-            <Grid Margin="0,16,0,0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <ui:CardAction
-                    Grid.Column="0"
-                    Margin="0,0,4,0"
-                    Padding="0"
-                    VerticalAlignment="Stretch"
-                    Command="{Binding ViewModel.CardClickCommand, Mode=OneWay}"
-                    CommandParameter="管理"
-                    IsChevronVisible="False">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <ui:Image
-                            Width="48"
-                            Margin="26,0,0,0"
-                            RenderOptions.BitmapScalingMode="HighQuality"
-                            Source="pack://application:,,,/Assets/database.png"
-                            Stretch="UniformToFill" />
-                        <ui:TextBlock
-                            Grid.Column="1"
-                            Margin="29,20,24,20"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            FontSize="22"
-                            Text="图书管理" />
-                    </Grid>
-                </ui:CardAction>
-                <ui:CardAction
-                    Grid.Column="1"
-                    Margin="8,0,4,0"
-                    Padding="0"
-                    VerticalAlignment="Stretch"
-                    Command="{Binding ViewModel.CardClickCommand, Mode=OneWay}"
-                    CommandParameter="蓝牙"
-                    IsChevronVisible="False">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <ui:Image
-                            Width="50"
-                            Margin="24,0,0,0"
-                            RenderOptions.BitmapScalingMode="HighQuality"
-                            Source="pack://application:,,,/Assets/homeBluetooth.png"
-                            Stretch="UniformToFill" />
-                        <ui:TextBlock
-                            Grid.Column="1"
-                            Margin="29,20,24,20"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            FontSize="22"
-                            Text="蓝牙设置" />
-                    </Grid>
-                </ui:CardAction>
-                <ui:CardAction
-                    Grid.Column="2"
-                    Margin="8,0,0,0"
-                    Padding="0"
-                    VerticalAlignment="Stretch"
-                    Command="{Binding ViewModel.CardClickCommand, Mode=OneWay}"
-                    CommandParameter="设置"
-                    IsChevronVisible="False">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <ui:Image
-                            Width="50"
-                            Margin="24,0,0,0"
-                            RenderOptions.BitmapScalingMode="HighQuality"
-                            Source="/Shared;Component/Assets/homeSetting.png"
-                            Stretch="UniformToFill" />
-                        <ui:TextBlock
-                            Grid.Column="1"
-                            Margin="29,24,24,24"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            FontSize="22"
-                            Text="软件设置" />
-                    </Grid>
-                </ui:CardAction>
-            </Grid>
-        </StackPanel>
+        <Grid Grid.Row="1" Margin="16,16,16,8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <ui:CardAction
+                Grid.Column="0"
+                Margin="0,0,4,0"
+                Padding="0"
+                VerticalAlignment="Stretch"
+                Command="{Binding ViewModel.CardClickCommand, Mode=OneWay}"
+                CommandParameter="我要找书"
+                IsChevronVisible="False">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <ui:Image
+                        Width="60"
+                        Height="60"
+                        Margin="32,0,0,0"
+                        RenderOptions.BitmapScalingMode="HighQuality"
+                        Source="pack://application:,,,/Assets/findbook-512x512.png"
+                        Stretch="UniformToFill" />
+                    <ui:TextBlock
+                        Grid.Column="1"
+                        Margin="24"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontSize="22"
+                        Text="我要找书" />
+                </Grid>
+            </ui:CardAction>
+            <ui:CardAction
+                Grid.Column="1"
+                Margin="8,0,4,0"
+                Padding="0"
+                VerticalAlignment="Stretch"
+                Command="{Binding ViewModel.CardClickCommand, Mode=OneWay}"
+                CommandParameter="我要借/还书"
+                IsChevronVisible="False">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <ui:Image
+                        Width="60"
+                        Height="60"
+                        Margin="32,0,0,0"
+                        RenderOptions.BitmapScalingMode="HighQuality"
+                        Source="pack://application:,,,/Assets/borrowbook-512x512.png"
+                        Stretch="UniformToFill" />
+                    <ui:TextBlock
+                        Grid.Column="1"
+                        Margin="14"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontSize="22"
+                        Text="我要借/还书" />
+                </Grid>
+            </ui:CardAction>
+            <ui:CardAction
+                Grid.Column="2"
+                Margin="8,0,0,0"
+                Padding="0"
+                VerticalAlignment="Stretch"
+                Command="{Binding ViewModel.CardClickCommand, Mode=OneWay}"
+                CommandParameter="图书信息查询"
+                IsChevronVisible="False">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <ui:Image
+                        Width="50"
+                        Height="50"
+                        Margin="32,0,0,0"
+                        RenderOptions.BitmapScalingMode="HighQuality"
+                        Source="pack://application:,,,/Assets/bookinfo-512x512.png"
+                        Stretch="UniformToFill" />
+                    <ui:TextBlock
+                        Grid.Column="1"
+                        Margin="12"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontSize="22"
+                        Text="图书信息查询" />
+                </Grid>
+            </ui:CardAction>
+        </Grid>
+        <Grid Grid.Row="2" Margin="16,8,16,16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <ui:CardAction
+                Grid.Column="0"
+                Margin="0,0,4,0"
+                Padding="0"
+                VerticalAlignment="Stretch"
+                Command="{Binding ViewModel.CardClickCommand, Mode=OneWay}"
+                CommandParameter="管理"
+                IsChevronVisible="False">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <ui:Image
+                        Width="48"
+                        Height="48"
+                        Margin="30,0,0,0"
+                        RenderOptions.BitmapScalingMode="HighQuality"
+                        Source="pack://application:,,,/Assets/database.png"
+                        Stretch="UniformToFill" />
+                    <ui:TextBlock
+                        Grid.Column="1"
+                        Margin="29,20,24,20"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontSize="22"
+                        Text="图书管理" />
+                </Grid>
+            </ui:CardAction>
+            <ui:CardAction
+                Grid.Column="1"
+                Margin="8,0,4,0"
+                Padding="0"
+                VerticalAlignment="Stretch"
+                Command="{Binding ViewModel.CardClickCommand, Mode=OneWay}"
+                CommandParameter="蓝牙"
+                IsChevronVisible="False">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <ui:Image
+                        Width="50"
+                        Height="50"
+                        Margin="32,0,0,0"
+                        RenderOptions.BitmapScalingMode="HighQuality"
+                        Source="pack://application:,,,/Assets/homeBluetooth.png"
+                        Stretch="UniformToFill" />
+                    <ui:TextBlock
+                        Grid.Column="1"
+                        Margin="29,20,24,20"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontSize="22"
+                        Text="蓝牙设置" />
+                </Grid>
+            </ui:CardAction>
+            <ui:CardAction
+                Grid.Column="2"
+                Margin="8,0,0,0"
+                Padding="0"
+                VerticalAlignment="Stretch"
+                Command="{Binding ViewModel.CardClickCommand, Mode=OneWay}"
+                CommandParameter="设置"
+                IsChevronVisible="False">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <ui:Image
+                        Width="50"
+                        Height="50"
+                        Margin="32,0,0,0"
+                        RenderOptions.BitmapScalingMode="HighQuality"
+                        Source="/Shared;Component/Assets/homeSetting.png"
+                        Stretch="UniformToFill" />
+                    <ui:TextBlock
+                        Grid.Column="1"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontSize="22"
+                        Text="软件设置" />
+                </Grid>
+            </ui:CardAction>
+        </Grid>
     </Grid>
 </Page>

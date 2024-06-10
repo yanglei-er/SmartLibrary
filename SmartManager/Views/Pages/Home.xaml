@@ -17,7 +17,7 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="3*" />
+            <RowDefinition Height="4*" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Border Grid.Row="0" CornerRadius="8,0,0,0">
@@ -107,7 +107,7 @@
                     <ui:Image
                         Width="65"
                         Height="65"
-                        Margin="24,0,0,0"
+                        Margin="32,0,0,0"
                         RenderOptions.BitmapScalingMode="HighQuality"
                         Source="pack://application:,,,/Assets/face-scan.png"
                         Stretch="UniformToFill" />
@@ -136,7 +136,7 @@
                     <ui:Image
                         Width="60"
                         Height="60"
-                        Margin="24,0,0,0"
+                        Margin="32,0,0,0"
                         RenderOptions.BitmapScalingMode="HighQuality"
                         Source="pack://application:,,,/Assets/rfid.png"
                         Stretch="UniformToFill" />
@@ -165,7 +165,7 @@
                     <ui:Image
                         Width="60"
                         Height="60"
-                        Margin="24,0,0,0"
+                        Margin="32,0,0,0"
                         RenderOptions.BitmapScalingMode="HighQuality"
                         Source="/Shared;Component/Assets/homeSetting.png"
                         Stretch="UniformToFill" />

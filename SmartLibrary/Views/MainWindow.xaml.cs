@@ -54,6 +54,26 @@ namespace SmartLibrary.Views
             WindowInteropHelper helper = new(this);
             HwndSource hwndSource = HwndSource.FromHwnd(helper.Handle);
             hwndSource.AddHook(new HwndSourceHook(BluetoothHelper.HwndHandler));
+            hwndSource.AddHook(new HwndSourceHook(WndProc));
+        }
+
+        private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wparam, IntPtr lparam, ref bool handled)
+        {
+            if (msg == NativeMethods.WM_SHOWME)
+            {
+                if (WindowState == WindowState.Minimized || Visibility != Visibility.Visible)
+                {
+                    Show();
+                    WindowState = WindowState.Normal;
+                }
+
+                // According to some sources these steps gurantee that an app will be brought to foreground.
+                Activate();
+                Topmost = true;
+                Topmost = false;
+                Focus();
+            }
+            return IntPtr.Zero;
         }
 
         private void OnBleStateChanged(bool state)

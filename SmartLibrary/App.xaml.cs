@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Shared.Helpers;
 using Shared.Services;
 using Shared.Services.Contracts;
 using SmartLibrary.Services;
@@ -11,6 +12,8 @@ namespace SmartLibrary
 {
     public partial class App : Application
     {
+        private Mutex? mutex;
+
         private static readonly IHost _host = Host.CreateDefaultBuilder()
             .ConfigureAppConfiguration(c =>
             {
@@ -67,7 +70,17 @@ namespace SmartLibrary
 
         private void OnStartup(object sender, StartupEventArgs e)
         {
-            _host.Start();
+            mutex = new Mutex(true, "SmartLibrary", out bool aIsNewInstance);
+            if (aIsNewInstance)
+            {
+                _host.Start();
+                mutex.ReleaseMutex();
+            }
+            else
+            {
+                NativeMethods.PostMessage(NativeMethods.HWND_BROADCAST, NativeMethods.WM_SHOWME, IntPtr.Zero, IntPtr.Zero);
+                Current.Shutdown();
+            }
         }
 
         private void OnExit(object sender, ExitEventArgs e)
