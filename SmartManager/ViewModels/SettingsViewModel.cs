@@ -5,7 +5,7 @@ using System.Windows.Media;
 using Wpf.Ui.Appearance;
 using Wpf.Ui.Extensions;
 
-namespace SamrtManager.ViewModels
+namespace SmartManager.ViewModels
 {
     public partial class SettingsViewModel : ObservableObject
     {

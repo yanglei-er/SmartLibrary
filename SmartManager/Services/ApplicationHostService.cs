@@ -1,11 +1,11 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using SamrtManager.Views;
-using SamrtManager.Views.Pages;
 using Shared.Services.Contracts;
+using SmartManager.Views;
+using SmartManager.Views.Pages;
 using System.Windows;
 
-namespace SamrtManager.Services
+namespace SmartManager.Services
 {
     public class ApplicationHostService : IHostedService
     {

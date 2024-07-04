@@ -6,31 +6,42 @@
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <ImplicitUsings>enable</ImplicitUsings>
+    <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
 	<PropertyGroup>
 		<Description>Smart library共享资源库</Description>
 		<Copyright>Copyright © 2024 赵杨磊.All Rights Reserved.</Copyright>
-		<AssemblyVersion>0.3.2.24162</AssemblyVersion>
-		<FileVersion>0.3.2.24161</FileVersion>
+		<AssemblyVersion>0.3.3.24179</AssemblyVersion>
+		<FileVersion>0.3.3.24179</FileVersion>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 
 	<ItemGroup>
 	  <None Remove="Assets\.net-48x48.png" />
+	  <None Remove="Assets\databaseEmpty.png" />
 	  <None Remove="Assets\gplv3-127x51.png" />
 	  <None Remove="Assets\homeSetting.png" />
+	  <None Remove="Assets\warning.png" />
 	  <None Remove="Assets\wpfui-48x48.png" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<Resource Include="Assets\.net-48x48.png" />
+		<Resource Include="Assets\databaseEmpty.png" />
 		<Resource Include="Assets\gplv3-127x51.png" />
 		<Resource Include="Assets\homeSetting.png" />
+		<Resource Include="Assets\warning.png" />
 		<Resource Include="Assets\wpfui-48x48.png" />
 	</ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Hompus.VideoInputDevices" Version="0.5.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+    <PackageReference Include="OpenCvSharp4.Windows" Version="4.10.0.20240616" />
+    <PackageReference Include="OpenCvSharp4.WpfExtensions" Version="4.10.0.20240616" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
+    <PackageReference Include="System.Data.SQLite" Version="1.0.118" />
     <PackageReference Include="WPF-UI" Version="3.0.4" />
   </ItemGroup>
 

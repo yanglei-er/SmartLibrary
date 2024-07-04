@@ -1,9 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using SamrtManager.Views.Pages;
+using SmartManager.Views.Pages;
 using Wpf.Ui;
 
-namespace SamrtManager.ViewModels
+namespace SmartManager.ViewModels
 {
     public partial class HomeViewModel : ObservableObject
     {

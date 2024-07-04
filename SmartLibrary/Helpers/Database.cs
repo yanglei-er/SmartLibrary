@@ -1,4 +1,5 @@
-﻿using SmartLibrary.Models;
+﻿using Shared.Helpers;
+using SmartLibrary.Models;
 using System.Data;
 using System.Data.Common;
 using System.Data.SQLite;
@@ -7,25 +8,24 @@ using System.Text;
 
 namespace SmartLibrary.Helpers
 {
-    public class SQLiteHelper
+    public class Database : SQLiteHelper
     {
-        private static readonly Dictionary<string, SQLiteHelper> DataBaceList = [];
-        private readonly string DataSource = string.Empty;
+        private static readonly Dictionary<string, Database> DataBaceList = [];
 
-        private SQLiteHelper(string filename)
+        private Database(string filename) : base(filename)
         {
             DataSource = @".\database\" + filename;
         }
 
-        public static SQLiteHelper GetDatabase(string filename)
+        public static Database GetDatabase(string filename)
         {
-            if (DataBaceList.TryGetValue(filename, out SQLiteHelper? value))
+            if (DataBaceList.TryGetValue(filename, out Database? value))
             {
                 return value;
             }
             else
             {
-                SQLiteHelper db = new(filename);
+                Database db = new(filename);
                 if (File.Exists(@".\database\" + filename))
                 {
                     DataBaceList.Add(filename, db);
@@ -78,129 +78,6 @@ namespace SmartLibrary.Helpers
             }
         }
 
-        private SQLiteConnection GetSQLiteConnection()
-        {
-            string connStr = string.Format("Data Source={0}", DataSource);
-            var con = new SQLiteConnection(connStr);
-            return con;
-        }
-
-        private static void PrepareCommand(SQLiteCommand cmd, SQLiteConnection conn, string sqlStr, params SQLiteParameter[]? p)
-        {
-            if (conn.State != ConnectionState.Open)
-            {
-                conn.Open();
-            }
-            cmd.Parameters.Clear();
-            cmd.Connection = conn;
-            cmd.CommandText = sqlStr;
-            cmd.CommandType = CommandType.Text;
-            cmd.CommandTimeout = 30;
-            if (p != null && p.Length >= 1)
-            {
-                foreach (SQLiteParameter parm in p)
-                {
-                    cmd.Parameters.AddWithValue(parm.ParameterName, parm.Value);
-                }
-            }
-        }
-
-        private static async Task PrepareCommandAsync(SQLiteCommand cmd, SQLiteConnection conn, string sqlStr, params SQLiteParameter[]? p)
-        {
-            if (conn.State != ConnectionState.Open)
-            {
-                await conn.OpenAsync();
-            }
-            cmd.Parameters.Clear();
-            cmd.Connection = conn;
-            cmd.CommandText = sqlStr;
-            cmd.CommandType = CommandType.Text;
-            cmd.CommandTimeout = 30;
-            if (p != null && p.Length >= 1)
-            {
-                foreach (SQLiteParameter parm in p)
-                {
-                    cmd.Parameters.AddWithValue(parm.ParameterName, parm.Value);
-                }
-            }
-        }
-
-        public DataTable ExecuteDataTable(string cmdText, params SQLiteParameter[]? data)
-        {
-            var dt = new DataTable();
-            using (SQLiteConnection connection = GetSQLiteConnection())
-            {
-                var command = new SQLiteCommand();
-                PrepareCommand(command, connection, cmdText, data);
-                SQLiteDataReader reader = command.ExecuteReader();
-                dt.Load(reader);
-            }
-            return dt;
-        }
-
-        public async ValueTask<DataTable> ExecuteDataTableAsync(string cmdText, params SQLiteParameter[]? data)
-        {
-            var dt = new DataTable();
-            using (SQLiteConnection connection = GetSQLiteConnection())
-            {
-                var command = new SQLiteCommand();
-                await PrepareCommandAsync(command, connection, cmdText, data);
-                DbDataReader reader = await command.ExecuteReaderAsync();
-                dt.Load(reader);
-            }
-            return dt;
-        }
-
-        public int ExecuteNonQuery(string cmdText, params SQLiteParameter[]? data)
-        {
-            using SQLiteConnection connection = GetSQLiteConnection();
-            var command = new SQLiteCommand();
-            PrepareCommand(command, connection, cmdText, data);
-            return command.ExecuteNonQuery();
-        }
-
-        public async ValueTask<int> ExecuteNonQueryAsync(string cmdText, params SQLiteParameter[]? data)
-        {
-            using SQLiteConnection connection = GetSQLiteConnection();
-            SQLiteCommand command = new();
-            await PrepareCommandAsync(command, connection, cmdText, data);
-            return await command.ExecuteNonQueryAsync();
-        }
-
-        public SQLiteDataReader ExecuteReader(string cmdText, params SQLiteParameter[]? data)
-        {
-            var command = new SQLiteCommand();
-            using SQLiteConnection connection = GetSQLiteConnection();
-            PrepareCommand(command, connection, cmdText, data);
-            SQLiteDataReader reader = command.ExecuteReader(CommandBehavior.CloseConnection);
-            return reader;
-        }
-
-        public async ValueTask<DbDataReader> ExecuteReaderAsync(string cmdText, params SQLiteParameter[]? data)
-        {
-            var command = new SQLiteCommand();
-            using SQLiteConnection connection = GetSQLiteConnection();
-            await PrepareCommandAsync(command, connection, cmdText, data);
-            DbDataReader reader = await command.ExecuteReaderAsync(CommandBehavior.CloseConnection);
-            return reader;
-        }
-
-        public object ExecuteScalar(string cmdText, params SQLiteParameter[]? data)
-        {
-            using SQLiteConnection connection = GetSQLiteConnection();
-            var cmd = new SQLiteCommand();
-            PrepareCommand(cmd, connection, cmdText, data);
-            return cmd.ExecuteScalar();
-        }
-
-        public async ValueTask<object?> ExecuteScalarAsync(string cmdText, params SQLiteParameter[]? data)
-        {
-            using SQLiteConnection connection = GetSQLiteConnection();
-            var cmd = new SQLiteCommand();
-            await PrepareCommandAsync(cmd, connection, cmdText, data);
-            return await cmd.ExecuteScalarAsync();
-        }
-
         public async ValueTask<DataTable> ExecutePagerAsync(int pageIndex, int pageSize)
         {
             StringBuilder sbr = new();
@@ -222,44 +99,6 @@ namespace SmartLibrary.Helpers
             return await ExecuteDataTableAsync(sbr.ToString());
         }
 
-        public async void CleanDatabaseAsync()
-        {
-            using SQLiteConnection conn = GetSQLiteConnection();
-            var cmd = new SQLiteCommand();
-
-            if (conn.State != ConnectionState.Open)
-            {
-                await conn.OpenAsync();
-            }
-            cmd.Parameters.Clear();
-            cmd.Connection = conn;
-            cmd.CommandText = "DELETE FROM main;";
-            cmd.CommandType = CommandType.Text;
-            cmd.CommandTimeout = 30;
-            await cmd.ExecuteNonQueryAsync();
-
-            cmd.Parameters.Clear();
-            cmd.CommandText = "vacuum";
-            await cmd.ExecuteNonQueryAsync();
-        }
-
-        public async void ResetDataBassAsync()
-        {
-            using SQLiteConnection conn = GetSQLiteConnection();
-            var cmd = new SQLiteCommand();
-
-            if (conn.State != ConnectionState.Open)
-            {
-                await conn.OpenAsync();
-            }
-            cmd.Parameters.Clear();
-            cmd.Connection = conn;
-            cmd.CommandText = "vacuum";
-            cmd.CommandType = CommandType.Text;
-            cmd.CommandTimeout = 30;
-            await cmd.ExecuteNonQueryAsync();
-        }
-
         public async ValueTask<int> GetRecordCountAsync()
         {
             object? result = await ExecuteScalarAsync("SELECT count(shelfNumber) FROM main");
@@ -278,7 +117,7 @@ namespace SmartLibrary.Helpers
 
         public async ValueTask<bool> ExistsAsync(string isbn)
         {
-            if(string.IsNullOrEmpty(isbn)) return false;
+            if (string.IsNullOrEmpty(isbn)) return false;
             object? result = await ExecuteScalarAsync($"SELECT COUNT(*) FROM main WHERE isbn = {isbn}", null);
             if (Convert.ToInt32(result) > 0)
             {
@@ -448,6 +287,27 @@ namespace SmartLibrary.Helpers
         {
             string sql = $"UPDATE main SET isBorrowed = 0 WHERE isbn = '{isbn}'";
             await ExecuteNonQueryAsync(sql);
+        }
+
+        public async void CleanDatabaseAsync()
+        {
+            using SQLiteConnection conn = GetSQLiteConnection();
+            var cmd = new SQLiteCommand();
+
+            if (conn.State != ConnectionState.Open)
+            {
+                await conn.OpenAsync();
+            }
+            cmd.Parameters.Clear();
+            cmd.Connection = conn;
+            cmd.CommandText = "DELETE FROM main;";
+            cmd.CommandType = CommandType.Text;
+            cmd.CommandTimeout = 30;
+            await cmd.ExecuteNonQueryAsync();
+
+            cmd.Parameters.Clear();
+            cmd.CommandText = "vacuum";
+            await cmd.ExecuteNonQueryAsync();
         }
     }
 }

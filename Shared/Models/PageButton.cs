@@ -1,4 +1,4 @@
-﻿namespace SmartLibrary.Models
+﻿namespace Shared.Models
 {
     public class PageButton
     {

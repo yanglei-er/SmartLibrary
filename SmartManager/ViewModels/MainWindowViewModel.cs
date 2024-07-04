@@ -2,7 +2,7 @@
 using System.Collections.ObjectModel;
 using Wpf.Ui.Controls;
 
-namespace SamrtManager.ViewModels
+namespace SmartManager.ViewModels
 {
     public partial class MainWindowViewModel : ObservableObject
     {

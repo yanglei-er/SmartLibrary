@@ -1,5 +1,4 @@
-﻿using System.Runtime.InteropServices;
-using System.Windows.Media;
+﻿using System.Windows.Media;
 using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
 
@@ -102,15 +101,5 @@ namespace Shared.Helpers
         {
             return (Color)ColorConverter.ConvertFromString(color);
         }
-    }
-
-    public class NativeMethods
-    {
-        public const int HWND_BROADCAST = 0xffff;
-        public static readonly int WM_SHOWME = RegisterWindowMessage("WM_SHOWME");
-        [DllImport("user32")]
-        public static extern bool PostMessage(IntPtr hwnd, int msg, IntPtr wparam, IntPtr lparam);
-        [DllImport("user32")]
-        public static extern int RegisterWindowMessage(string message);
     }
 }

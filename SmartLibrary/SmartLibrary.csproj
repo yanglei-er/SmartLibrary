@@ -8,14 +8,15 @@
     <UseWPF>true</UseWPF>
 	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	<Nullable>enable</Nullable>
+	<Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
     <PropertyGroup>
 	    <ApplicationIcon>applicationIcon.ico</ApplicationIcon>
 		<Description>Smart library</Description>
 		<Copyright>Copyright © 2024 赵杨磊.All Rights Reserved.</Copyright>
-		<AssemblyVersion>0.3.2.24162</AssemblyVersion>
-		<FileVersion>0.3.2.24161</FileVersion>
+		<AssemblyVersion>0.3.3.24169</AssemblyVersion>
+		<FileVersion>0.3.3.24169</FileVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -31,7 +32,6 @@
     <None Remove="Assets\bookinfo-512x512.png" />
     <None Remove="Assets\borrowbook-512x512.png" />
     <None Remove="Assets\database.png" />
-    <None Remove="Assets\databaseEmpty.png" />
     <None Remove="Assets\DynamicPic\light\cross.png" />
     <None Remove="Assets\DynamicPic\light\LoadingPictureError.png" />
     <None Remove="Assets\DynamicPic\light\PictureEmpty.png" />
@@ -45,11 +45,9 @@
     <None Remove="Assets\DynamicPic\right.png" />
     <None Remove="Assets\DynamicPic\tick.png" />
     <None Remove="Assets\DynamicPic\wrong.png" />
-    <None Remove="Assets\warning.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Assets\databaseEmpty.png" />
     <Resource Include="Assets\DynamicPic\light\cross.png" />
     <Resource Include="Assets\DynamicPic\light\LoadingPictureError.png" />
     <Resource Include="Assets\DynamicPic\light\PictureEmpty.png" />
@@ -71,7 +69,6 @@
     <Resource Include="Assets\right.png" />
     <Resource Include="Assets\DynamicPic\dark\tick.png" />
     <Resource Include="Assets\wrong.png" />
-    <Resource Include="Assets\warning.png" />
   </ItemGroup>
 
 	<ItemGroup>
@@ -90,6 +87,7 @@
 		<PackageReference Include="32feet.NET" Version="3.5.0" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
+		<PackageReference Include="PaddleOCRSharp" Version="4.3.0" />
 		<PackageReference Include="SixLabors.ImageSharp" Version="3.1.4" />
 		<PackageReference Include="System.Data.SQLite" Version="1.0.118" />
 		<PackageReference Include="WPF-UI" Version="3.0.4" />

@@ -194,7 +194,7 @@ namespace SmartLibrary.Helpers
             {
                 if (resultURI.Scheme == Uri.UriSchemeHttp || resultURI.Scheme == Uri.UriSchemeHttps)
                 {
-                    if(s.EndsWith("jpg") || s.EndsWith("png"))
+                    if (s.EndsWith("jpg") || s.EndsWith("png"))
                     {
                         return true;
                     }

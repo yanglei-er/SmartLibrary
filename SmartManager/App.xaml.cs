@@ -1,15 +1,15 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using SamrtManager.Services;
 using Shared.Helpers;
 using Shared.Services;
 using Shared.Services.Contracts;
+using SmartManager.Services;
 using System.Windows;
 using System.Windows.Threading;
 using Wpf.Ui;
 
-namespace SamrtManager
+namespace SmartManager
 {
     public partial class App : Application
     {
@@ -44,6 +44,9 @@ namespace SamrtManager
 
                     services.AddSingleton<Views.Pages.Settings>();
                     services.AddSingleton<ViewModels.SettingsViewModel>();
+
+                    services.AddTransient<Views.Pages.AddFace>();
+                    services.AddTransient<ViewModels.AddFaceViewModel>();
                 }
             ).Build();
 

@@ -57,7 +57,7 @@
                     <ui:TextBlock
                         FontTypography="Subtitle"
                         Foreground="#FFFFFF"
-                        Text="Manage books intelligently">
+                        Text="Manage the books intelligently">
                         <TextBlock.Effect>
                             <DropShadowEffect
                                 BlurRadius="8"

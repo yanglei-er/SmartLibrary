@@ -1,7 +1,7 @@
-﻿using SamrtManager.ViewModels;
+﻿using SmartManager.ViewModels;
 using Wpf.Ui.Controls;
 
-namespace SamrtManager.Views.Pages
+namespace SmartManager.Views.Pages
 {
     public partial class Home : INavigableView<HomeViewModel>
     {

@@ -8,7 +8,7 @@ namespace SmartLibrary.ViewModels
 {
     public partial class Borrow_Return_BookViewModel : ObservableObject, INavigationAware
     {
-        private readonly SQLiteHelper BooksDb = SQLiteHelper.GetDatabase("books.smartlibrary");
+        private readonly Database BooksDb = Database.GetDatabase("books.smartlibrary");
         private readonly LocalStorage localStorage = new();
         private readonly INavigationService _navigationService;
         private readonly ISnackbarService _snackbarService;

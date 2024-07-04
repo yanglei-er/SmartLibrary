@@ -8,14 +8,15 @@
 	  <UseWPF>true</UseWPF>
 	  <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	  <Nullable>enable</Nullable>
+	  <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
 	<PropertyGroup>
 		<ApplicationIcon>applicationIcon.ico</ApplicationIcon>
 		<Description>Smart Manage</Description>
 		<Copyright>Copyright © 2024 赵杨磊.All Rights Reserved.</Copyright>
-		<AssemblyVersion>0.3.2.24162</AssemblyVersion>
-		<FileVersion>0.3.2.24161</FileVersion>
+		<AssemblyVersion>0.3.3.24179</AssemblyVersion>
+		<FileVersion>0.3.3.24179</FileVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -42,17 +43,15 @@
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="OpenCvSharp4.Windows" Version="4.10.0.20240616" />
+    <PackageReference Include="OpenCvSharp4.WpfExtensions" Version="4.10.0.20240616" />
+    <PackageReference Include="System.Drawing.Common" Version="8.0.6" />
     <PackageReference Include="ViewFaceCore" Version="0.3.8" />
     <PackageReference Include="ViewFaceCore.Extension.ImageSharp" Version="0.3.7" />
     <PackageReference Include="ViewFaceCore.model.face_landmarker_pts68" Version="6.0.7" />
     <PackageReference Include="ViewFaceCore.model.face_recognizer" Version="6.0.7" />
     <PackageReference Include="ViewFaceCore.runtime.win.x64" Version="6.0.7" />
     <PackageReference Include="WPF-UI" Version="3.0.4" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Helpers\" />
-    <Folder Include="Converters\" />
   </ItemGroup>
 
 </Project>

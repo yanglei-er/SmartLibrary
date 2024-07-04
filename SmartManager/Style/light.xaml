@@ -1,0 +1,19 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <SolidColorBrush x:Key="AddButtonBackground" Color="#FF7047ED" />
+    <SolidColorBrush x:Key="AddButtonIsMouseOverBackground" Color="#7B5CD6" />
+    <SolidColorBrush x:Key="AddButtonIsPressedBackground" Color="#FF6045B4" />
+    <SolidColorBrush x:Key="AddButtonIsEnabledBackground" Color="#FF4415CB" />
+
+    <SolidColorBrush x:Key="DelButtonBackground" Color="#FFDD3232" />
+    <SolidColorBrush x:Key="DelButtonIsMouseOverBackground" Color="#F44336" />
+    <SolidColorBrush x:Key="DelButtonIsPressedBackground" Color="#FFBF2E23" />
+    <SolidColorBrush x:Key="DelButtonIsEnabledBackground" Color="#FFA0180E" />
+
+    <SolidColorBrush x:Key="EditButtonIsMouseOverBackground" Color="#FF9978F7" />
+    <SolidColorBrush x:Key="EditButtonIsPressedBackground" Color="#FF7455D4" />
+
+    <SolidColorBrush x:Key="RemoveButtonIsMouseOverBackground" Color="#F44336" />
+    <SolidColorBrush x:Key="RemoveButtonIsPressedBackground" Color="#FFBF2E23" />
+
+    <SolidColorBrush x:Key="DataGridRowIsMouseOverForeground" Color="#559CE4" />
+</ResourceDictionary>

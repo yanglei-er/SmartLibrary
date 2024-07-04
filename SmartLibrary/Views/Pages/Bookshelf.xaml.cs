@@ -23,5 +23,13 @@ namespace SmartLibrary.Views.Pages
                 XuNiBox.Focus();
             }
         }
+
+        private void SearchBox_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                XuNiBox.Focus();
+            }
+        }
     }
 }

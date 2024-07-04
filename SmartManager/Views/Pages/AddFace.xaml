@@ -1,0 +1,83 @@
+﻿<Page
+    x:Class="SmartManager.Views.Pages.AddFace"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:SmartManager.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:SmartManager.Views.Pages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    Title="AddFace"
+    d:DataContext="{d:DesignInstance local:AddFace,
+                                     IsDesignTimeCreatable=False}"
+    d:DesignHeight="550"
+    d:DesignWidth="1000"
+    ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
+    ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+    Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+    ScrollViewer.CanContentScroll="False"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <converters:BoolToOpenCameraTextConverter x:Key="BoolToOpenCameraTextConverter" />
+        <Style BasedOn="{StaticResource MyButtonStyle}" TargetType="ui:Button" />
+    </Page.Resources>
+
+    <Grid Margin="16">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <TextBox Name="XuNiBox" Width="0" />
+        <Border
+            Grid.Column="0"
+            Margin="0,0,12,0"
+            Background="{ui:ThemeResource ControlFillColorDefaultBrush}"
+            CornerRadius="8">
+            <ui:Image
+                Name="CameraImage"
+                Width="720"
+                Height="480" />
+        </Border>
+        <Grid Grid.Column="1" Width="180">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <StackPanel Grid.Row="0">
+                <ui:TextBlock FontSize="24" Text="选择视频源" />
+                <ComboBox
+                    x:Name="DeviceComboBox"
+                    Margin="0,8,0,0"
+                    ItemsSource="{Binding ViewModel.DevicesName, Mode=OneWay}"
+                    SelectedIndex="{Binding ViewModel.DeviceSelectedIndex, Mode=TwoWay}" />
+                <ui:Button
+                    Name="OpenCamera"
+                    Margin="0,8,0,0"
+                    HorizontalAlignment="Stretch"
+                    Click="OpenCamera_Click"
+                    Content="{Binding ViewModel.IsCameraOpened, Converter={StaticResource BoolToOpenCameraTextConverter}, Mode=OneWay}"
+                    FontSize="18"
+                    IsEnabled="{Binding ViewModel.IsOpenCameraButtonEnabled, Mode=OneWay}" />
+            </StackPanel>
+            <StackPanel Grid.Row="1" Margin="0,8,0,0">
+                <ui:TextBlock FontSize="24" Text="姓名：" />
+                <ui:TextBox Margin="0,8,0,0" />
+            </StackPanel>
+            <StackPanel Grid.Row="2" Margin="0,8,0,0">
+                <ui:Button
+                    HorizontalAlignment="Stretch"
+                    Appearance="Primary"
+                    Content="添加"
+                    FontSize="24" />
+                <ui:Button
+                    Margin="0,8,0,0"
+                    HorizontalAlignment="Stretch"
+                    Command="{Binding ViewModel.GoBackCommand}"
+                    Content="返回"
+                    FontSize="24" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Page>

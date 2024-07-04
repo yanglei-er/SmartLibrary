@@ -1,9 +1,9 @@
-﻿using SamrtManager.ViewModels;
+﻿using SmartManager.ViewModels;
 using System.Diagnostics;
 using System.Reflection;
 using System.Windows;
 using Wpf.Ui.Controls;
-namespace SamrtManager.Views.Pages
+namespace SmartManager.Views.Pages
 {
     public partial class Settings : INavigableView<SettingsViewModel>
     {

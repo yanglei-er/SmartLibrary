@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Win32;
 using Shared.Helpers;
+using Shared.Models;
 using SmartLibrary.Helpers;
 using SmartLibrary.Models;
 using SmartLibrary.Views.Pages;
@@ -19,7 +20,7 @@ namespace SmartLibrary.ViewModels
         private readonly INavigationService _navigationService;
         private readonly ISnackbarService _snackbarService;
         private readonly IContentDialogService _contentDialogService;
-        private SQLiteHelper BooksDb = SQLiteHelper.GetDatabase("books.smartlibrary");
+        private Database BooksDb = Database.GetDatabase("books.smartlibrary");
         private int TotalPageCount;
         private bool needRefresh = false;
 
@@ -82,7 +83,7 @@ namespace SmartLibrary.ViewModels
 
             WeakReferenceMessenger.Default.Register<string, string>(this, "BookManage", (_, _) => needRefresh = true);
 
-            if (SQLiteHelper.IsDatabaseConnected("books.smartlibrary"))
+            if (Database.IsDatabaseConnected("books.smartlibrary"))
             {
                 needRefresh = true;
             }
@@ -119,8 +120,8 @@ namespace SmartLibrary.ViewModels
         [RelayCommand]
         private void RefreshDatabase()
         {
-            BooksDb = SQLiteHelper.GetDatabase("books.smartlibrary");
-            if (SQLiteHelper.IsDatabaseConnected("books.smartlibrary"))
+            BooksDb = Database.GetDatabase("books.smartlibrary");
+            if (Database.IsDatabaseConnected("books.smartlibrary"))
             {
                 MissingDatabase = false;
                 IsTopbarEnabled = true;
@@ -133,7 +134,7 @@ namespace SmartLibrary.ViewModels
         private async Task CreateDatabase()
         {
             await BooksDb.CreateDataBaseAsync();
-            BooksDb = SQLiteHelper.GetDatabase("books.smartlibrary");
+            BooksDb = Database.GetDatabase("books.smartlibrary");
             MissingDatabase = false;
             IsTopbarEnabled = true;
             RefreshAsync();
@@ -244,7 +245,7 @@ namespace SmartLibrary.ViewModels
                 };
                 if (openFileDialog.ShowDialog() == true)
                 {
-                    if (!SQLiteHelper.IsDatabaseConnected("books.smartlibrary"))
+                    if (!Database.IsDatabaseConnected("books.smartlibrary"))
                     {
                         await CreateDatabase();
                     }

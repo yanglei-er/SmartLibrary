@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace SamrtManager.ViewModels
+namespace SmartManager.ViewModels
 {
     public partial class RFIDManageViewModel : ObservableObject
     {

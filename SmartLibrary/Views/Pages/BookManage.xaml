@@ -4,9 +4,10 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:converters="clr-namespace:SmartLibrary.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:extensions="clr-namespace:Shared.Extensions;assembly=Shared" 
+    xmlns:extensions="clr-namespace:Shared.Extensions;assembly=Shared"
     xmlns:local="clr-namespace:SmartLibrary.Views.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:sharedConverters="clr-namespace:Shared.Converters;assembly=Shared"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     Title="BookManage"
     d:DataContext="{d:DesignInstance local:BookManage,
@@ -20,7 +21,7 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-        <converters:BoolToAppearanceConverter x:Key="BoolToAppearanceConverter" />
+        <sharedConverters:BoolToAppearanceConverter x:Key="BoolToAppearanceConverter" />
         <Style x:Key="CenterAlignmentStyle" TargetType="TextBlock">
             <Setter Property="TextAlignment" Value="Center" />
             <Setter Property="VerticalAlignment" Value="Center" />
@@ -181,6 +182,7 @@
                 IconPlacement="Right"
                 IsEnabled="{Binding ViewModel.IsTopbarEnabled, Mode=OneWay}"
                 PlaceholderText="快速查找ISBN、书名、作者、书架号..."
+                PreviewKeyDown="SearchBox_PreviewKeyDown"
                 Text="{Binding ViewModel.AutoSuggestBoxText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Delay=500}" />
             <ui:Button
                 Grid.Column="1"
@@ -336,7 +338,7 @@
                     Width="168"
                     Height="168"
                     RenderOptions.BitmapScalingMode="HighQuality"
-                    Source="pack://application:,,,/Assets/warning.png" />
+                    Source="/Shared;Component/Assets/warning.png" />
                 <ui:TextBlock
                     HorizontalAlignment="Center"
                     FontSize="36"
@@ -371,7 +373,7 @@
                     Width="148"
                     Height="148"
                     RenderOptions.BitmapScalingMode="HighQuality"
-                    Source="pack://application:,,,/Assets/databaseEmpty.png" />
+                    Source="/Shared;Component/Assets/databaseEmpty.png" />
                 <ui:TextBlock
                     Margin="0,12,0,0"
                     FontSize="36"

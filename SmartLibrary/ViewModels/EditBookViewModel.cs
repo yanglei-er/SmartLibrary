@@ -15,7 +15,7 @@ namespace SmartLibrary.ViewModels
         private readonly INavigationService _navigationService;
         private readonly ISnackbarService _snackbarService;
         private readonly IContentDialogService _contentDialogService;
-        private readonly SQLiteHelper BooksDb = SQLiteHelper.GetDatabase("books.smartlibrary");
+        private readonly Database BooksDb = Database.GetDatabase("books.smartlibrary");
         private readonly LocalStorage localStorage = new();
 
         [ObservableProperty]

@@ -28,6 +28,14 @@ namespace SmartLibrary.Views.Pages
             }
         }
 
+        private void SearchBox_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                XuNiBox.Focus();
+            }
+        }
+
         private void DataGrid_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             if (DataGrid.SelectedItem == null) { DelButton.IsEnabled = false; }

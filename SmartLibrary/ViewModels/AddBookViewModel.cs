@@ -16,7 +16,7 @@ namespace SmartLibrary.ViewModels
         private readonly INavigationService _navigationService;
         private readonly ISnackbarService _snackbarService;
         private readonly IContentDialogService _contentDialogService;
-        private readonly SQLiteHelper BooksDb = SQLiteHelper.GetDatabase("books.smartlibrary");
+        private readonly Database BooksDb = Database.GetDatabase("books.smartlibrary");
         private readonly LocalStorage localStorage = new();
         private readonly Network network = Network.Instance;
 
@@ -170,7 +170,7 @@ namespace SmartLibrary.ViewModels
             }
             else
             {
-                _snackbarService.Show("条码错误", $"请重新扫描", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(2));
+                _snackbarService.Show("条码错误", $"请重新扫描", ControlAppearance.Caution, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(2));
                 System.Media.SystemSounds.Asterisk.Play();
             }
         }

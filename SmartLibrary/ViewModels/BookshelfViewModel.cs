@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using Shared.Helpers;
+using Shared.Models;
 using SmartLibrary.Helpers;
 using SmartLibrary.Models;
 using SmartLibrary.Views.Pages;
@@ -13,7 +14,7 @@ namespace SmartLibrary.ViewModels
     public partial class BookshelfViewModel : ObservableObject, INavigationAware
     {
         private readonly INavigationService _navigationService;
-        private readonly SQLiteHelper BooksDb = SQLiteHelper.GetDatabase("books.smartlibrary");
+        private readonly Database BooksDb = Database.GetDatabase("books.smartlibrary");
         private int TotalPageCount;
         private bool needRefresh = false;
 
@@ -67,7 +68,7 @@ namespace SmartLibrary.ViewModels
             _navigationService = navigationService;
             WeakReferenceMessenger.Default.Register<string, string>(this, "Bookshelf", OnMessageReceived);
 
-            if (SQLiteHelper.IsDatabaseConnected("books.smartlibrary"))
+            if (Database.IsDatabaseConnected("books.smartlibrary"))
             {
                 needRefresh = true;
             }

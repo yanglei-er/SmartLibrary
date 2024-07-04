@@ -8,6 +8,7 @@
     xmlns:local="clr-namespace:SmartLibrary.Views.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="clr-namespace:SmartLibrary.Models"
+    xmlns:sharedConverters="clr-namespace:Shared.Converters;assembly=Shared"
     xmlns:sharedExtensions="clr-namespace:Shared.Extensions;assembly=Shared"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     Title="Bookshelf"
@@ -22,7 +23,7 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-        <converters:BoolToAppearanceConverter x:Key="BoolToAppearanceConverter" />
+        <sharedConverters:BoolToAppearanceConverter x:Key="BoolToAppearanceConverter" />
     </Page.Resources>
 
     <Grid Margin="16,16,16,12">
@@ -35,8 +36,9 @@
             Grid.Row="0"
             Icon="{ui:SymbolIcon Search24}"
             IconPlacement="Right"
-            IsEnabled="{Binding ViewModel.DatabaseEmpty, Converter={StaticResource InverseBooleanConverter}, Mode=OneWay}"
+            IsEnabled="{Binding ViewModel.MissingDatabase, Converter={StaticResource InverseBooleanConverter}, Mode=OneWay}"
             PlaceholderText="搜索书名，作者、书架号..."
+            PreviewKeyDown="SearchBox_PreviewKeyDown"
             Text="{Binding ViewModel.AutoSuggestBoxText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Delay=500}" />
         <Grid Grid.Row="1" Visibility="{Binding ViewModel.MissingDatabase, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
             <StackPanel
@@ -47,7 +49,7 @@
                     Width="168"
                     Height="168"
                     RenderOptions.BitmapScalingMode="HighQuality"
-                    Source="pack://application:,,,/Assets/warning.png" />
+                    Source="/Shared;Component/Assets/warning.png" />
                 <ui:TextBlock
                     HorizontalAlignment="Center"
                     FontSize="36"
@@ -65,7 +67,7 @@
                     Width="148"
                     Height="148"
                     RenderOptions.BitmapScalingMode="HighQuality"
-                    Source="pack://application:,,,/Assets/databaseEmpty.png" />
+                    Source="/Shared;Component/Assets/databaseEmpty.png" />
                 <ui:TextBlock
                     Margin="0,12,0,0"
                     FontSize="36"
