@@ -8,9 +8,18 @@ namespace Shared.Helpers
         {
             using SystemDeviceEnumerator sde = new();
             Dictionary<string, int> devices = [];
-            foreach (var device in sde.ListVideoInputDevice())
+            IReadOnlyDictionary<int, string> systemDevices;
+            try
             {
-                devices.Add(device.Value, device.Key);
+                systemDevices = sde.ListVideoInputDevice();
+                foreach (var device in systemDevices)
+                {
+                    devices.Add(device.Value, device.Key);
+                }
+            }
+            catch
+            {
+                devices.Add("暂无摄像头", -1);
             }
             return devices;
         }

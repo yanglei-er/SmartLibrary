@@ -1,6 +1,7 @@
 ﻿using SmartLibrary.Models;
 using SmartLibrary.ViewModels;
 using System.Data;
+using System.IO;
 using System.Windows.Input;
 using Wpf.Ui.Controls;
 
@@ -89,6 +90,42 @@ namespace SmartLibrary.Views.Pages
                 bool isBorrowed = Convert.ToBoolean(dataRowView[4]);
                 ViewModel.CheckBox_Click(isbn, isBorrowed);
             }
+        }
+
+        private void Page_DragOver(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                e.Effects = DragDropEffects.Link;
+                Array a = (Array)e.Data.GetData(DataFormats.FileDrop);
+                foreach (string filepath in a)
+                {
+                    if (Directory.Exists(filepath))
+                    {
+                        e.Effects = DragDropEffects.None;
+                        e.Handled = true;
+                        return;
+                    }
+                    if (!filepath.EndsWith("smartlibrary"))
+                    {
+                        e.Effects = DragDropEffects.None;
+                        e.Handled = true;
+                        return;
+                    }
+                }
+                e.Effects = DragDropEffects.Link;
+            }
+            else
+            {
+                e.Effects = DragDropEffects.None;
+                e.Handled = true;
+            }
+        }
+
+        private void Page_Drop(object sender, DragEventArgs e)
+        {
+            List<string> files = new((string[])e.Data.GetData(DataFormats.FileDrop));
+            ViewModel.DropFileImportAsync(files);
         }
     }
 }

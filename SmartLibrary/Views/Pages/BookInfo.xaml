@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:converters="clr-namespace:SmartLibrary.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:extensions="clr-namespace:Shared.Extensions;assembly=Shared" 
+    xmlns:extensions="clr-namespace:Shared.Extensions;assembly=Shared"
     xmlns:local="clr-namespace:SmartLibrary.Views.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
@@ -119,7 +119,8 @@
                         Grid.Row="1"
                         extensions:ScrollAnimationBehavior.IsEnabled="True"
                         extensions:ScrollAnimationBehavior.PointsToScroll="16"
-                        extensions:ScrollAnimationBehavior.TimeDuration="00:00:00.20">
+                        extensions:ScrollAnimationBehavior.TimeDuration="00:00:00.20"
+                        extensions:TouchableScrollViewer.IsEnabled="True">
                         <Grid
                             Margin="32,16,32,0"
                             HorizontalAlignment="Center"
@@ -189,7 +190,8 @@
                 Margin="8,0,0,0"
                 extensions:ScrollAnimationBehavior.IsEnabled="True"
                 extensions:ScrollAnimationBehavior.PointsToScroll="16"
-                extensions:ScrollAnimationBehavior.TimeDuration="00:00:00.20">
+                extensions:ScrollAnimationBehavior.TimeDuration="00:00:00.20"
+                extensions:TouchableScrollViewer.IsEnabled="True">
                 <StackPanel Margin="0,0,12,0">
                     <ui:CardExpander IsExpanded="True">
                         <ui:CardExpander.Header>

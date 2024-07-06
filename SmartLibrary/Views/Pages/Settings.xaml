@@ -56,7 +56,8 @@
         <ScrollViewer
             extensions:ScrollAnimationBehavior.IsEnabled="True"
             extensions:ScrollAnimationBehavior.PointsToScroll="16"
-            extensions:ScrollAnimationBehavior.TimeDuration="00:00:00.20">
+            extensions:ScrollAnimationBehavior.TimeDuration="00:00:00.20"
+            extensions:TouchableScrollViewer.IsEnabled="True">
             <StackPanel MaxWidth="1180" Margin="0,0,12,0">
                 <ui:TextBlock FontTypography="Subtitle" Text="通用设置" />
                 <ui:CardControl Margin="0,8,0,0" Icon="{ui:SymbolIcon Laptop24}">

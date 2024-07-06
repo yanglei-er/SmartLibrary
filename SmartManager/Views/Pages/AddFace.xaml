@@ -4,8 +4,10 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:converters="clr-namespace:SmartManager.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:extensions="clr-namespace:Shared.Extensions;assembly=Shared"
     xmlns:local="clr-namespace:SmartManager.Views.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="clr-namespace:SmartManager.Models"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     Title="AddFace"
     d:DataContext="{d:DesignInstance local:AddFace,
@@ -21,6 +23,7 @@
     <Page.Resources>
         <converters:BoolToOpenCameraTextConverter x:Key="BoolToOpenCameraTextConverter" />
         <Style BasedOn="{StaticResource MyButtonStyle}" TargetType="ui:Button" />
+        <Style BasedOn="{StaticResource MyCheckBoxStyle}" TargetType="CheckBox" />
     </Page.Resources>
 
     <Grid Margin="16">
@@ -29,16 +32,193 @@
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <TextBox Name="XuNiBox" Width="0" />
-        <Border
-            Grid.Column="0"
-            Margin="0,0,12,0"
-            Background="{ui:ThemeResource ControlFillColorDefaultBrush}"
-            CornerRadius="8">
-            <ui:Image
-                Name="CameraImage"
-                Width="720"
-                Height="480" />
-        </Border>
+        <Grid Grid.Column="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1.6*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <ui:Image
+                    Name="CameraImage"
+                    Grid.Row="0"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    RenderOptions.BitmapScalingMode="HighQuality"
+                    Source="{Binding ViewModel.CameraImageSource, Mode=OneWay}" />
+                <Border
+                    Grid.Row="1"
+                    Margin="0,8,0,0"
+                    Background="{ui:ThemeResource ControlFillColorDefaultBrush}"
+                    CornerRadius="8">
+                    <ui:ListView
+                        d:ItemsSource="{d:SampleData ItemCount=6}"
+                        ItemsSource="{Binding ViewModel.FaceImageList, Mode=OneWay}"
+                        ScrollViewer.VerticalScrollBarVisibility="Hidden">
+                        <ListView.ItemTemplate>
+                            <DataTemplate DataType="{x:Type models:FaceImage}">
+                                <ui:Image Source="{Binding ImageSource}" />
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                        <ListView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <ui:VirtualizingWrapPanel
+                                    IsItemsHost="True"
+                                    ItemSize="48,72"
+                                    Orientation="Vertical"
+                                    SpacingMode="Uniform"
+                                    StretchItems="True" />
+                            </ItemsPanelTemplate>
+                        </ListView.ItemsPanel>
+                    </ui:ListView>
+                </Border>
+            </Grid>
+            <ScrollViewer
+                Grid.Column="1"
+                Margin="8,0,0,0"
+                extensions:ScrollAnimationBehavior.IsEnabled="True"
+                extensions:ScrollAnimationBehavior.PointsToScroll="16"
+                extensions:ScrollAnimationBehavior.TimeDuration="00:00:00.20"
+                extensions:TouchableScrollViewer.IsEnabled="True">
+                <StackPanel Margin="0,0,12,0">
+                    <ui:CardExpander IsExpanded="True">
+                        <ui:CardExpander.Header>
+                            <ui:TextBlock FontSize="24" Text="基本信息" />
+                        </ui:CardExpander.Header>
+                        <ui:CardExpander.Content>
+                            <StackPanel>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <ui:TextBlock
+                                        Grid.Column="0"
+                                        FontSize="24"
+                                        Text="ID：" />
+                                    <ui:TextBox
+                                        Grid.Column="1"
+                                        Margin="23,0,0,0"
+                                        BorderThickness="0"
+                                        FontSize="18"
+                                        PlaceholderText="为空则系统自动生成"
+                                        PreviewKeyDown="TextBox_PreviewKeyDown"
+                                        TextWrapping="Wrap" />
+                                </Grid>
+                                <Grid Margin="0,6,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <ui:TextBlock
+                                        Grid.Column="0"
+                                        FontSize="24"
+                                        Text="姓名：" />
+                                    <ui:TextBox
+                                        Grid.Column="1"
+                                        BorderThickness="0"
+                                        FontSize="18"
+                                        PreviewKeyDown="TextBox_PreviewKeyDown"
+                                        TextWrapping="Wrap" />
+                                </Grid>
+                            </StackPanel>
+                        </ui:CardExpander.Content>
+                    </ui:CardExpander>
+                    <ui:CardExpander Margin="0,8,0,0" IsExpanded="True">
+                        <ui:CardExpander.Header>
+                            <ui:TextBlock FontSize="24" Text="附加信息" />
+                        </ui:CardExpander.Header>
+                        <ui:CardExpander.Content>
+                            <StackPanel>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <ui:TextBlock
+                                        Grid.Column="0"
+                                        FontSize="24"
+                                        Text="性别：" />
+                                    <ui:TextBox
+                                        Grid.Column="1"
+                                        BorderThickness="0"
+                                        FontSize="18"
+                                        PreviewKeyDown="TextBox_PreviewKeyDown"
+                                        TextWrapping="Wrap" />
+                                </Grid>
+                                <Grid Margin="0,6,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <ui:TextBlock
+                                        Grid.Column="0"
+                                        FontSize="24"
+                                        Text="年龄：" />
+                                    <ui:TextBox
+                                        Grid.Column="1"
+                                        BorderThickness="0"
+                                        FontSize="18"
+                                        PreviewKeyDown="TextBox_PreviewKeyDown"
+                                        TextWrapping="Wrap" />
+                                </Grid>
+                                <Grid Margin="0,6,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <ui:TextBlock
+                                        Grid.Column="0"
+                                        FontSize="24"
+                                        Text="职业：" />
+                                    <ui:TextBox
+                                        Grid.Column="1"
+                                        BorderThickness="0"
+                                        FontSize="18"
+                                        PreviewKeyDown="TextBox_PreviewKeyDown"
+                                        TextWrapping="Wrap" />
+                                </Grid>
+                                <Grid Margin="0,6,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <ui:TextBlock
+                                        Grid.Column="0"
+                                        FontSize="24"
+                                        Text="地区：" />
+                                    <ui:TextBox
+                                        Grid.Column="1"
+                                        BorderThickness="0"
+                                        FontSize="18"
+                                        PreviewKeyDown="TextBox_PreviewKeyDown"
+                                        TextWrapping="Wrap" />
+                                </Grid>
+                                <Grid Margin="0,6,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <ui:TextBlock
+                                        Grid.Column="0"
+                                        FontSize="24"
+                                        Text="语言：" />
+                                    <ui:TextBox
+                                        Grid.Column="1"
+                                        BorderThickness="0"
+                                        FontSize="18"
+                                        PreviewKeyDown="TextBox_PreviewKeyDown"
+                                        TextWrapping="Wrap" />
+                                </Grid>
+                            </StackPanel>
+                        </ui:CardExpander.Content>
+                    </ui:CardExpander>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
         <Grid Grid.Column="1" Width="180">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
@@ -58,19 +238,36 @@
                     HorizontalAlignment="Stretch"
                     Click="OpenCamera_Click"
                     Content="{Binding ViewModel.IsCameraOpened, Converter={StaticResource BoolToOpenCameraTextConverter}, Mode=OneWay}"
-                    FontSize="18"
+                    FontSize="20"
                     IsEnabled="{Binding ViewModel.IsOpenCameraButtonEnabled, Mode=OneWay}" />
             </StackPanel>
             <StackPanel Grid.Row="1" Margin="0,8,0,0">
-                <ui:TextBlock FontSize="24" Text="姓名：" />
-                <ui:TextBox Margin="0,8,0,0" />
+                <CheckBox
+                    Content="人脸检测"
+                    FontSize="20"
+                    IsChecked="{Binding ViewModel.IsDrawFaceFrame, Mode=TwoWay}" />
+                <ui:Button
+                    Margin="0,8,0,0"
+                    HorizontalAlignment="Stretch"
+                    Command="{Binding ViewModel.CollectingFaceCommand}"
+                    Content="采集图像"
+                    FontSize="24"
+                    IsEnabled="{Binding ViewModel.IsCameraOpened, Mode=OneWay}" />
+                <ui:Button
+                    Margin="0,8,0,0"
+                    HorizontalAlignment="Stretch"
+                    Command="{Binding ViewModel.TestCommand}"
+                    Content="Test"
+                    FontSize="24" />
             </StackPanel>
             <StackPanel Grid.Row="2" Margin="0,8,0,0">
                 <ui:Button
                     HorizontalAlignment="Stretch"
                     Appearance="Primary"
+                    Command="{Binding ViewModel.AddFaceCommand}"
                     Content="添加"
-                    FontSize="24" />
+                    FontSize="24"
+                    IsEnabled="{Binding ViewModel.IsAddButtonEnabled, Mode=OneWay}" />
                 <ui:Button
                     Margin="0,8,0,0"
                     HorizontalAlignment="Stretch"

@@ -14,7 +14,7 @@ namespace SmartManager.Views.Pages
             InitializeComponent();
         }
 
-        private void SearchBox_PreviewKeyDown(object sender, KeyEventArgs e)
+        private void TextBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {

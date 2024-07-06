@@ -215,10 +215,9 @@
                 Grid.Column="4"
                 Margin="8,0,0,0"
                 Command="{Binding ViewModel.DelBooksCommand, Mode=OneWay}"
-                CommandParameter="{Binding ElementName=DataGrid, Path=SelectedItems}"
                 IsEnabled="{Binding ViewModel.IsDelButtonEnabled, Mode=TwoWay}"
                 Style="{StaticResource DelButton}"
-                ToolTip="删除所选图书" />
+                ToolTip="删除所选人物" />
         </Grid>
         <Grid Grid.Row="1" Visibility="{Binding ViewModel.MissingDatabase, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
             <StackPanel

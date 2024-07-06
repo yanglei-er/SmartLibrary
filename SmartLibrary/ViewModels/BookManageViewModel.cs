@@ -110,6 +110,7 @@ namespace SmartLibrary.ViewModels
                 }
                 needRefresh = false;
             }
+
         }
 
         public void OnNavigatedFrom()
@@ -233,7 +234,7 @@ namespace SmartLibrary.ViewModels
         }
 
         [RelayCommand]
-        private async Task OnTopButtonClick(string parameter)
+        private void OnTopButtonClick(string parameter)
         {
             if (parameter == "Import")
             {
@@ -245,36 +246,8 @@ namespace SmartLibrary.ViewModels
                 };
                 if (openFileDialog.ShowDialog() == true)
                 {
-                    if (!Database.IsDatabaseConnected("books.smartlibrary"))
-                    {
-                        await CreateDatabase();
-                    }
-                    int[] mergedResult = [0, 0];
                     List<string> fileNames = new(openFileDialog.FileNames);
-                    List<string> repeatFileNames = [];
-                    foreach (string fileName in fileNames)
-                    {
-                        if (fileName == Path.GetFullPath(@".\database\books.smartlibrary")) //避免重复
-                        {
-                            repeatFileNames.Add(fileName);
-                            continue;
-                        }
-                        int[] _mergedResult = await BooksDb.MergeDatabaseAsync(fileName);
-                        mergedResult[0] += _mergedResult[0];
-                        mergedResult[1] += _mergedResult[1];
-                    }
-                    foreach (string fileName in repeatFileNames)
-                    {
-                        fileNames.Remove(fileName);
-                        mergedResult[1] += 1;
-                    }
-                    if (mergedResult[0] != 0)
-                    {
-                        RefreshAsync();
-                        PagerAsync();
-                        WeakReferenceMessenger.Default.Send("refresh", "Bookshelf");
-                    }
-                    _snackbarService.Show("导入数据库", $"{fileNames.Count} 个数据库已导入，共 {mergedResult[0] + mergedResult[1]} 条数据，导入 {mergedResult[0]} 条，重复 {mergedResult[1]} 条。", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
+                    ImportDatabase(fileNames);
                 }
             }
             else if (parameter == "Export")
@@ -293,6 +266,53 @@ namespace SmartLibrary.ViewModels
                     _snackbarService.Show("导出数据库", $"{Path.GetFileName(saveFileDialog.FileName)} 已导出至 {Path.GetDirectoryName(saveFileDialog.FileName)} 下", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
                 }
             }
+        }
+
+        public async void DropFileImportAsync(List<string> files)
+        {
+            ContentDialogResult result = await _contentDialogService.ShowSimpleDialogAsync(new SimpleContentDialogCreateOptions()
+            {
+                Title = "导入数据库",
+                Content = $"是否导入你选择的 {files.Count} 个数据库?",
+                PrimaryButtonText = "是",
+                CloseButtonText = "否",
+            });
+
+            if (result == ContentDialogResult.Primary)
+            {
+                ImportDatabase(files);
+            }
+        }
+
+        private async void ImportDatabase(List<string> files)
+        {
+            if (!Database.IsDatabaseConnected("books.smartlibrary"))
+            {
+                await CreateDatabase();
+            }
+            int[] mergedResult = [0, 0];
+            List<string> repeatFileNames = [];
+
+            foreach (string fileName in files)
+            {
+                if (fileName == Path.GetFullPath(@".\database\books.smartlibrary")) //避免重复
+                {
+                    repeatFileNames.Add(fileName);
+                    continue;
+                }
+                int[] _mergedResult = await BooksDb.MergeDatabaseAsync(fileName);
+                mergedResult[0] += _mergedResult[0];
+                mergedResult[1] += _mergedResult[1];
+            }
+
+            if (mergedResult[0] != 0)
+            {
+                RefreshAsync();
+                PagerAsync();
+                WeakReferenceMessenger.Default.Send("refresh", "Bookshelf");
+            }
+
+            _snackbarService.Show("导入数据库", $"{files.Count} 个数据库已导入，共 {mergedResult[0] + mergedResult[1]} 条数据，导入 {mergedResult[0]} 条，重复 {mergedResult[1]} 条。", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
         }
 
         [RelayCommand]
