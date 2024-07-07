@@ -9,6 +9,7 @@
     xmlns:local="clr-namespace:SmartLibrary.Views.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    xmlns:ws="https://schemas.elecho.dev/wpfsuite"
     Title="Settings"
     d:DataContext="{d:DesignInstance local:Settings,
                                      IsDesignTimeCreatable=False}"
@@ -53,11 +54,7 @@
 
     <Grid Margin="16,16,4,16">
         <TextBox Name="XuNiBox" Width="0" />
-        <ScrollViewer
-            extensions:ScrollAnimationBehavior.IsEnabled="True"
-            extensions:ScrollAnimationBehavior.PointsToScroll="16"
-            extensions:ScrollAnimationBehavior.TimeDuration="00:00:00.20"
-            extensions:TouchableScrollViewer.IsEnabled="True">
+        <ws:ScrollViewer ws:StylusTouchDevice.Simulate="True" PanningMode="Both">
             <StackPanel MaxWidth="1180" Margin="0,0,12,0">
                 <ui:TextBlock FontTypography="Subtitle" Text="通用设置" />
                 <ui:CardControl Margin="0,8,0,0" Icon="{ui:SymbolIcon Laptop24}">
@@ -760,6 +757,6 @@
                     </StackPanel>
                 </ui:CardExpander>
             </StackPanel>
-        </ScrollViewer>
+        </ws:ScrollViewer>
     </Grid>
 </Page>

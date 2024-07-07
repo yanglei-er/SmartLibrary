@@ -12,8 +12,8 @@
 	<PropertyGroup>
 		<Description>Smart library共享资源库</Description>
 		<Copyright>Copyright © 2024 赵杨磊.All Rights Reserved.</Copyright>
-		<AssemblyVersion>0.3.4.24188</AssemblyVersion>
-		<FileVersion>0.3.4.24188</FileVersion>
+		<AssemblyVersion>0.3.5.24189</AssemblyVersion>
+		<FileVersion>0.3.5.24189</FileVersion>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 
@@ -36,6 +36,7 @@
 	</ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="EleCho.WpfSuite" Version="0.5.3" />
     <PackageReference Include="Hompus.VideoInputDevices" Version="0.5.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
     <PackageReference Include="OpenCvSharp4.Windows" Version="4.10.0.20240616" />

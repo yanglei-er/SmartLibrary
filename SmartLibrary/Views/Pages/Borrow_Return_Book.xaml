@@ -8,6 +8,7 @@
     xmlns:local="clr-namespace:SmartLibrary.Views.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    xmlns:ws="https://schemas.elecho.dev/wpfsuite"
     Title="Borrow_Return_Book"
     d:DataContext="{d:DesignInstance local:Borrow_Return_Book,
                                      IsDesignTimeCreatable=False}"
@@ -115,12 +116,10 @@
 
                         </Grid>
                     </Grid>
-                    <ScrollViewer
+                    <ws:ScrollViewer
                         Grid.Row="1"
-                        extensions:ScrollAnimationBehavior.IsEnabled="True"
-                        extensions:ScrollAnimationBehavior.PointsToScroll="16"
-                        extensions:ScrollAnimationBehavior.TimeDuration="00:00:00.20"
-                        extensions:TouchableScrollViewer.IsEnabled="True">
+                        ws:StylusTouchDevice.Simulate="True"
+                        PanningMode="Both">
                         <Grid
                             Margin="32,16,32,0"
                             HorizontalAlignment="Center"
@@ -157,7 +156,7 @@
                                 TextAlignment="Center"
                                 TextWrapping="Wrap" />
                         </Grid>
-                    </ScrollViewer>
+                    </ws:ScrollViewer>
                     <Grid
                         Grid.Row="2"
                         Margin="16"
@@ -185,13 +184,11 @@
                     </Grid>
                 </Grid>
             </Border>
-            <ScrollViewer
+            <ws:ScrollViewer
                 Grid.Column="1"
                 Margin="8,0,0,0"
-                extensions:ScrollAnimationBehavior.IsEnabled="True"
-                extensions:ScrollAnimationBehavior.PointsToScroll="16"
-                extensions:ScrollAnimationBehavior.TimeDuration="00:00:00.20"
-                extensions:TouchableScrollViewer.IsEnabled="True">
+                ws:StylusTouchDevice.Simulate="True"
+                PanningMode="Both">
                 <StackPanel Margin="0,0,12,0">
                     <ui:CardExpander IsExpanded="True">
                         <ui:CardExpander.Header>
@@ -475,7 +472,7 @@
                         </ui:CardExpander.Content>
                     </ui:CardExpander>
                 </StackPanel>
-            </ScrollViewer>
+            </ws:ScrollViewer>
         </Grid>
     </Grid>
 </Page>
