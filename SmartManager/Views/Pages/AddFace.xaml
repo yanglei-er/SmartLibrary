@@ -43,13 +43,20 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
-                <ui:Image
+                <Image
+                    Name="MaskImage"
+                    Grid.Row="0"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Panel.ZIndex="999"
+                    Source="{Binding ViewModel.MaskImageSource, Converter={StaticResource StringToImageSourceConverter}, Mode=OneWay}" />
+                <Image
                     Name="CameraImage"
                     Grid.Row="0"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
                     RenderOptions.BitmapScalingMode="HighQuality"
-                    Source="{Binding ViewModel.CameraImageSource, Mode=OneWay}" />
+                    Source="{Binding ViewModel.CameraImageSource, Converter={StaticResource StringToImageSourceConverter}, Mode=OneWay}" />
                 <Border
                     Grid.Row="1"
                     Margin="0,8,0,0"
@@ -68,8 +75,8 @@
                             <ItemsPanelTemplate>
                                 <ui:VirtualizingWrapPanel
                                     IsItemsHost="True"
-                                    ItemSize="48,72"
-                                    Orientation="Vertical"
+                                    ItemSize="120,180"
+                                    Orientation="Horizontal"
                                     SpacingMode="Uniform"
                                     StretchItems="True" />
                             </ItemsPanelTemplate>
@@ -235,7 +242,7 @@
                     Name="OpenCamera"
                     Margin="0,8,0,0"
                     HorizontalAlignment="Stretch"
-                    Click="OpenCamera_Click"
+                    Click="OpenCameraClick"
                     Content="{Binding ViewModel.IsCameraOpened, Converter={StaticResource BoolToOpenCameraTextConverter}, Mode=OneWay}"
                     FontSize="20"
                     IsEnabled="{Binding ViewModel.IsOpenCameraButtonEnabled, Mode=OneWay}" />
@@ -248,16 +255,10 @@
                 <ui:Button
                     Margin="0,8,0,0"
                     HorizontalAlignment="Stretch"
-                    Command="{Binding ViewModel.CollectingFaceCommand}"
+                    Click="CaptureFaceClick"
                     Content="采集图像"
                     FontSize="24"
                     IsEnabled="{Binding ViewModel.IsCameraOpened, Mode=OneWay}" />
-                <ui:Button
-                    Margin="0,8,0,0"
-                    HorizontalAlignment="Stretch"
-                    Command="{Binding ViewModel.TestCommand}"
-                    Content="Test"
-                    FontSize="24" />
             </StackPanel>
             <StackPanel Grid.Row="2" Margin="0,8,0,0">
                 <ui:Button

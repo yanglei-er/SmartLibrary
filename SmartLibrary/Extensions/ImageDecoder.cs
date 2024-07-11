@@ -54,7 +54,7 @@ namespace SmartLibrary.Extensions
 
             if (i.Parent is Grid grid)
             {
-                foreach (var c in grid.Children)
+                foreach (object c in grid.Children)
                 {
                     if (c is ProgressRing progressring)
                     {

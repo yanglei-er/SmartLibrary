@@ -6,7 +6,7 @@ using System.Text;
 
 namespace SmartLibrary.Helpers
 {
-    public static class Utils
+    public static class APIHelper
     {
         public static void SetAPIKey(string apiKey)
         {

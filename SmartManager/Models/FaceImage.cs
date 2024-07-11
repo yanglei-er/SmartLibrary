@@ -1,12 +1,13 @@
-﻿using System.Windows.Media.Imaging;
+﻿using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace SmartManager.Models
 {
     public record class FaceImage
     {
-        public BitmapSource ImageSource { get; set; }
+        public BitmapImage? ImageSource { get; set; }
 
-        public FaceImage(BitmapSource imageSource)
+        public FaceImage(BitmapImage? imageSource)
         {
             ImageSource = imageSource;
         }

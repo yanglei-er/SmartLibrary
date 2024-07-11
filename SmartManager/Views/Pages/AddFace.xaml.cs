@@ -1,4 +1,5 @@
 ﻿using SmartManager.ViewModels;
+using System.Windows.Controls;
 using System.Windows.Input;
 using Wpf.Ui.Controls;
 
@@ -22,9 +23,14 @@ namespace SmartManager.Views.Pages
             }
         }
 
-        private void OpenCamera_Click(object sender, System.Windows.RoutedEventArgs e)
+        private void OpenCameraClick(object sender, System.Windows.RoutedEventArgs e)
         {
-            ViewModel.OpenCamera(CameraImage);
+            ViewModel.OpenCamera(CameraImage, MaskImage);
+        }
+
+        private void CaptureFaceClick(object sender, System.Windows.RoutedEventArgs e)
+        {
+            ViewModel.CaptureFace(CameraImage);
         }
     }
 }

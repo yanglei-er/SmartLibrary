@@ -79,7 +79,7 @@ namespace SmartLibrary.ViewModels
         private string _apiKey = string.Empty;
 
         [ObservableProperty]
-        private string _apiKeyText = Helpers.Utils.GetAPIKey();
+        private string _apiKeyText = Helpers.APIHelper.GetAPIKey();
 
         public SettingsViewModel(INavigationService navigationService, IContentDialogService contentDialogService, ISnackbarService snackbarService)
         {
@@ -203,20 +203,20 @@ namespace SmartLibrary.ViewModels
             if (value == 0)
             {
                 SettingsHelper.SetConfig("Theme", "System");
-                //ApplicationTheme theme = Helpers.Utils.GetUserApplicationTheme("System");
-                //ApplicationThemeManager.Apply(theme, Helpers.Utils.GetUserBackdrop(SettingsHelper.GetConfig("Backdrop")));
+                //ApplicationTheme theme = Helpers.APIHelper.GetUserApplicationTheme("System");
+                //ApplicationThemeManager.Apply(theme, Helpers.APIHelper.GetUserBackdrop(SettingsHelper.GetConfig("Backdrop")));
                 //ResourceManager.UpdateTheme(theme.ToString());
             }
             else if (value == 1)
             {
                 SettingsHelper.SetConfig("Theme", "Light");
-                //ApplicationThemeManager.Apply(ApplicationTheme.Light, Helpers.Utils.GetUserBackdrop(SettingsHelper.GetConfig("Backdrop")));
+                //ApplicationThemeManager.Apply(ApplicationTheme.Light, Helpers.APIHelper.GetUserBackdrop(SettingsHelper.GetConfig("Backdrop")));
                 //ResourceManager.UpdateTheme("Light");
             }
             else
             {
                 SettingsHelper.SetConfig("Theme", "Dark");
-                //ApplicationThemeManager.Apply(ApplicationTheme.Dark, Helpers.Utils.GetUserBackdrop(SettingsHelper.GetConfig("Backdrop")));
+                //ApplicationThemeManager.Apply(ApplicationTheme.Dark, Helpers.APIHelper.GetUserBackdrop(SettingsHelper.GetConfig("Backdrop")));
                 //ResourceManager.UpdateTheme("Dark");
             }
         }
@@ -327,7 +327,7 @@ namespace SmartLibrary.ViewModels
 
         partial void OnApiKeyTextChanged(string value)
         {
-            Helpers.Utils.SetAPIKey(ApiKey);
+            Helpers.APIHelper.SetAPIKey(ApiKey);
         }
     }
 }

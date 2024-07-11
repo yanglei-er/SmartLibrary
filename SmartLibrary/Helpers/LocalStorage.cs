@@ -1,7 +1,7 @@
-﻿using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Formats.Jpeg;
-using SixLabors.ImageSharp.Processing;
+﻿using Shared.Helpers;
 using SmartLibrary.Models;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Text.RegularExpressions;
 
@@ -63,9 +63,10 @@ namespace SmartLibrary.Helpers
                 {
                     Directory.CreateDirectory(localPath);
                 }
-                using Image image = Image.Load(picture);
-                image.Mutate(a => a.Resize(new ResizeOptions() { Size = new(270, 390), Mode = SixLabors.ImageSharp.Processing.ResizeMode.Crop }));
-                await image.SaveAsJpegAsync(path, new JpegEncoder() { Quality = 100 });
+                using MemoryStream stream = new(picture);
+                using Image image = Image.FromStream(stream);
+                Image a = ImageProcess.Resize(image, 270, 390);
+                a.Save(path, ImageFormat.Jpeg);
                 return true;
             }
             else
@@ -90,9 +91,9 @@ namespace SmartLibrary.Helpers
             {
                 if (File.Exists(path))
                 {
-                    using Image image = Image.Load(path);
-                    image.Mutate(a => a.Resize(new ResizeOptions() { Size = new(270, 390), Mode = SixLabors.ImageSharp.Processing.ResizeMode.Crop }));
-                    image.SaveAsJpegAsync(localFilePath, new JpegEncoder() { Quality = 100 });
+                    using Image image = Image.FromFile(path);
+                    Image a = ImageProcess.Resize(image, 270, 390);
+                    a.Save(path, ImageFormat.Jpeg);
                     return localFilePath;
                 }
                 else if (File.Exists(tempFilePath))

@@ -63,7 +63,6 @@ namespace SmartManager.Views
                     WindowState = WindowState.Normal;
                 }
 
-                // According to some sources these steps gurantee that an app will be brought to foreground.
                 Activate();
                 Topmost = true;
                 Topmost = false;
@@ -74,6 +73,7 @@ namespace SmartManager.Views
 
         protected override void OnClosed(EventArgs e)
         {
+            FaceRecognition.CloseCamera();
             base.OnClosed(e);
             Application.Current.Shutdown();
         }

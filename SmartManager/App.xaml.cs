@@ -64,7 +64,7 @@ namespace SmartManager
 
         private void OnStartup(object sender, StartupEventArgs e)
         {
-            mutex = new Mutex(true, "SmartManage", out bool aIsNewInstance);
+            mutex = new Mutex(true, "SmartManager", out bool aIsNewInstance);
             if (aIsNewInstance)
             {
                 _host.Start();

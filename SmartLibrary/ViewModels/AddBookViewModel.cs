@@ -20,7 +20,7 @@ namespace SmartLibrary.ViewModels
         private readonly LocalStorage localStorage = new();
         private readonly Network network = Network.Instance;
 
-        private readonly string APIKey = Helpers.Utils.GetAPIKey();
+        private readonly string APIKey = Helpers.APIHelper.GetAPIKey();
 
         [ObservableProperty]
         private bool _isPictureLoading = false;
