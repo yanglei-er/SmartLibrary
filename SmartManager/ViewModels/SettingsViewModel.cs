@@ -10,10 +10,10 @@ namespace SmartManager.ViewModels
     public partial class SettingsViewModel : ObservableObject
     {
         [ObservableProperty]
-        private int _currentApplicationThemeIndex = Shared.Helpers.Utils.GetCurrentApplicationThemeIndex(SettingsHelper.GetConfig("Theme"));
+        private int _currentApplicationThemeIndex = Utils.GetCurrentApplicationThemeIndex(SettingsHelper.GetConfig("Theme"));
 
         [ObservableProperty]
-        private bool _isCustomizedAccentColor = Convert.ToBoolean(SettingsHelper.GetConfig("IsCustomizedAccentColor"));
+        private bool _isCustomizedAccentColor = SettingsHelper.GetBoolean("IsCustomizedAccentColor");
 
         #region AccentColorGroup
         [ObservableProperty]
@@ -33,7 +33,7 @@ namespace SmartManager.ViewModels
         #endregion AccentColorGroup
 
         [ObservableProperty]
-        private int _currentBackdropIndex = Shared.Helpers.Utils.GetCurrentBackdropIndex(SettingsHelper.GetConfig("Backdrop"));
+        private int _currentBackdropIndex = Utils.GetCurrentBackdropIndex(SettingsHelper.GetConfig("Backdrop"));
 
         partial void OnCurrentApplicationThemeIndexChanged(int value)
         {
@@ -64,8 +64,8 @@ namespace SmartManager.ViewModels
             SettingsHelper.SetConfig("IsCustomizedAccentColor", value.ToString());
             if (value)
             {
-                SystemAccentColor = Shared.Helpers.Utils.StringToSolidColorBrush(SettingsHelper.GetConfig("CustomizedAccentColor"));
-                ApplicationAccentColorManager.Apply(SystemAccentColor.Color, Shared.Helpers.Utils.GetUserApplicationTheme(SettingsHelper.GetConfig("Theme")));
+                SystemAccentColor = Utils.StringToSolidColorBrush(SettingsHelper.GetConfig("CustomizedAccentColor"));
+                ApplicationAccentColorManager.Apply(SystemAccentColor.Color, Utils.GetUserApplicationTheme(SettingsHelper.GetConfig("Theme")));
             }
             else
             {
@@ -73,12 +73,12 @@ namespace SmartManager.ViewModels
                 SystemAccentColor = (SolidColorBrush)ApplicationAccentColorManager.SystemAccentBrush;
             }
             Color _color = SystemAccentColor.Color;
-            Light1 = Shared.Helpers.Utils.ColorToSolidColorBrush(_color.Update(15f, -12f));
-            Light2 = Shared.Helpers.Utils.ColorToSolidColorBrush(_color.Update(30f, -24f));
-            Light3 = Shared.Helpers.Utils.ColorToSolidColorBrush(_color.Update(45f, -36f));
-            Dark1 = Shared.Helpers.Utils.ColorToSolidColorBrush(_color.UpdateBrightness(-5f));
-            Dark2 = Shared.Helpers.Utils.ColorToSolidColorBrush(_color.UpdateBrightness(-10f));
-            Dark3 = Shared.Helpers.Utils.ColorToSolidColorBrush(_color.UpdateBrightness(-15f));
+            Light1 = Utils.ColorToSolidColorBrush(_color.Update(15f, -12f));
+            Light2 = Utils.ColorToSolidColorBrush(_color.Update(30f, -24f));
+            Light3 = Utils.ColorToSolidColorBrush(_color.Update(45f, -36f));
+            Dark1 = Utils.ColorToSolidColorBrush(_color.UpdateBrightness(-5f));
+            Dark2 = Utils.ColorToSolidColorBrush(_color.UpdateBrightness(-10f));
+            Dark3 = Utils.ColorToSolidColorBrush(_color.UpdateBrightness(-15f));
         }
 
         public void ColorExpander_Expanded()

@@ -53,7 +53,7 @@ namespace SmartManager.ViewModels
         private int _totalCount = 0;
 
         [ObservableProperty]
-        private int _displayIndex = int.Parse(SettingsHelper.GetConfig("FaceManageDisplayIndex"));
+        private int _displayIndex = SettingsHelper.GetInt("FaceManageDisplayIndex");
 
         [ObservableProperty]
         private ObservableCollection<PageButton> _pageButtonList = [];

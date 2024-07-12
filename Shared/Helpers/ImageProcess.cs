@@ -57,7 +57,7 @@ namespace Shared.Helpers
             return bitmapImage;
         }
 
-        public static Image Resize(Image image, int maxWidth, int maxHeight)
+        public static Bitmap Resize(Image image, int maxWidth, int maxHeight)
         {
             //模版的宽高比例
             double resultRate = (double)maxWidth / maxHeight;
@@ -68,11 +68,11 @@ namespace Shared.Helpers
             if (resultRate == initRate)
             {
                 //按模版大小生成最终图片
-                Image resultImage = new Bitmap(maxWidth, maxHeight);
+                Bitmap resultImage = new(maxWidth, maxHeight);
                 using Graphics graphics = Graphics.FromImage(resultImage);
                 graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.High;
                 graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-                graphics.Clear(System.Drawing.Color.White);
+                graphics.Clear(System.Drawing.Color.Transparent);
                 graphics.DrawImage(image, new Rectangle(-1, -1, maxWidth, maxHeight), new Rectangle(0, 0, image.Width, image.Height), GraphicsUnit.Pixel);
                 return resultImage;
             }
@@ -80,7 +80,7 @@ namespace Shared.Helpers
             else
             {
                 //裁剪对象
-                Image tempImage;
+                Bitmap tempImage;
                 Graphics tempGraphics;
 
                 //定位
@@ -131,11 +131,11 @@ namespace Shared.Helpers
                 tempGraphics.DrawImage(image, toR, fromR, GraphicsUnit.Pixel);
 
                 //按模版大小生成最终图片
-                Image resultImage = new Bitmap(maxWidth, maxHeight);
+                Bitmap resultImage = new(maxWidth, maxHeight);
                 using Graphics resultGraphics = Graphics.FromImage(resultImage);
                 resultGraphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.High;
                 resultGraphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-                resultGraphics.Clear(System.Drawing.Color.White);
+                resultGraphics.Clear(System.Drawing.Color.Transparent);
                 resultGraphics.DrawImage(tempImage, new Rectangle(0, 0, maxWidth, maxHeight), new Rectangle(0, 0, tempImage.Width, tempImage.Height), GraphicsUnit.Pixel);
 
                 tempGraphics.Dispose();

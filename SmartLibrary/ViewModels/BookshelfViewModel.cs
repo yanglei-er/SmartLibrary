@@ -37,7 +37,7 @@ namespace SmartLibrary.ViewModels
         private int _totalCount = 0;
 
         [ObservableProperty]
-        private int _displayIndex = int.Parse(SettingsHelper.GetConfig("BookshelfDisplayIndex"));
+        private int _displayIndex = SettingsHelper.GetInt("BookshelfDisplayIndex");
 
         [ObservableProperty]
         private ObservableCollection<PageButton> _pageButtonList = [];

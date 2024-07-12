@@ -43,7 +43,7 @@ namespace SmartLibrary.Views
             ApplicationTheme theme = Shared.Helpers.Utils.GetUserApplicationTheme(SettingsHelper.GetConfig("Theme"));
             ResourceManager.UpdateTheme(theme.ToString());
             ApplicationThemeManager.Apply(theme, Shared.Helpers.Utils.GetUserBackdrop(SettingsHelper.GetConfig("Backdrop")));
-            if (Convert.ToBoolean(SettingsHelper.GetConfig("IsCustomizedAccentColor")))
+            if (SettingsHelper.GetBoolean("IsCustomizedAccentColor"))
             {
                 ApplicationAccentColorManager.Apply(Shared.Helpers.Utils.StringToColor(SettingsHelper.GetConfig("CustomizedAccentColor")), theme);
             }

@@ -18,16 +18,16 @@ namespace SmartLibrary.ViewModels
         private readonly Database BooksDb = Database.GetDatabase("books.smartlibrary");
 
         [ObservableProperty]
-        private bool _autoStart = Convert.ToBoolean(SettingsHelper.GetConfig("AutoStart"));
+        private bool _autoStart = SettingsHelper.GetBoolean("AutoStart");
 
         [ObservableProperty]
-        private bool _autoStartMinimized = Convert.ToBoolean(SettingsHelper.GetConfig("AutoStartMinimized"));
+        private bool _autoStartMinimized = SettingsHelper.GetBoolean("AutoStartMinimized");
 
         [ObservableProperty]
-        private bool _trayEnabled = Convert.ToBoolean(SettingsHelper.GetConfig("TrayEnabled"));
+        private bool _trayEnabled = SettingsHelper.GetBoolean("TrayEnabled");
 
         [ObservableProperty]
-        private bool _autoCheckUpdate = Convert.ToBoolean(SettingsHelper.GetConfig("AutoCheckUpdate"));
+        private bool _autoCheckUpdate = SettingsHelper.GetBoolean("AutoCheckUpdate");
 
         #region FileOccupancy
         [ObservableProperty]
@@ -50,7 +50,7 @@ namespace SmartLibrary.ViewModels
         private int _currentApplicationThemeIndex = Shared.Helpers.Utils.GetCurrentApplicationThemeIndex(SettingsHelper.GetConfig("Theme"));
 
         [ObservableProperty]
-        private bool _isCustomizedAccentColor = Convert.ToBoolean(SettingsHelper.GetConfig("IsCustomizedAccentColor"));
+        private bool _isCustomizedAccentColor = SettingsHelper.GetBoolean("IsCustomizedAccentColor");
 
         #region AccentColorGroup
         [ObservableProperty]
@@ -73,13 +73,13 @@ namespace SmartLibrary.ViewModels
         private int _currentBackdropIndex = Shared.Helpers.Utils.GetCurrentBackdropIndex(SettingsHelper.GetConfig("Backdrop"));
 
         [ObservableProperty]
-        private bool _isAdministrator = Convert.ToBoolean(SettingsHelper.GetConfig("IsAdministrator"));
+        private bool _isAdministrator = SettingsHelper.GetBoolean("IsAdministrator");
 
         [ObservableProperty]
         private string _apiKey = string.Empty;
 
         [ObservableProperty]
-        private string _apiKeyText = Helpers.APIHelper.GetAPIKey();
+        private string _apiKeyText = APIHelper.GetAPIKey();
 
         public SettingsViewModel(INavigationService navigationService, IContentDialogService contentDialogService, ISnackbarService snackbarService)
         {

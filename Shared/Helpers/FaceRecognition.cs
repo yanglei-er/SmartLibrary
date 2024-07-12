@@ -12,7 +12,7 @@ namespace Shared.Helpers
         private static readonly ViewFaceCore.Core.FaceDetector faceDetector = new();
         private static readonly Pen pen = new(Color.Red, 2);
 
-        public static bool IsCameraOpened = false;
+        public static bool IsCameraOpened { get; set; }
 
         public static int SleepTime
         {
@@ -64,9 +64,9 @@ namespace Shared.Helpers
             }
         }
 
-        public static Image GetMaskImage(Image cameraImage)
+        public static Bitmap GetMaskImage(Image cameraImage)
         {
-            Image mask = new Bitmap(cameraImage.Width, cameraImage.Height);
+            Bitmap mask = new(cameraImage.Width, cameraImage.Height);
             using Graphics maskGraphics = Graphics.FromImage(mask);
 
             FaceInfo[] faceInfos = faceDetector.Detect(cameraImage);
@@ -77,7 +77,7 @@ namespace Shared.Helpers
             return mask;
         }
 
-        public async static ValueTask<Image> GetFace(Image cameraImage)
+        public async static ValueTask<Bitmap> GetFace(Image cameraImage)
         {
             FaceInfo[] faceInfos = await faceDetector.DetectAsync(cameraImage);
 
@@ -87,7 +87,7 @@ namespace Shared.Helpers
                 Rectangle cropArea = new(face.Location.X, face.Location.Y, face.Location.Width, face.Location.Height);
                 using Bitmap bitmap = (Bitmap)cameraImage;
                 using Bitmap croppedBitmap = bitmap.Clone(cropArea, bitmap.PixelFormat);
-                Image a =  ImageProcess.Resize(croppedBitmap, 120, 180);
+                Bitmap a = ImageProcess.Resize(croppedBitmap, 164, 216);
                 return a;
             }
             else

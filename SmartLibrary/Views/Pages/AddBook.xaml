@@ -172,7 +172,7 @@
                     <ws:ScrollViewer
                         Grid.Row="1"
                         ws:StylusTouchDevice.Simulate="True"
-                        PanningMode="Both">
+                        PanningMode="VerticalOnly">
                         <Grid
                             Margin="32,16,32,0"
                             HorizontalAlignment="Center"
@@ -241,7 +241,7 @@
                 Grid.Column="1"
                 Margin="8,0,0,0"
                 ws:StylusTouchDevice.Simulate="True"
-                PanningMode="Both">
+                PanningMode="VerticalOnly">
                 <StackPanel Margin="0,0,12,0">
                     <ui:CardExpander IsExpanded="True">
                         <ui:CardExpander.Header>

@@ -52,7 +52,7 @@ namespace SmartLibrary.ViewModels
         private int _totalCount = 0;
 
         [ObservableProperty]
-        private int _displayIndex = int.Parse(SettingsHelper.GetConfig("BookManageDisplayIndex"));
+        private int _displayIndex = SettingsHelper.GetInt("BookManageDisplayIndex");
 
         [ObservableProperty]
         private ObservableCollection<PageButton> _pageButtonList = [];

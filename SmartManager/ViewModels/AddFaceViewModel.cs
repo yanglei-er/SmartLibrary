@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.Drawing;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
+using Wpf.Ui.Extensions;
 
 namespace SmartManager.ViewModels
 {
@@ -28,16 +29,16 @@ namespace SmartManager.ViewModels
         private bool _isOpenCameraButtonEnabled = false;
 
         [ObservableProperty]
-        private bool _isDrawFaceFrame = false;
+        private bool _isDrawFaceRectangle = SettingsHelper.GetBoolean("IsDrawFaceRectangle");
 
         [ObservableProperty]
         private string _cameraImageSource = $"pack://application:,,,/Assets/DynamicPic/{ResourceManager.CurrentTheme}/cameraEmpty.jpg";
 
         [ObservableProperty]
-        private string _maskImageSource = string.Empty;
+        private ObservableCollection<Models.FaceImage> _faceImageList = [];
 
         [ObservableProperty]
-        private ObservableCollection<Models.FaceImage> _faceImageList = [];
+        private int _faceCount = 0;
 
         [ObservableProperty]
         private bool _isAddButtonEnabled = false;
@@ -58,6 +59,11 @@ namespace SmartManager.ViewModels
         partial void OnDeviceSelectedIndexChanged(int value)
         {
             IsOpenCameraButtonEnabled = true;
+        }
+
+        partial void OnIsDrawFaceRectangleChanged(bool value)
+        {
+            SettingsHelper.SetConfig("IsDrawFaceRectangle", value.ToString());
         }
 
         public void OnNavigatedTo()
@@ -83,20 +89,25 @@ namespace SmartManager.ViewModels
             }
             else
             {
-                IsCameraOpened = false;
-                FaceRecognition.CloseCamera();
-
-                System.Windows.Threading.DispatcherTimer dispatcherTimer = new()
-                {
-                    Interval = TimeSpan.FromMicroseconds(500)
-                };
-                dispatcherTimer.Tick += (_, _) =>
-                {
-                    image.Source = ImageProcess.StringToImageSource($"pack://application:,,,/Assets/DynamicPic/{ResourceManager.CurrentTheme}/cameraEmpty.jpg");
-                    maskImage.Source = ImageProcess.StringToImageSource(string.Empty); dispatcherTimer.Stop();
-                };
-                dispatcherTimer.Start();
+                CloseCamera(image, maskImage);
             }
+        }
+
+        private void CloseCamera(System.Windows.Controls.Image image, System.Windows.Controls.Image maskImage)
+        {
+            IsCameraOpened = false;
+            FaceRecognition.CloseCamera();
+
+            System.Windows.Threading.DispatcherTimer dispatcherTimer = new()
+            {
+                Interval = TimeSpan.FromMicroseconds(500)
+            };
+            dispatcherTimer.Tick += (_, _) =>
+            {
+                image.Source = ImageProcess.StringToImageSource($"pack://application:,,,/Assets/DynamicPic/{ResourceManager.CurrentTheme}/cameraEmpty.jpg");
+                maskImage.Source = ImageProcess.StringToImageSource(string.Empty); dispatcherTimer.Stop();
+            };
+            dispatcherTimer.Start();
         }
 
         private void PlayVideo(System.Windows.Controls.Image cameraImage, System.Windows.Controls.Image maskImage)
@@ -121,12 +132,12 @@ namespace SmartManager.ViewModels
             {
                 using System.Drawing.Image image = FaceRecognition.GetImage();
 
-                if (IsDrawFaceFrame)
+                if (IsDrawFaceRectangle)
                 {
                     maskImage.Dispatcher.Invoke(new Action(() => { maskImage.Source = ImageProcess.BitmapToPngBitmapImage((Bitmap)FaceRecognition.GetMaskImage(image)); }));
                 }
 
-                cameraImage.Dispatcher.Invoke(new Action(() => { cameraImage.Source = ImageProcess.BitmapToPngBitmapImage((Bitmap)image); }));
+                cameraImage.Dispatcher.Invoke(new Action(() => { cameraImage.Source = ImageProcess.BitmapToBitmapImage((Bitmap)image); }));
 
                 Thread.Sleep(sleepTime);
             }
@@ -142,33 +153,31 @@ namespace SmartManager.ViewModels
             else
             {
                 FaceImageList.Add(new Models.FaceImage(ImageProcess.BitmapToBitmapImage((Bitmap)faceImage)));
+                IsAddButtonEnabled = true;
+                FaceCount++;
             }
         }
 
-        partial void OnIsDrawFaceFrameChanged(bool value)
+        public async void AddFace(System.Windows.Controls.Image image, System.Windows.Controls.Image maskImage)
         {
-            if (!value)
+            if (FaceImageList.Count < 5)
             {
-                System.Windows.Threading.DispatcherTimer dispatcherTimer = new()
+                if (await _contentDialogService.ShowSimpleDialogAsync(new SimpleContentDialogCreateOptions()
                 {
-                    Interval = TimeSpan.FromMicroseconds(500)
-                };
-                dispatcherTimer.Tick += (_, _) =>
+                    Title = "提示",
+                    Content = "您的人脸图片数据太少，会导致训练识别结果精确度下降，是否继续添加？",
+                    PrimaryButtonText = "是",
+                    CloseButtonText = "否",
+                }) != ContentDialogResult.Primary)
                 {
-                   
-                };
-                dispatcherTimer.Start();
+                    return;
+                }
             }
+            
         }
 
         [RelayCommand]
-        void AddFace()
-        {
-
-        }
-
-        [RelayCommand]
-        void GoBack()
+        private void GoBack()
         {
             _navigationService.GoBack();
         }

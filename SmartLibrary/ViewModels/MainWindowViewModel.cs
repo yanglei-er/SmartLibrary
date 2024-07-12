@@ -42,7 +42,7 @@ namespace SmartLibrary.ViewModels
                     }
                 ];
 
-            if (Convert.ToBoolean(SettingsHelper.GetConfig("IsAdministrator")))
+            if (SettingsHelper.GetBoolean("IsAdministrator"))
             {
                 NavigationFooter.Add(new NavigationViewItem()
                 {

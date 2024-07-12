@@ -40,7 +40,7 @@ namespace SmartManager.Views
             ApplicationTheme theme = Utils.GetUserApplicationTheme(SettingsHelper.GetConfig("Theme"));
             ResourceManager.UpdateTheme(theme.ToString());
             ApplicationThemeManager.Apply(theme, Utils.GetUserBackdrop(SettingsHelper.GetConfig("Backdrop")));
-            if (Convert.ToBoolean(SettingsHelper.GetConfig("IsCustomizedAccentColor")))
+            if (SettingsHelper.GetBoolean("IsCustomizedAccentColor"))
             {
                 ApplicationAccentColorManager.Apply(Utils.StringToColor(SettingsHelper.GetConfig("CustomizedAccentColor")), theme);
             }

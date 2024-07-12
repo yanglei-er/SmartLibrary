@@ -1,4 +1,5 @@
-﻿using System.Windows.Media;
+﻿using System.Windows;
+using System.Windows.Media;
 using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
 
@@ -89,7 +90,7 @@ namespace Shared.Helpers
 
         public static SolidColorBrush StringToSolidColorBrush(string color)
         {
-            return new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(color));
+            return new SolidColorBrush((Color)ColorConverter.ConvertFromString(color));
         }
 
         public static SolidColorBrush ColorToSolidColorBrush(Color color)
@@ -99,7 +100,28 @@ namespace Shared.Helpers
 
         public static Color StringToColor(string color)
         {
-            return (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(color);
+            return (Color)ColorConverter.ConvertFromString(color);
+        }
+
+        public static T? FindVisualChild<T>(DependencyObject? obj) where T : DependencyObject
+        {
+            if (obj != null)
+            {
+                for (int i = 0; i < VisualTreeHelper.GetChildrenCount(obj); i++)
+                {
+                    DependencyObject child = VisualTreeHelper.GetChild(obj, i);
+                    if (child != null && child is T t)
+                    {
+                        return t;
+                    }
+                    T? childItem = FindVisualChild<T>(child);
+                    if (childItem != null)
+                    {
+                        return childItem;
+                    }
+                }
+            }
+            return null;
         }
     }
 }

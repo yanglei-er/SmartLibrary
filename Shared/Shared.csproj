@@ -12,8 +12,8 @@
 	<PropertyGroup>
 		<Description>Smart library共享资源库</Description>
 		<Copyright>Copyright © 2024 赵杨磊.All Rights Reserved.</Copyright>
-		<AssemblyVersion>0.3.6.24193</AssemblyVersion>
-		<FileVersion>0.3.6.24193</FileVersion>
+		<AssemblyVersion>0.3.7.24194</AssemblyVersion>
+		<FileVersion>0.3.7.24194</FileVersion>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 
