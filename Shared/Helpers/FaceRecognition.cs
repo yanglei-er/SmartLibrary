@@ -1,7 +1,12 @@
 ﻿using Hompus.VideoInputDevices;
+using Newtonsoft.Json;
 using OpenCvSharp;
+using Shared.Models;
 using System.Drawing;
+using System.Windows;
 using ViewFaceCore;
+using ViewFaceCore.Configs;
+using ViewFaceCore.Core;
 using ViewFaceCore.Model;
 
 namespace Shared.Helpers
@@ -9,8 +14,12 @@ namespace Shared.Helpers
     public static class FaceRecognition
     {
         private static VideoCapture videoCapture = new();
-        private static readonly ViewFaceCore.Core.FaceDetector faceDetector = new();
+        private static readonly FaceDetector faceDetector = new();
+        private static readonly FaceLandmarker faceMark;
+        private static readonly FaceRecognizer faceRecognizer = new();
+        private static readonly FaceQuality faceQuality;
         private static readonly Pen pen = new(Color.Red, 2);
+        private static readonly float videoCaptureFps = 18;
 
         public static bool IsCameraOpened { get; set; }
 
@@ -18,7 +27,7 @@ namespace Shared.Helpers
         {
             get
             {
-                return (int)Math.Round(1000 / videoCapture.Fps);
+                return (int)Math.Round(1000 / videoCaptureFps);
             }
         }
 
@@ -47,16 +56,24 @@ namespace Shared.Helpers
 
         static FaceRecognition()
         {
+            FaceLandmarkConfig faceLandmarkconfig = new()
+            {
+                MarkType = MarkType.Light,
+                DeviceType = DeviceType.CPU
+            };
+            faceMark = new(faceLandmarkconfig);
 
+            QualityConfig qualityConfig = new();
+            faceQuality = new(qualityConfig);
         }
 
-        public static Image GetImage()
+        public static Bitmap GetImage()
         {
             using Mat v_mat = new();
             videoCapture.Read(v_mat);
             if (v_mat != null)
             {
-                return Image.FromStream(v_mat.ToMemoryStream());
+                return (Bitmap)Image.FromStream(v_mat.ToMemoryStream());
             }
             else
             {
@@ -64,7 +81,7 @@ namespace Shared.Helpers
             }
         }
 
-        public static Bitmap GetMaskImage(Image cameraImage)
+        public static Bitmap GetMaskImage(Bitmap cameraImage)
         {
             Bitmap mask = new(cameraImage.Width, cameraImage.Height);
             using Graphics maskGraphics = Graphics.FromImage(mask);
@@ -77,35 +94,54 @@ namespace Shared.Helpers
             return mask;
         }
 
-        public async static ValueTask<Bitmap> GetFace(Image cameraImage)
+        public async static ValueTask<Face> GetFace(Bitmap cameraImage)
         {
             FaceInfo[] faceInfos = await faceDetector.DetectAsync(cameraImage);
 
             if (faceInfos.Length > 0)
             {
-                FaceInfo face = faceInfos[0];
-                Rectangle cropArea = new(face.Location.X, face.Location.Y, face.Location.Width, face.Location.Height);
-                using Bitmap bitmap = (Bitmap)cameraImage;
-                using Bitmap croppedBitmap = bitmap.Clone(cropArea, bitmap.PixelFormat);
+                FaceInfo faceInfo = faceInfos[0];
+
+                Rectangle cropArea = new(faceInfo.Location.X, faceInfo.Location.Y, faceInfo.Location.Width, faceInfo.Location.Height);
+                using Bitmap croppedBitmap = cameraImage.Clone(cropArea, cameraImage.PixelFormat);
                 Bitmap a = ImageProcess.Resize(croppedBitmap, 164, 216);
-                return a;
+
+                FaceMarkPoint[] faceMarkPoint = faceMark.Mark(a, faceDetector.Detect(a)[0]);
+                return new Face(a, faceInfo, faceMarkPoint);
             }
             else
             {
-                Bitmap bitmap = new(1, 1);
-                return bitmap;
+                Bitmap bitmap = new(2, 2);
+                return new Face(bitmap, new FaceInfo(), []);
             }
+        }
+
+        public static float[] GetFaceFeature(Face face)
+        {
+            return faceRecognizer.Extract(face.FaceImage, face.FaceMarkPoints);
+        }
+
+        public static float GetFaceQuality(Face face)
+        {
+            QualityResult result = faceQuality.Detect(face.FaceImage, face.FaceInfo, face.FaceMarkPoints, QualityType.Pose);
+            return result.Score;
+        }
+
+        public static string GetFaceFeatureString(Face face)
+        {
+           return JsonConvert.SerializeObject(GetFaceFeature(face));
         }
 
         public static bool OpenCamera(int videoCapture_id, out string message)
         {
-            videoCapture = new(videoCapture_id);
-            videoCapture.Set(VideoCaptureProperties.FrameWidth, 720);
-            videoCapture.Set(VideoCaptureProperties.FrameHeight, 480);//高度
-            videoCapture.Set(VideoCaptureProperties.Fps, 10);
+            videoCapture = new();
+            videoCapture.Set(VideoCaptureProperties.FrameWidth, 960);
+            videoCapture.Set(VideoCaptureProperties.FrameHeight, 564);//高度
+            videoCapture.Set(VideoCaptureProperties.Fps, (int)videoCaptureFps);
             try
             {
                 message = string.Empty;
+                videoCapture.Open(videoCapture_id, VideoCaptureAPIs.DSHOW);
                 if (videoCapture.IsOpened())
                 {
                     IsCameraOpened = true;

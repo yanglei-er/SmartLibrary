@@ -12,8 +12,8 @@
 	<PropertyGroup>
 		<Description>Smart library共享资源库</Description>
 		<Copyright>Copyright © 2024 赵杨磊.All Rights Reserved.</Copyright>
-		<AssemblyVersion>0.3.7.24194</AssemblyVersion>
-		<FileVersion>0.3.7.24194</FileVersion>
+		<AssemblyVersion>0.3.8.24195</AssemblyVersion>
+		<FileVersion>0.3.8.24195</FileVersion>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 
@@ -39,6 +39,7 @@
     <PackageReference Include="EleCho.WpfSuite" Version="0.5.3" />
     <PackageReference Include="Hompus.VideoInputDevices" Version="0.5.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="OpenCvSharp4" Version="4.10.0.20240616" />
     <PackageReference Include="OpenCvSharp4.runtime.win" Version="4.10.0.20240616" />
     <PackageReference Include="OpenCvSharp4.WpfExtensions" Version="4.10.0.20240616" />
@@ -47,7 +48,9 @@
     <PackageReference Include="ViewFaceCore" Version="0.3.8" />
     <PackageReference Include="ViewFaceCore.Extension.SystemDrawing" Version="0.3.7" />
     <PackageReference Include="ViewFaceCore.model.face_detector" Version="6.0.7" />
+    <PackageReference Include="ViewFaceCore.model.face_landmarker_pts5" Version="6.0.7" />
     <PackageReference Include="ViewFaceCore.model.face_recognizer" Version="6.0.7" />
+    <PackageReference Include="ViewFaceCore.model.quality_lbn" Version="6.0.7" />
     <PackageReference Include="ViewFaceCore.runtime.win.x64" Version="6.0.7" />
     <PackageReference Include="WPF-UI" Version="3.0.4" />
   </ItemGroup>

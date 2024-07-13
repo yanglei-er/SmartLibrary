@@ -1,4 +1,5 @@
 ﻿using Shared.Helpers;
+using Shared.Models;
 using System.Data;
 using System.Data.SQLite;
 using System.IO;
@@ -56,8 +57,10 @@ namespace SmartManager.Helpers
                 SQLiteConnection.CreateFile(DataSource);
                 StringBuilder sbr = new();
                 sbr.AppendLine("CREATE TABLE IF NOT EXISTS 'main' (");
-                sbr.AppendLine("'id' INTEGER PRIMARY KEY NOT NULL,");
-                sbr.AppendLine("'name' TEXT NOT NULL,");
+                sbr.AppendLine("'name' TEXT PRIMARY KEY NOT NULL,");
+                sbr.AppendLine("'sex' TEXT,");
+                sbr.AppendLine("'age' TEXT,");
+                sbr.AppendLine("'joinTime',");
                 sbr.AppendLine("'feature' BLOB NOT NULL");
                 sbr.AppendLine(");");
                 await ExecuteNonQueryAsync(sbr.ToString());
@@ -81,14 +84,10 @@ namespace SmartManager.Helpers
             return await ExecuteDataTableAsync(sbr.ToString());
         }
 
-        public async void DelBookAsync(string isbn)
+        public async void AddUserAsync(User user)
         {
-            await ExecuteNonQueryAsync($"DELETE FROM main WHERE isbn = {isbn}");
-            string localFilePath = @".\pictures\" + isbn + ".jpg";
-            if (File.Exists(localFilePath))
-            {
-                File.Delete(localFilePath);
-            }
+            string sqlStr = $"INSERT INTO main VALUES ('{user.Name}','{user.Sex}','{user.Age}','{user.JoinTime}','{user.Feature}')";
+            await ExecuteNonQueryAsync(sqlStr);
         }
     }
 }

@@ -7,7 +7,8 @@
     xmlns:extensions="clr-namespace:Shared.Extensions;assembly=Shared"
     xmlns:local="clr-namespace:SmartManager.Views.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:models="clr-namespace:SmartManager.Models"
+    xmlns:models="clr-namespace:Shared.Models;assembly=Shared"
+    xmlns:sharedConverters="clr-namespace:Shared.Converters;assembly=Shared"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     xmlns:ws="https://schemas.elecho.dev/wpfsuite"
     Title="AddFace"
@@ -23,6 +24,7 @@
 
     <Page.Resources>
         <converters:BoolToOpenCameraTextConverter x:Key="BoolToOpenCameraTextConverter" />
+        <sharedConverters:BitmapToImageSourceConverter x:Key="BitmapToImageSourceConverter" />
         <Style BasedOn="{StaticResource MyButtonStyle}" TargetType="ui:Button" />
         <Style BasedOn="{StaticResource MyCheckBoxStyle}" TargetType="CheckBox" />
     </Page.Resources>
@@ -63,13 +65,13 @@
                     <ui:ListView
                         Name="FaceListView"
                         d:ItemsSource="{d:SampleData ItemCount=6}"
-                        ItemsSource="{Binding ViewModel.FaceImageList, Mode=OneWay}"
+                        ItemsSource="{Binding ViewModel.FaceList, Mode=OneWay}"
                         MouseWheel="FaceListView_MouseWheel"
                         ScrollViewer.PanningMode="HorizontalOnly"
                         ScrollViewer.VerticalScrollBarVisibility="Hidden">
                         <ListView.ItemTemplate>
-                            <DataTemplate DataType="{x:Type models:FaceImage}">
-                                <ui:Image Source="{Binding ImageSource}" />
+                            <DataTemplate DataType="{x:Type models:Face}">
+                                <ui:Image Source="{Binding FaceImage, Converter={StaticResource BitmapToImageSourceConverter}}" />
                             </DataTemplate>
                         </ListView.ItemTemplate>
                         <ListView.ItemsPanel>
@@ -97,29 +99,11 @@
                     <StackPanel Grid.Row="0" Margin="0,0,12,0">
                         <ui:CardExpander IsExpanded="True">
                             <ui:CardExpander.Header>
-                                <ui:TextBlock FontSize="24" Text="基本信息" />
+                                <ui:TextBlock FontSize="24" Text="必要信息" />
                             </ui:CardExpander.Header>
                             <ui:CardExpander.Content>
                                 <StackPanel>
                                     <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="*" />
-                                        </Grid.ColumnDefinitions>
-                                        <ui:TextBlock
-                                            Grid.Column="0"
-                                            FontSize="24"
-                                            Text="ID：" />
-                                        <ui:TextBox
-                                            Grid.Column="1"
-                                            Margin="23,0,0,0"
-                                            BorderThickness="0"
-                                            FontSize="18"
-                                            PlaceholderText="为空则系统自动生成"
-                                            PreviewKeyDown="TextBox_PreviewKeyDown"
-                                            TextWrapping="Wrap" />
-                                    </Grid>
-                                    <Grid Margin="0,6,0,0">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto" />
                                             <ColumnDefinition Width="*" />
@@ -133,6 +117,7 @@
                                             BorderThickness="0"
                                             FontSize="18"
                                             PreviewKeyDown="TextBox_PreviewKeyDown"
+                                            Text="{Binding ViewModel.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                             TextWrapping="Wrap" />
                                     </Grid>
                                 </StackPanel>
@@ -158,6 +143,7 @@
                                             BorderThickness="0"
                                             FontSize="18"
                                             PreviewKeyDown="TextBox_PreviewKeyDown"
+                                            Text="{Binding ViewModel.Sex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                             TextWrapping="Wrap" />
                                     </Grid>
                                     <Grid Margin="0,6,0,0">
@@ -171,9 +157,11 @@
                                             Text="年龄：" />
                                         <ui:TextBox
                                             Grid.Column="1"
+                                            extensions:TextBoxAttachedProperties.IsOnlyNumber="True"
                                             BorderThickness="0"
                                             FontSize="18"
                                             PreviewKeyDown="TextBox_PreviewKeyDown"
+                                            Text="{Binding ViewModel.Age, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                             TextWrapping="Wrap" />
                                     </Grid>
                                     <Grid Margin="0,6,0,0">
@@ -189,7 +177,9 @@
                                             Grid.Column="1"
                                             BorderThickness="0"
                                             FontSize="18"
+                                            PlaceholderText="为空则系统自动生成"
                                             PreviewKeyDown="TextBox_PreviewKeyDown"
+                                            Text="{Binding ViewModel.JoinTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                             TextWrapping="Wrap" />
                                     </Grid>
                                 </StackPanel>

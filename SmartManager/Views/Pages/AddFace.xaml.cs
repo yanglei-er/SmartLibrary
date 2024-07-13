@@ -41,7 +41,7 @@ namespace SmartManager.Views.Pages
 
         private void AddFaceClick(object sender, RoutedEventArgs e)
         {
-            ViewModel.AddFace(CameraImage, MaskImage);
+            ViewModel.AddFace();
         }
 
         private void FaceListView_MouseWheel(object sender, MouseWheelEventArgs e)

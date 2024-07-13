@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Shared.Helpers;
+using Shared.Models;
 using SmartManager.Helpers;
 using System.Collections.ObjectModel;
 using System.Drawing;
@@ -15,6 +16,7 @@ namespace SmartManager.ViewModels
         private readonly INavigationService _navigationService;
         private readonly ISnackbarService _snackbarService;
         private readonly IContentDialogService _contentDialogService;
+        private readonly Database UsersDb = Database.GetDatabase("users.smartmanager");
 
         [ObservableProperty]
         private bool _isCameraOpened = false;
@@ -35,13 +37,25 @@ namespace SmartManager.ViewModels
         private string _cameraImageSource = $"pack://application:,,,/Assets/DynamicPic/{ResourceManager.CurrentTheme}/cameraEmpty.jpg";
 
         [ObservableProperty]
-        private ObservableCollection<Models.FaceImage> _faceImageList = [];
+        private ObservableCollection<Face> _faceList = [];
 
         [ObservableProperty]
         private int _faceCount = 0;
 
         [ObservableProperty]
         private bool _isAddButtonEnabled = false;
+
+        [ObservableProperty]
+        private string _name = string.Empty;
+
+        [ObservableProperty]
+        private string _sex = string.Empty;
+
+        [ObservableProperty]
+        private string _age = string.Empty;
+
+        [ObservableProperty]
+        private string _joinTime = string.Empty;
 
         public AddFaceViewModel(INavigationService navigationService, ISnackbarService snackbarService, IContentDialogService contentDialogService)
         {
@@ -50,6 +64,7 @@ namespace SmartManager.ViewModels
             _contentDialogService = contentDialogService;
 
             DevicesName = [.. FaceRecognition.SystemCameraDevices.Keys];
+
             if (DevicesName[0] != "暂无摄像头")
             {
                 IsOpenCameraButtonEnabled = true;
@@ -100,7 +115,7 @@ namespace SmartManager.ViewModels
 
             System.Windows.Threading.DispatcherTimer dispatcherTimer = new()
             {
-                Interval = TimeSpan.FromMicroseconds(500)
+                Interval = TimeSpan.FromMicroseconds(200)
             };
             dispatcherTimer.Tick += (_, _) =>
             {
@@ -130,14 +145,14 @@ namespace SmartManager.ViewModels
 
             while (FaceRecognition.IsCameraOpened)
             {
-                using System.Drawing.Image image = FaceRecognition.GetImage();
+                using Bitmap image = FaceRecognition.GetImage();
 
                 if (IsDrawFaceRectangle)
                 {
-                    maskImage.Dispatcher.Invoke(new Action(() => { maskImage.Source = ImageProcess.BitmapToPngBitmapImage((Bitmap)FaceRecognition.GetMaskImage(image)); }));
+                    maskImage.Dispatcher.Invoke(new Action(() => { maskImage.Source = ImageProcess.BitmapToPngBitmapImage(FaceRecognition.GetMaskImage(image)); }));
                 }
 
-                cameraImage.Dispatcher.Invoke(new Action(() => { cameraImage.Source = ImageProcess.BitmapToBitmapImage((Bitmap)image); }));
+                cameraImage.Dispatcher.Invoke(new Action(() => { cameraImage.Source = ImageProcess.BitmapToBitmapImage(image); }));
 
                 Thread.Sleep(sleepTime);
             }
@@ -145,26 +160,39 @@ namespace SmartManager.ViewModels
 
         public async void CaptureFace(System.Windows.Controls.Image cameraImage)
         {
-            using System.Drawing.Image faceImage = await FaceRecognition.GetFace(ImageProcess.ImageSourceToBitmap(cameraImage.Source));
-            if (faceImage.Width == 1)
+            Face face = await FaceRecognition.GetFace(ImageProcess.ImageSourceToBitmap(cameraImage.Source));
+
+            if (face.FaceImage.Width == 2)
             {
                 _snackbarService.Show("警告", $"未识别到人脸，无法添加！", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(2));
             }
             else
             {
-                FaceImageList.Add(new Models.FaceImage(ImageProcess.BitmapToBitmapImage((Bitmap)faceImage)));
+                FaceList.Add(face);
                 IsAddButtonEnabled = true;
                 FaceCount++;
             }
         }
 
-        public async void AddFace(System.Windows.Controls.Image image, System.Windows.Controls.Image maskImage)
+        public async void AddFace()
         {
-            if (FaceImageList.Count < 5)
+            if (string.IsNullOrEmpty(Name))
+            {
+                System.Media.SystemSounds.Asterisk.Play();
+                await _contentDialogService.ShowSimpleDialogAsync(new SimpleContentDialogCreateOptions()
+                {
+                    Title = "录入人脸",
+                    Content = "您必须录入姓名",
+                    CloseButtonText = "去录入",
+                });
+                return;
+            }
+
+            if (FaceList.Count < 3)
             {
                 if (await _contentDialogService.ShowSimpleDialogAsync(new SimpleContentDialogCreateOptions()
                 {
-                    Title = "提示",
+                    Title = "录入人脸",
                     Content = "您的人脸图片数据太少，会导致训练识别结果精确度下降，是否继续添加？",
                     PrimaryButtonText = "是",
                     CloseButtonText = "否",
@@ -173,7 +201,36 @@ namespace SmartManager.ViewModels
                     return;
                 }
             }
-            
+
+            if (string.IsNullOrEmpty(JoinTime))
+            {
+                JoinTime = DateTime.Now.ToString("d");
+            }
+
+            List<float> faceQualitys = [];
+            foreach (Face face in FaceList)
+            {
+                faceQualitys.Add(FaceRecognition.GetFaceQuality(face));
+            }
+
+            string faceFuture = FaceRecognition.GetFaceFeatureString(FaceList[faceQualitys.IndexOf(faceQualitys.Max())]);
+
+            UsersDb.AddUserAsync(new(Name, Sex, Age, JoinTime, faceFuture));
+            System.Media.SystemSounds.Asterisk.Play();
+            _snackbarService.Show("添加成功", $"用户 {Name} 已添加到数据库中。", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
+
+            CleanAll();
+        }
+
+        private void CleanAll()
+        {
+            Name = string.Empty;
+            Sex = string.Empty;
+            Age = string.Empty;
+            JoinTime = string.Empty;
+            FaceList.Clear();
+            FaceCount = 0;
+            IsAddButtonEnabled = false;
         }
 
         [RelayCommand]
