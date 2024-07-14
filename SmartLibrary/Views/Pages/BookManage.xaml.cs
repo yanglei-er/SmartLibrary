@@ -9,7 +9,7 @@ namespace SmartLibrary.Views.Pages
 {
     public partial class BookManage : INavigableView<BookManageViewModel>
     {
-        private readonly BookInfoSimple bookInfo = new("", "", "", 0, false);
+        private readonly BookInfoSimple bookInfo = new(string.Empty, string.Empty, string.Empty, 0, false);
 
         public BookManageViewModel ViewModel { get; }
 
@@ -67,17 +67,15 @@ namespace SmartLibrary.Views.Pages
                 {
                     dataRowView[2] = bookInfo.Author;
                 }
-                else
+
+                if ((string)dataRowView[1] != bookInfo.BookName || (string)dataRowView[2] != bookInfo.Author || (long)dataRowView[3] != bookInfo.ShelfNumber)
                 {
-                    if ((string)dataRowView[1] != bookInfo.BookName || (string)dataRowView[2] != bookInfo.Author || (long)dataRowView[3] != bookInfo.ShelfNumber)
-                    {
-                        bookInfo.Isbn = (string)dataRowView[0];
-                        bookInfo.BookName = (string)dataRowView[1];
-                        bookInfo.Author = (string)dataRowView[2];
-                        bookInfo.ShelfNumber = (long)dataRowView[3];
-                        bookInfo.IsBorrowed = Convert.ToBoolean(dataRowView[4]);
-                        ViewModel.UpdateSimple(bookInfo);
-                    }
+                    bookInfo.Isbn = (string)dataRowView[0];
+                    bookInfo.BookName = (string)dataRowView[1];
+                    bookInfo.Author = (string)dataRowView[2];
+                    bookInfo.ShelfNumber = (long)dataRowView[3];
+                    bookInfo.IsBorrowed = Convert.ToBoolean(dataRowView[4]);
+                    ViewModel.UpdateSimple(bookInfo);
                 }
             }
         }

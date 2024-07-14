@@ -6,9 +6,8 @@
     xmlns:local="clr-namespace:SmartManager.Views.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-    xmlns:ws="https://schemas.elecho.dev/wpfsuite"
     Title="EditFace"
-    d:DataContext="{d:DesignInstance local:EditBook,
+    d:DataContext="{d:DesignInstance local:EditFace,
                                      IsDesignTimeCreatable=False}"
     d:DesignHeight="700"
     d:DesignWidth="1180"
@@ -18,5 +17,7 @@
     ScrollViewer.CanContentScroll="False"
     mc:Ignorable="d">
 
-    <Grid />
+    <Grid Margin="16">
+        <TextBox Name="XuNiBox" Width="0" />
+    </Grid>
 </Page>

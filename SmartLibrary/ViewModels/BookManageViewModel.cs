@@ -110,7 +110,6 @@ namespace SmartLibrary.ViewModels
                 }
                 needRefresh = false;
             }
-
         }
 
         public void OnNavigatedFrom()
@@ -316,6 +315,86 @@ namespace SmartLibrary.ViewModels
         }
 
         [RelayCommand]
+        private void OnPageButtonClick(string parameter)
+        {
+            if (parameter == "PageUp")
+            {
+                if (CurrentPage > 1)
+                {
+                    CurrentPage--;
+                    if (!IsPageDownEnabled) IsPageDownEnabled = true;
+                }
+            }
+            else
+            {
+                if (CurrentPage < TotalPageCount)
+                {
+                    CurrentPage++;
+                    if (!IsPageUpEnabled) IsPageUpEnabled = true;
+                }
+            }
+        }
+
+        partial void OnCurrentPageChanged(int value)
+        {
+            TargetPage = value;
+            PagerAsync();
+            if (CurrentPage == 1) IsPageUpEnabled = false;
+            else if (CurrentPage == TotalPageCount) IsPageDownEnabled = false;
+        }
+
+        [RelayCommand]
+        private void GotoPage(string page)
+        {
+            CurrentPage = int.Parse(page);
+            if (CurrentPage > 1) IsPageUpEnabled = true;
+            if (CurrentPage < TotalPageCount) IsPageDownEnabled = true;
+        }
+
+        [RelayCommand]
+        partial void OnTargetPageChanged(int value)
+        {
+            if (value > TotalPageCount)
+            {
+                FlyoutText = $"输入页码超过最大页码！";
+                IsFlyoutOpen = true;
+                TargetPage = TotalPageCount;
+            }
+            else if (value == 0)
+            {
+                FlyoutText = "最小页码为 1 ";
+                IsFlyoutOpen = true;
+                TargetPage = 1;
+            }
+            else if (value > 0 && value < TotalPageCount)
+            {
+                if (IsFlyoutOpen)
+                {
+                    IsFlyoutOpen = false;
+                }
+            }
+        }
+
+        public void GotoTargetPage(string page)
+        {
+            if (string.IsNullOrEmpty(page))
+            {
+                TargetPage = -1;
+                TargetPage = CurrentPage;
+            }
+            else
+            {
+                CurrentPage = TargetPage;
+                if (CurrentPage > 1) IsPageUpEnabled = true;
+                if (CurrentPage < TotalPageCount) IsPageDownEnabled = true;
+            }
+            if (IsFlyoutOpen)
+            {
+                IsFlyoutOpen = false;
+            }
+        }
+
+        [RelayCommand]
         private async Task DelBooks(IList selectedItems)
         {
             System.Media.SystemSounds.Asterisk.Play();
@@ -398,86 +477,6 @@ namespace SmartLibrary.ViewModels
             WeakReferenceMessenger.Default.Send("refresh", "Bookshelf");
             WeakReferenceMessenger.Default.Send("." + isbn, "BookInfo");
             WeakReferenceMessenger.Default.Send("." + isbn, "Borrow_Return_Book");
-        }
-
-        [RelayCommand]
-        private void OnPageButtonClick(string parameter)
-        {
-            if (parameter == "PageUp")
-            {
-                if (CurrentPage > 1)
-                {
-                    CurrentPage--;
-                    if (!IsPageDownEnabled) IsPageDownEnabled = true;
-                }
-            }
-            else
-            {
-                if (CurrentPage < TotalPageCount)
-                {
-                    CurrentPage++;
-                    if (!IsPageUpEnabled) IsPageUpEnabled = true;
-                }
-            }
-        }
-
-        partial void OnCurrentPageChanged(int value)
-        {
-            TargetPage = value;
-            PagerAsync();
-            if (CurrentPage == 1) IsPageUpEnabled = false;
-            else if (CurrentPage == TotalPageCount) IsPageDownEnabled = false;
-        }
-
-        [RelayCommand]
-        private void GotoPage(string page)
-        {
-            CurrentPage = int.Parse(page);
-            if (CurrentPage > 1) IsPageUpEnabled = true;
-            if (CurrentPage < TotalPageCount) IsPageDownEnabled = true;
-        }
-
-        [RelayCommand]
-        partial void OnTargetPageChanged(int value)
-        {
-            if (value > TotalPageCount)
-            {
-                FlyoutText = $"输入页码超过最大页码！";
-                IsFlyoutOpen = true;
-                TargetPage = TotalPageCount;
-            }
-            else if (value == 0)
-            {
-                FlyoutText = "最小页码为 1 ";
-                IsFlyoutOpen = true;
-                TargetPage = 1;
-            }
-            else if (value > 0 && value < TotalPageCount)
-            {
-                if (IsFlyoutOpen)
-                {
-                    IsFlyoutOpen = false;
-                }
-            }
-        }
-
-        public void GotoTargetPage(string page)
-        {
-            if (string.IsNullOrEmpty(page))
-            {
-                TargetPage = -1;
-                TargetPage = CurrentPage;
-            }
-            else
-            {
-                CurrentPage = TargetPage;
-                if (CurrentPage > 1) IsPageUpEnabled = true;
-                if (CurrentPage < TotalPageCount) IsPageDownEnabled = true;
-            }
-            if (IsFlyoutOpen)
-            {
-                IsFlyoutOpen = false;
-            }
         }
 
         public void UpdateSimple(BookInfoSimple bookInfo)

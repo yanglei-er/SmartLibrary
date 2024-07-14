@@ -72,7 +72,7 @@ namespace SmartManager.Helpers
         public async ValueTask<DataTable> ExecutePagerSimpleAsync(int pageIndex, int pageSize)
         {
             StringBuilder sbr = new();
-            sbr.AppendLine("SELECT isbn,bookName,author,shelfNumber,isBorrowed FROM main LIMIT ");
+            sbr.AppendLine("SELECT name, sex, age, joinTime FROM main LIMIT ");
             sbr.AppendLine(pageSize.ToString());
             sbr.AppendLine(" OFFSET ");
             int OffsetIndex = (pageIndex - 1) * pageSize;
@@ -86,15 +86,10 @@ namespace SmartManager.Helpers
             return Convert.ToInt32(result);
         }
 
-        public async void DelBookAsync(string name)
-        {
-            await ExecuteNonQueryAsync($"DELETE FROM main WHERE name = {name}");
-        }
-
         public async ValueTask<bool> ExistsAsync(string name)
         {
             if (string.IsNullOrEmpty(name)) return false;
-            object? result = await ExecuteScalarAsync($"SELECT COUNT(*) FROM main WHERE name = {name}", null);
+            object? result = await ExecuteScalarAsync($"SELECT COUNT(*) FROM main WHERE name = '{name}'", null);
             if (Convert.ToInt32(result) > 0)
             {
                 return true;
@@ -114,6 +109,23 @@ namespace SmartManager.Helpers
                 Value = image
             };
             await ExecuteNonQueryAsync(sqlStr, parameter);
+        }
+
+        public async void DelFaceAsync(string name)
+        {
+            await ExecuteNonQueryAsync($"DELETE FROM main WHERE name = '{name}'");
+        }
+
+        public async void UpdateSimpleAsync(string name, string? sex, string? age, string? joinTime)
+        {
+            string sql = $"UPDATE main SET name = '{name}', sex = '{sex}', age = '{age}', joinTime = '{joinTime}' WHERE name = '{name}'";
+            await ExecuteNonQueryAsync(sql);
+        }
+
+        public async ValueTask<DataTable> AutoSuggestByStringAsync(string str)
+        {
+            string sql = $"SELECT name,sex,age,joinTime FROM main WHERE name LIKE '%{str}%'";
+            return await ExecuteDataTableAsync(sql);
         }
 
         public async ValueTask<int[]> MergeDatabaseAsync(string newDbPath)

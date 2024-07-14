@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using Shared.Helpers;
 using Shared.Models;
 using SmartManager.Helpers;
@@ -187,8 +188,8 @@ namespace SmartManager.ViewModels
                 await _contentDialogService.ShowSimpleDialogAsync(new SimpleContentDialogCreateOptions()
                 {
                     Title = "录入人脸",
-                    Content = "您必须录入姓名",
-                    CloseButtonText = "去录入",
+                    Content = "您必须完善以下书籍信息， 才能将人脸数据添加到数据库中：\n\n姓名不能为空！",
+                    CloseButtonText = "去完善",
                 });
                 return;
             }
@@ -220,7 +221,7 @@ namespace SmartManager.ViewModels
 
             System.Media.SystemSounds.Asterisk.Play();
             _snackbarService.Show("添加成功", $"用户 {Name} 已添加到数据库中。", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
-
+            WeakReferenceMessenger.Default.Send("refresh", "FaceManage");
             CleanAll();
         }
 

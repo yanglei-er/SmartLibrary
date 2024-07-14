@@ -213,7 +213,7 @@
                 Command="{Binding ViewModel.AddFaceCommand, Mode=OneWay}"
                 IsEnabled="{Binding ViewModel.IsTopbarEnabled, Mode=OneWay}"
                 Style="{StaticResource AddButton}"
-                ToolTip="添加图书" />
+                ToolTip="添加人脸数据" />
             <ui:Button
                 x:Name="DelButton"
                 Grid.Column="4"
@@ -221,7 +221,7 @@
                 Command="{Binding ViewModel.DelFacesCommand, Mode=OneWay}"
                 IsEnabled="{Binding ViewModel.IsDelButtonEnabled, Mode=TwoWay}"
                 Style="{StaticResource DelButton}"
-                ToolTip="删除所选人物" />
+                ToolTip="删除所选人脸数据" />
         </Grid>
         <Grid Grid.Row="1" Visibility="{Binding ViewModel.MissingDatabase, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
             <StackPanel
@@ -276,7 +276,89 @@
                     Text="什么都没有 ┑(￣Д ￣)┍" />
             </StackPanel>
         </Grid>
-
+        <ui:DataGrid
+            x:Name="DataGrid"
+            Grid.Row="1"
+            Margin="0,12,0,0"
+            d:ItemsSource="{d:SampleData ItemCount=8}"
+            AutoGenerateColumns="False"
+            BeginningEdit="DataGrid_BeginningEdit"
+            CanUserAddRows="False"
+            EnableColumnVirtualization="True"
+            EnableRowVirtualization="True"
+            HorizontalScrollBarVisibility="Hidden"
+            ItemsSource="{Binding ViewModel.DataGridItems, Mode=TwoWay}"
+            RowEditEnding="DataGrid_RowEditEnding"
+            RowHeaderWidth="0"
+            ScrollViewer.CanContentScroll="True"
+            SelectionChanged="DataGrid_SelectionChanged"
+            SelectionUnit="FullRow"
+            VirtualizingPanel.IsContainerVirtualizable="True"
+            VirtualizingPanel.IsVirtualizing="True"
+            VirtualizingPanel.VirtualizationMode="Recycling">
+            <ui:DataGrid.ColumnHeaderStyle>
+                <Style BasedOn="{StaticResource DefaultDataGridColumnHeaderStyle}" TargetType="DataGridColumnHeader">
+                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                </Style>
+            </ui:DataGrid.ColumnHeaderStyle>
+            <ui:DataGrid.RowStyle>
+                <Style BasedOn="{StaticResource DefaultDataGridRowStyle}" TargetType="DataGridRow">
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Foreground" Value="{DynamicResource DataGridRowIsMouseOverForeground}" />
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Foreground" Value="{StaticResource AccentTextFillColorTertiaryBrush}" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </ui:DataGrid.RowStyle>
+            <ui:DataGrid.Columns>
+                <DataGridTextColumn
+                    Width="*"
+                    Binding="{Binding name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    ElementStyle="{StaticResource CenterAlignmentStyle}"
+                    Header="姓名" />
+                <DataGridTextColumn
+                    Width="*"
+                    Binding="{Binding sex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    ElementStyle="{StaticResource CenterAlignmentStyle}"
+                    Header="性别" />
+                <DataGridTextColumn
+                    Width="*"
+                    Binding="{Binding age, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    ElementStyle="{StaticResource CenterAlignmentStyle}"
+                    Header="年龄" />
+                <DataGridTextColumn
+                    Width="*"
+                    Binding="{Binding joinTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    ElementStyle="{StaticResource CenterAlignmentStyle}"
+                    Header="加入时间" />
+                <DataGridTemplateColumn
+                    Width="58"
+                    CanUserResize="False"
+                    Header="操作">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <ui:Button
+                                    Margin="2,0,0,0"
+                                    Command="{Binding ElementName=DataGrid, Path=DataContext.ViewModel.EditFaceCommand, Mode=OneWay}"
+                                    CommandParameter="{Binding ElementName=DataGrid, Path=SelectedItem}"
+                                    Style="{StaticResource EditButton}"
+                                    ToolTip="编辑人脸信息" />
+                                <ui:Button
+                                    Margin="2,0,2,0"
+                                    Command="{Binding ElementName=DataGrid, Path=DataContext.ViewModel.DelOneFaceCommand, Mode=OneWay}"
+                                    CommandParameter="{Binding ElementName=DataGrid, Path=SelectedItem}"
+                                    Style="{StaticResource RemoveButton}"
+                                    ToolTip="删除人脸" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </ui:DataGrid.Columns>
+        </ui:DataGrid>
         <Grid Grid.Row="2" Margin="0,12,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />

@@ -5,6 +5,7 @@ using Microsoft.Win32;
 using Shared.Helpers;
 using Shared.Models;
 using SmartManager.Helpers;
+using SmartManager.Models;
 using SmartManager.Views.Pages;
 using System.Collections;
 using System.Collections.ObjectModel;
@@ -21,7 +22,7 @@ namespace SmartManager.ViewModels
         private readonly INavigationService _navigationService;
         private readonly ISnackbarService _snackbarService;
         private readonly IContentDialogService _contentDialogService;
-        private Database FacesDB = Database.GetDatabase("faces.smartmanager");
+        private Database FacesDb = Database.GetDatabase("faces.smartmanager");
         private int TotalPageCount;
         private bool needRefresh = false;
 
@@ -82,6 +83,8 @@ namespace SmartManager.ViewModels
             _snackbarService = snackbarService;
             _contentDialogService = contentDialogService;
 
+            WeakReferenceMessenger.Default.Register<string, string>(this, "FaceManage", (_, _) => needRefresh = true);
+
             if (Database.IsDatabaseConnected("faces.smartmanager"))
             {
                 needRefresh = true;
@@ -119,7 +122,7 @@ namespace SmartManager.ViewModels
         [RelayCommand]
         private void RefreshDatabase()
         {
-            FacesDB = Database.GetDatabase("faces.smartmanager");
+            FacesDb = Database.GetDatabase("faces.smartmanager");
             if (Database.IsDatabaseConnected("faces.smartmanager"))
             {
                 MissingDatabase = false;
@@ -132,8 +135,8 @@ namespace SmartManager.ViewModels
         [RelayCommand]
         private async Task CreateDatabase()
         {
-            await FacesDB.CreateDataBaseAsync();
-            FacesDB = Database.GetDatabase("faces.smartmanager");
+            await FacesDb.CreateDataBaseAsync();
+            FacesDb = Database.GetDatabase("faces.smartmanager");
             MissingDatabase = false;
             IsTopbarEnabled = true;
             RefreshAsync();
@@ -149,13 +152,13 @@ namespace SmartManager.ViewModels
         private void EditFace(DataRowView selectedItem)
         {
             _navigationService.NavigateWithHierarchy(typeof(EditFace));
-            string isbn = (string)selectedItem[0];
-            WeakReferenceMessenger.Default.Send(isbn, "EditFace");
+            string name = (string)selectedItem[0];
+            WeakReferenceMessenger.Default.Send(name, "EditFace");
         }
 
         private async void RefreshAsync()
         {
-            TotalCount = await FacesDB.GetRecordCountAsync();
+            TotalCount = await FacesDb.GetRecordCountAsync();
             if (TotalCount == 0)
             {
                 DatabaseEmpty = true;
@@ -178,7 +181,7 @@ namespace SmartManager.ViewModels
         private async void PagerAsync()
         {
             IsDelButtonEnabled = false;
-            DataGridItems = (await FacesDB.ExecutePagerSimpleAsync(CurrentPage, PageCountList[DisplayIndex])).DefaultView;
+            DataGridItems = (await FacesDb.ExecutePagerSimpleAsync(CurrentPage, PageCountList[DisplayIndex])).DefaultView;
 
             PageButtonList.Clear();
             if (TotalPageCount <= 7)
@@ -297,7 +300,7 @@ namespace SmartManager.ViewModels
                     repeatFileNames.Add(fileName);
                     continue;
                 }
-                int[] _mergedResult = await FacesDB.MergeDatabaseAsync(fileName);
+                int[] _mergedResult = await FacesDb.MergeDatabaseAsync(fileName);
                 mergedResult[0] += _mergedResult[0];
                 mergedResult[1] += _mergedResult[1];
             }
@@ -306,67 +309,9 @@ namespace SmartManager.ViewModels
             {
                 RefreshAsync();
                 PagerAsync();
-                //WeakReferenceMessenger.Default.Send("refresh", "Bookshelf");
             }
 
             _snackbarService.Show("导入数据库", $"{files.Count} 个数据库已导入，共 {mergedResult[0] + mergedResult[1]} 条数据，导入 {mergedResult[0]} 条，重复 {mergedResult[1]} 条。", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
-        }
-
-        [RelayCommand]
-        private async Task DelFaces(IList selectedItems)
-        {
-            System.Media.SystemSounds.Asterisk.Play();
-            ContentDialogResult result = await _contentDialogService.ShowSimpleDialogAsync(new SimpleContentDialogCreateOptions()
-            {
-                Title = "删除数据",
-                Content = $"是否删除你选择的 {selectedItems.Count} 个人脸数据，此操作不可撤销！",
-                PrimaryButtonText = "是",
-                CloseButtonText = "否",
-            });
-
-            if (result == ContentDialogResult.Primary)
-            {
-                List<int> indexs = [];
-                if (DataGridItems.Table != null)
-                {
-                    foreach (DataRowView item in selectedItems)
-                    {
-                        string isbn = (string)item[0];
-                        FacesDB.DelBookAsync(isbn);
-                        if (!IsBottombarEnabled)
-                        {
-                            indexs.Add(DataGridItems.Table.Rows.IndexOf(item.Row));
-                        }
-                    }
-                }
-
-                _snackbarService.Show("删除数据", $"已删除你选择的 {selectedItems.Count} 个人脸数据", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
-
-                if (IsBottombarEnabled)
-                {
-                    RefreshAsync();
-                    PagerAsync();
-                }
-                else
-                {
-                    if (DataGridItems.Table != null)
-                    {
-                        foreach (int index in indexs)
-                        {
-                            DataGridItems.Table.Rows.RemoveAt(index);
-                        }
-                        DataGridItems.Table.AcceptChanges();
-                    }
-                    if (DataGridItems.Count == 0)
-                    {
-                        DatabaseEmpty = true;
-                    }
-                    TotalCount = DataGridItems.Count;
-                }
-            }
-            WeakReferenceMessenger.Default.Send("refresh", "Bookshelf");
-            WeakReferenceMessenger.Default.Send("refresh", "BookInfo");
-            WeakReferenceMessenger.Default.Send("refresh", "Borrow_Return_Book");
         }
 
         [RelayCommand]
@@ -449,9 +394,118 @@ namespace SmartManager.ViewModels
             }
         }
 
+        [RelayCommand]
+        private async Task DelFaces(IList selectedItems)
+        {
+            System.Media.SystemSounds.Asterisk.Play();
+            ContentDialogResult result = await _contentDialogService.ShowSimpleDialogAsync(new SimpleContentDialogCreateOptions()
+            {
+                Title = "删除数据",
+                Content = $"是否删除你选择的 {selectedItems.Count} 个人脸数据，此操作不可撤销！",
+                PrimaryButtonText = "是",
+                CloseButtonText = "否",
+            });
+
+            if (result == ContentDialogResult.Primary)
+            {
+                List<int> indexs = [];
+                if (DataGridItems.Table != null)
+                {
+                    foreach (DataRowView item in selectedItems)
+                    {
+                        string isbn = (string)item[0];
+                        FacesDb.DelFaceAsync(isbn);
+                        if (!IsBottombarEnabled)
+                        {
+                            indexs.Add(DataGridItems.Table.Rows.IndexOf(item.Row));
+                        }
+                    }
+                }
+
+                _snackbarService.Show("删除数据", $"已删除你选择的 {selectedItems.Count} 个人脸数据", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
+
+                if (IsBottombarEnabled)
+                {
+                    RefreshAsync();
+                    PagerAsync();
+                }
+                else
+                {
+                    if (DataGridItems.Table != null)
+                    {
+                        foreach (int index in indexs)
+                        {
+                            DataGridItems.Table.Rows.RemoveAt(index);
+                        }
+                        DataGridItems.Table.AcceptChanges();
+                    }
+                    if (DataGridItems.Count == 0)
+                    {
+                        DatabaseEmpty = true;
+                    }
+                    TotalCount = DataGridItems.Count;
+                }
+            }
+        }
+
+        [RelayCommand]
+        private void DelOneFace(DataRowView selectedItem)
+        {
+            string name = (string)selectedItem[0];
+            FacesDb.DelFaceAsync(name);
+            if (IsBottombarEnabled)
+            {
+                RefreshAsync();
+                PagerAsync();
+            }
+            else
+            {
+                if (DataGridItems.Table != null)
+                {
+                    DataGridItems.Table.Rows.Remove(selectedItem.Row);
+                    DataGridItems.Table.AcceptChanges();
+                }
+                if (DataGridItems.Count == 0)
+                {
+                    DatabaseEmpty = true;
+                }
+                TotalCount--;
+            }
+        }
+
+        public void UpdateSimple(FaceInfoSimple faceInfo)
+        {
+            FacesDb.UpdateSimpleAsync(faceInfo.Name, faceInfo.Sex, faceInfo.Age, faceInfo.JoinTime);
+        }
+
+        partial void OnAutoSuggestBoxTextChanged(string value)
+        {
+            AutoSuggest(value);
+        }
+
         private async void AutoSuggest(string value)
         {
+            if (!string.IsNullOrEmpty(value))
+            {
+                IsBottombarEnabled = false;
 
+                DataGridItems = (await FacesDb.AutoSuggestByStringAsync(value)).DefaultView;
+
+                if (DataGridItems.Count > 0)
+                {
+                    DatabaseEmpty = false;
+                }
+                else
+                {
+                    DatabaseEmpty = true;
+                }
+                TotalCount = DataGridItems.Count;
+            }
+            else
+            {
+                RefreshAsync();
+                PagerAsync();
+            }
         }
     }
 }
