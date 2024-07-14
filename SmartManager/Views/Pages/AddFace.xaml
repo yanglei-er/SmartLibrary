@@ -8,7 +8,6 @@
     xmlns:local="clr-namespace:SmartManager.Views.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="clr-namespace:Shared.Models;assembly=Shared"
-    xmlns:sharedConverters="clr-namespace:Shared.Converters;assembly=Shared"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     xmlns:ws="https://schemas.elecho.dev/wpfsuite"
     Title="AddFace"
@@ -24,7 +23,6 @@
 
     <Page.Resources>
         <converters:BoolToOpenCameraTextConverter x:Key="BoolToOpenCameraTextConverter" />
-        <sharedConverters:BitmapToImageSourceConverter x:Key="BitmapToImageSourceConverter" />
         <Style BasedOn="{StaticResource MyButtonStyle}" TargetType="ui:Button" />
         <Style BasedOn="{StaticResource MyCheckBoxStyle}" TargetType="CheckBox" />
     </Page.Resources>
@@ -42,8 +40,8 @@
             </Grid.ColumnDefinitions>
             <Grid Grid.Column="0">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="2*" />
                     <RowDefinition Height="*" />
+                    <RowDefinition Height="248" />
                 </Grid.RowDefinitions>
                 <Image
                     Name="CameraImage"
@@ -70,8 +68,8 @@
                         ScrollViewer.PanningMode="HorizontalOnly"
                         ScrollViewer.VerticalScrollBarVisibility="Hidden">
                         <ListView.ItemTemplate>
-                            <DataTemplate DataType="{x:Type models:Face}">
-                                <ui:Image Source="{Binding FaceImage, Converter={StaticResource BitmapToImageSourceConverter}}" />
+                            <DataTemplate DataType="{x:Type models:EncodingFace}">
+                                <ui:Image Source="{Binding FaceImage}" />
                             </DataTemplate>
                         </ListView.ItemTemplate>
                         <ListView.ItemsPanel>
@@ -155,9 +153,8 @@
                                             Grid.Column="0"
                                             FontSize="24"
                                             Text="年龄：" />
-                                        <ui:TextBox
+                                        <ui:NumberBox
                                             Grid.Column="1"
-                                            extensions:TextBoxAttachedProperties.IsOnlyNumber="True"
                                             BorderThickness="0"
                                             FontSize="18"
                                             PreviewKeyDown="TextBox_PreviewKeyDown"
@@ -173,14 +170,12 @@
                                             Grid.Column="0"
                                             FontSize="24"
                                             Text="加入时间：" />
-                                        <ui:TextBox
+                                        <DatePicker
                                             Grid.Column="1"
                                             BorderThickness="0"
-                                            FontSize="18"
-                                            PlaceholderText="为空则系统自动生成"
+                                            FontSize="16"
                                             PreviewKeyDown="TextBox_PreviewKeyDown"
-                                            Text="{Binding ViewModel.JoinTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                            TextWrapping="Wrap" />
+                                            Text="{Binding ViewModel.JoinTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                     </Grid>
                                 </StackPanel>
                             </ui:CardExpander.Content>
@@ -215,6 +210,7 @@
                 <ComboBox
                     x:Name="DeviceComboBox"
                     Margin="0,8,0,0"
+                    DropDownOpened="DeviceComboBox_DropDownOpened"
                     ItemsSource="{Binding ViewModel.DevicesName, Mode=OneWay}"
                     SelectedIndex="{Binding ViewModel.DeviceSelectedIndex, Mode=TwoWay}" />
                 <ui:Button

@@ -55,6 +55,92 @@
     <Grid Margin="16,16,4,16">
         <ws:ScrollViewer ws:StylusTouchDevice.Simulate="True" PanningMode="VerticalOnly">
             <StackPanel MaxWidth="1180" Margin="0,0,12,0">
+                <ui:TextBlock FontTypography="Subtitle" Text="通用设置" />
+                <ui:CardExpander
+                    Margin="0,4,0,0"
+                    ContentPadding="0"
+                    Expanded="FileOccupancyExpander_Expanded"
+                    Icon="{ui:SymbolIcon DataPie24}"
+                    IsExpanded="{Binding ViewModel.IsFileOccupancyExpanded, Mode=TwoWay}">
+                    <ui:CardExpander.Header>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <ui:TextBlock FontSize="16" Text="存储空间" />
+                                <ui:TextBlock
+                                    FontSize="13"
+                                    Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                    Text="查看程序详细存储空间占用" />
+                            </StackPanel>
+                            <ui:Button
+                                Grid.Column="1"
+                                Margin="0,0,24,0"
+                                BorderThickness="0"
+                                Click="AppFolderButton_Click"
+                                Content="打开 App 文件夹" />
+                        </Grid>
+                    </ui:CardExpander.Header>
+                    <StackPanel>
+                        <ui:Button
+                            Padding="16"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Stretch"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Click="FacesDataButton_Click"
+                            CornerRadius="0">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock
+                                    Grid.Column="0"
+                                    Margin="8,0,0,0"
+                                    FontSize="16"
+                                    Text="人脸数据库" />
+                                <TextBlock
+                                    Margin="0,0,8,0"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Center"
+                                    FontSize="13"
+                                    Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                    Text="{Binding ViewModel.DataCount, Mode=OneWay}" />
+                                <ui:SymbolIcon
+                                    Grid.Column="2"
+                                    Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                    Symbol="Open24" />
+                            </Grid>
+                        </ui:Button>
+                        <ui:Card Background="{StaticResource SystemFillColorCriticalBackgroundBrush}" BorderThickness="0">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <ui:TextBlock
+                                    Grid.Column="0"
+                                    Margin="8,0,0,0"
+                                    VerticalAlignment="Center"
+                                    FontSize="16"
+                                    Text="谨慎操作" />
+                                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                    <ui:Button
+                                        Width="108"
+                                        BorderThickness="0"
+                                        Command="{Binding ViewModel.CleanFileOccupancyButtonClickCommand}"
+                                        CommandParameter="CleanDatabase"
+                                        Content="重置数据库"
+                                        IsEnabled="{Binding ViewModel.IsCleanDatabaseEnabled, Mode=OneWay}" />
+                                </StackPanel>
+                            </Grid>
+                        </ui:Card>
+                    </StackPanel>
+                </ui:CardExpander>
                 <ui:TextBlock
                     Margin="0,12,0,0"
                     FontTypography="Subtitle"

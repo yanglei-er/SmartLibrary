@@ -47,6 +47,8 @@ namespace SmartManager
 
                     services.AddTransient<Views.Pages.AddFace>();
                     services.AddTransient<ViewModels.AddFaceViewModel>();
+                    services.AddTransient<Views.Pages.EditFace>();
+                    services.AddTransient<ViewModels.EditFaceViewModel>();
                 }
             ).Build();
 

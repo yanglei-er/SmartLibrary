@@ -9,24 +9,7 @@ namespace Shared.Helpers
 {
     public static class ImageProcess
     {
-        public static BitmapImage? ByteToImageSource(byte[] bytes)
-        {
-            BitmapImage? bitmapImage = new()
-            {
-                CacheOption = BitmapCacheOption.OnLoad
-            };
-            bitmapImage.BeginInit();
-            bitmapImage.StreamSource = new MemoryStream(bytes);
-            bitmapImage.EndInit();
-
-            if (bitmapImage.CanFreeze)
-            {
-                bitmapImage.Freeze();
-            }
-            return bitmapImage;
-        }
-
-        public static BitmapImage? StringToImageSource(string path)
+        public static BitmapImage? StringToBitmapImage(string path)
         {
             BitmapImage? bitmapImage = null;
             if (!string.IsNullOrEmpty(path))
@@ -161,7 +144,7 @@ namespace Shared.Helpers
         public static BitmapImage BitmapToBitmapImage(Bitmap bitmap)
         {
             using MemoryStream stream = new();
-            bitmap.Save(stream, ImageFormat.Jpeg); // 坑点：格式选Bmp时，不带透明度
+            bitmap.Save(stream, ImageFormat.Jpeg);
 
             stream.Position = 0;
             BitmapImage result = new();
@@ -176,7 +159,7 @@ namespace Shared.Helpers
         public static BitmapImage BitmapToPngBitmapImage(Bitmap bitmap)
         {
             using MemoryStream stream = new();
-            bitmap.Save(stream, ImageFormat.Png); // 坑点：格式选Bmp时，不带透明度
+            bitmap.Save(stream, ImageFormat.Png);
 
             stream.Position = 0;
             BitmapImage result = new();
@@ -186,6 +169,51 @@ namespace Shared.Helpers
             result.EndInit();
             result.Freeze();
             return result;
+        }
+
+        public static Bitmap BitmapImageToBitmap(BitmapImage bitmapImage)
+        {
+
+            using MemoryStream outStream = new();
+            BitmapEncoder enc = new BmpBitmapEncoder();
+            enc.Frames.Add(BitmapFrame.Create(bitmapImage));
+            enc.Save(outStream);
+            Bitmap bitmap = new(outStream);
+
+            return bitmap;
+        }
+
+        public static byte[] BitmapImageToByte(BitmapImage bmp)
+        {
+            byte[] buffer = [];
+            JpegBitmapEncoder encoder = new();
+            using MemoryStream memoryStream = new();
+            encoder.Frames.Add(BitmapFrame.Create(bmp.StreamSource));
+            encoder.Save(memoryStream);
+            memoryStream.Position = 0;
+            if (memoryStream.Length > 0)
+            {
+                using BinaryReader br = new(memoryStream);
+                buffer = br.ReadBytes((int)memoryStream.Length);
+            }
+            return buffer;
+        }
+
+        public static BitmapImage? ByteToBitmapImage(byte[] bytes)
+        {
+            BitmapImage? bitmapImage = new()
+            {
+                CacheOption = BitmapCacheOption.OnLoad
+            };
+            bitmapImage.BeginInit();
+            bitmapImage.StreamSource = new MemoryStream(bytes);
+            bitmapImage.EndInit();
+
+            if (bitmapImage.CanFreeze)
+            {
+                bitmapImage.Freeze();
+            }
+            return bitmapImage;
         }
     }
 }

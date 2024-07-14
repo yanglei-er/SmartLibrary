@@ -327,7 +327,7 @@ namespace SmartLibrary.ViewModels
 
         partial void OnApiKeyTextChanged(string value)
         {
-            Helpers.APIHelper.SetAPIKey(ApiKey);
+            APIHelper.SetAPIKey(ApiKey);
         }
     }
 }

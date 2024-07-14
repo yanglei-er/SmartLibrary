@@ -84,7 +84,7 @@ namespace SmartManager.ViewModels
 
             if (Database.IsDatabaseConnected("faces.smartmanager"))
             {
-                //needRefresh = true;
+                needRefresh = true;
             }
             else
             {
@@ -105,7 +105,7 @@ namespace SmartManager.ViewModels
                 }
                 else
                 {
-                    //AutoSuggest(AutoSuggestBoxText);
+                    AutoSuggest(AutoSuggestBoxText);
                 }
                 needRefresh = false;
             }
@@ -132,7 +132,7 @@ namespace SmartManager.ViewModels
         [RelayCommand]
         private async Task CreateDatabase()
         {
-            await FacesDB.CreateDataBaseAsync(); 
+            await FacesDB.CreateDataBaseAsync();
             FacesDB = Database.GetDatabase("faces.smartmanager");
             MissingDatabase = false;
             IsTopbarEnabled = true;
@@ -148,7 +148,7 @@ namespace SmartManager.ViewModels
         [RelayCommand]
         private void EditFace(DataRowView selectedItem)
         {
-            //_navigationService.NavigateWithHierarchy(typeof(EditBook));
+            _navigationService.NavigateWithHierarchy(typeof(EditFace));
             string isbn = (string)selectedItem[0];
             WeakReferenceMessenger.Default.Send(isbn, "EditFace");
         }
@@ -231,49 +231,20 @@ namespace SmartManager.ViewModels
         }
 
         [RelayCommand]
-        private async Task OnTopButtonClick(string parameter)
+        private void OnTopButtonClick(string parameter)
         {
             if (parameter == "Import")
             {
                 OpenFileDialog openFileDialog = new()
                 {
                     Title = "导入数据库",
-                    Filter = "SmartManager数据库 (*.smartmanager)|*.smartmanager",
+                    Filter = "人脸数据库 (*.smartmanager)|*.smartmanager",
                     Multiselect = true,
                 };
                 if (openFileDialog.ShowDialog() == true)
                 {
-                    if (!Database.IsDatabaseConnected("faces.smartmanager"))
-                    {
-                        await CreateDatabase();
-                    }
-                    int[] mergedResult = [0, 0];
                     List<string> fileNames = new(openFileDialog.FileNames);
-                    List<string> repeatFileNames = [];
-                    foreach (string fileName in fileNames)
-                    {
-                        if (fileName == Path.GetFullPath(@".\database\faces.smartmanager")) //避免重复
-                        {
-                            repeatFileNames.Add(fileName);
-                            continue;
-                        }
-                        //int[] _mergedResult = await FacesDB.MergeDatabaseAsync(fileName);
-                        int[] _mergedResult = [0, 0];
-                        mergedResult[0] += _mergedResult[0];
-                        mergedResult[1] += _mergedResult[1];
-                    }
-                    foreach (string fileName in repeatFileNames)
-                    {
-                        fileNames.Remove(fileName);
-                        mergedResult[1] += 1;
-                    }
-                    if (mergedResult[0] != 0)
-                    {
-                        RefreshAsync();
-                        PagerAsync();
-                        WeakReferenceMessenger.Default.Send("refresh", "Bookshelf");
-                    }
-                    _snackbarService.Show("导入数据库", $"{fileNames.Count} 个数据库已导入，共 {mergedResult[0] + mergedResult[1]} 条数据，导入 {mergedResult[0]} 条，重复 {mergedResult[1]} 条。", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
+                    ImportDatabase(fileNames);
                 }
             }
             else if (parameter == "Export")
@@ -281,7 +252,7 @@ namespace SmartManager.ViewModels
                 SaveFileDialog saveFileDialog = new()
                 {
                     Title = "导出数据库",
-                    FileName = "智慧图书馆" + DateTime.Now.ToString("yyyyMMdd-HHmmss"),
+                    FileName = "智慧管理员" + DateTime.Now.ToString("yyyyMMdd-HHmmss"),
                     Filter = "SmartManager数据库 (*.smartmanager)|*.smartmanager",
                     InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop)
                 };
@@ -292,6 +263,110 @@ namespace SmartManager.ViewModels
                     _snackbarService.Show("导出数据库", $"{Path.GetFileName(saveFileDialog.FileName)} 已导出至 {Path.GetDirectoryName(saveFileDialog.FileName)} 下", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
                 }
             }
+        }
+
+        public async void DropFileImportAsync(List<string> files)
+        {
+            ContentDialogResult result = await _contentDialogService.ShowSimpleDialogAsync(new SimpleContentDialogCreateOptions()
+            {
+                Title = "导入数据库",
+                Content = $"是否导入你选择的 {files.Count} 个数据库?",
+                PrimaryButtonText = "是",
+                CloseButtonText = "否",
+            });
+
+            if (result == ContentDialogResult.Primary)
+            {
+                ImportDatabase(files);
+            }
+        }
+
+        private async void ImportDatabase(List<string> files)
+        {
+            if (!Database.IsDatabaseConnected("faces.smartmanager"))
+            {
+                await CreateDatabase();
+            }
+            int[] mergedResult = [0, 0];
+            List<string> repeatFileNames = [];
+
+            foreach (string fileName in files)
+            {
+                if (fileName == Path.GetFullPath(@".\database\faces.smartmanager")) //避免重复
+                {
+                    repeatFileNames.Add(fileName);
+                    continue;
+                }
+                int[] _mergedResult = await FacesDB.MergeDatabaseAsync(fileName);
+                mergedResult[0] += _mergedResult[0];
+                mergedResult[1] += _mergedResult[1];
+            }
+
+            if (mergedResult[0] != 0)
+            {
+                RefreshAsync();
+                PagerAsync();
+                //WeakReferenceMessenger.Default.Send("refresh", "Bookshelf");
+            }
+
+            _snackbarService.Show("导入数据库", $"{files.Count} 个数据库已导入，共 {mergedResult[0] + mergedResult[1]} 条数据，导入 {mergedResult[0]} 条，重复 {mergedResult[1]} 条。", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
+        }
+
+        [RelayCommand]
+        private async Task DelFaces(IList selectedItems)
+        {
+            System.Media.SystemSounds.Asterisk.Play();
+            ContentDialogResult result = await _contentDialogService.ShowSimpleDialogAsync(new SimpleContentDialogCreateOptions()
+            {
+                Title = "删除数据",
+                Content = $"是否删除你选择的 {selectedItems.Count} 个人脸数据，此操作不可撤销！",
+                PrimaryButtonText = "是",
+                CloseButtonText = "否",
+            });
+
+            if (result == ContentDialogResult.Primary)
+            {
+                List<int> indexs = [];
+                if (DataGridItems.Table != null)
+                {
+                    foreach (DataRowView item in selectedItems)
+                    {
+                        string isbn = (string)item[0];
+                        FacesDB.DelBookAsync(isbn);
+                        if (!IsBottombarEnabled)
+                        {
+                            indexs.Add(DataGridItems.Table.Rows.IndexOf(item.Row));
+                        }
+                    }
+                }
+
+                _snackbarService.Show("删除数据", $"已删除你选择的 {selectedItems.Count} 个人脸数据", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
+
+                if (IsBottombarEnabled)
+                {
+                    RefreshAsync();
+                    PagerAsync();
+                }
+                else
+                {
+                    if (DataGridItems.Table != null)
+                    {
+                        foreach (int index in indexs)
+                        {
+                            DataGridItems.Table.Rows.RemoveAt(index);
+                        }
+                        DataGridItems.Table.AcceptChanges();
+                    }
+                    if (DataGridItems.Count == 0)
+                    {
+                        DatabaseEmpty = true;
+                    }
+                    TotalCount = DataGridItems.Count;
+                }
+            }
+            WeakReferenceMessenger.Default.Send("refresh", "Bookshelf");
+            WeakReferenceMessenger.Default.Send("refresh", "BookInfo");
+            WeakReferenceMessenger.Default.Send("refresh", "Borrow_Return_Book");
         }
 
         [RelayCommand]
@@ -372,6 +447,11 @@ namespace SmartManager.ViewModels
             {
                 IsFlyoutOpen = false;
             }
+        }
+
+        private async void AutoSuggest(string value)
+        {
+
         }
     }
 }

@@ -1,8 +1,8 @@
 ﻿using System.IO;
 
-namespace SmartLibrary.Helpers
+namespace Shared.Helpers
 {
-    public sealed class FileOccupancy
+    public static class FileOccupancy
     {
         public static string GetDirectorySize(string path)
         {

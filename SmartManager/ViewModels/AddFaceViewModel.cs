@@ -16,7 +16,7 @@ namespace SmartManager.ViewModels
         private readonly INavigationService _navigationService;
         private readonly ISnackbarService _snackbarService;
         private readonly IContentDialogService _contentDialogService;
-        private readonly Database UsersDb = Database.GetDatabase("users.smartmanager");
+        private readonly Database UsersDb = Database.GetDatabase("faces.smartmanager");
 
         [ObservableProperty]
         private bool _isCameraOpened = false;
@@ -37,7 +37,7 @@ namespace SmartManager.ViewModels
         private string _cameraImageSource = $"pack://application:,,,/Assets/DynamicPic/{ResourceManager.CurrentTheme}/cameraEmpty.jpg";
 
         [ObservableProperty]
-        private ObservableCollection<Face> _faceList = [];
+        private ObservableCollection<EncodingFace> _faceList = [];
 
         [ObservableProperty]
         private int _faceCount = 0;
@@ -55,7 +55,7 @@ namespace SmartManager.ViewModels
         private string _age = string.Empty;
 
         [ObservableProperty]
-        private string _joinTime = string.Empty;
+        private string _joinTime = DateTime.Now.ToString("d");
 
         public AddFaceViewModel(INavigationService navigationService, ISnackbarService snackbarService, IContentDialogService contentDialogService)
         {
@@ -79,6 +79,11 @@ namespace SmartManager.ViewModels
         partial void OnIsDrawFaceRectangleChanged(bool value)
         {
             SettingsHelper.SetConfig("IsDrawFaceRectangle", value.ToString());
+        }
+
+        public void DeviceComboBox_DropDownOpened()
+        {
+            DevicesName = [.. FaceRecognition.SystemCameraDevices.Keys];
         }
 
         public void OnNavigatedTo()
@@ -119,8 +124,8 @@ namespace SmartManager.ViewModels
             };
             dispatcherTimer.Tick += (_, _) =>
             {
-                image.Source = ImageProcess.StringToImageSource($"pack://application:,,,/Assets/DynamicPic/{ResourceManager.CurrentTheme}/cameraEmpty.jpg");
-                maskImage.Source = ImageProcess.StringToImageSource(string.Empty); dispatcherTimer.Stop();
+                image.Source = ImageProcess.StringToBitmapImage($"pack://application:,,,/Assets/DynamicPic/{ResourceManager.CurrentTheme}/cameraEmpty.jpg");
+                maskImage.Source = ImageProcess.StringToBitmapImage(string.Empty); dispatcherTimer.Stop();
             };
             dispatcherTimer.Start();
         }
@@ -160,9 +165,9 @@ namespace SmartManager.ViewModels
 
         public async void CaptureFace(System.Windows.Controls.Image cameraImage)
         {
-            Face face = await FaceRecognition.GetFace(ImageProcess.ImageSourceToBitmap(cameraImage.Source));
+            EncodingFace face = await FaceRecognition.GetFace(ImageProcess.ImageSourceToBitmap(cameraImage.Source));
 
-            if (face.FaceImage.Width == 2)
+            if (face.FullImage.Width == 2)
             {
                 _snackbarService.Show("警告", $"未识别到人脸，无法添加！", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(2));
             }
@@ -207,15 +212,12 @@ namespace SmartManager.ViewModels
                 JoinTime = DateTime.Now.ToString("d");
             }
 
-            List<float> faceQualitys = [];
-            foreach (Face face in FaceList)
-            {
-                faceQualitys.Add(FaceRecognition.GetFaceQuality(face));
-            }
+            List<float> faceQualitys = FaceRecognition.GetFaceQualitys([.. FaceList]);
+            int MaxIndex = faceQualitys.IndexOf(faceQualitys.Max());
+            string faceFuture = FaceRecognition.GetFaceFeatureString(FaceList[MaxIndex]);
 
-            string faceFuture = FaceRecognition.GetFaceFeatureString(FaceList[faceQualitys.IndexOf(faceQualitys.Max())]);
+            UsersDb.AddFaceAsync(new(Name, Sex, Age, JoinTime, faceFuture, FaceList[MaxIndex].FaceImage));
 
-            UsersDb.AddUserAsync(new(Name, Sex, Age, JoinTime, faceFuture));
             System.Media.SystemSounds.Asterisk.Play();
             _snackbarService.Show("添加成功", $"用户 {Name} 已添加到数据库中。", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
 

@@ -1,5 +1,6 @@
 ﻿using SmartManager.ViewModels;
 using System.Diagnostics;
+using System.IO;
 using System.Reflection;
 using System.Windows;
 using Wpf.Ui.Controls;
@@ -22,9 +23,26 @@ namespace SmartManager.Views.Pages
             WpfUIVersion.Content = "WPF-UI " + (FileVersionInfo.GetVersionInfo("./Wpf.Ui.dll").ProductVersion ?? string.Empty).Split("+")[0];
         }
 
+        private void FileOccupancyExpander_Expanded(object sender, RoutedEventArgs e)
+        {
+            ViewModel.FileOccupancyExpander_Expanded();
+        }
+
         private void ColorExpander_Expanded(object sender, RoutedEventArgs e)
         {
             ViewModel.ColorExpander_Expanded();
+        }
+
+        private void AppFolderButton_Click(object sender, RoutedEventArgs e)
+        {
+            Process.Start("explorer.exe", Environment.CurrentDirectory);
+        }
+
+        private void FacesDataButton_Click(object sender, RoutedEventArgs e)
+        {
+            string path = Environment.CurrentDirectory + @".\database\";
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+            Process.Start("explorer.exe", path);
         }
     }
 }

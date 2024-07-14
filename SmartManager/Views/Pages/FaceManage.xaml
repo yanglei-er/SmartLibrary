@@ -15,7 +15,11 @@
     d:DesignWidth="800"
     ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
     ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+    AllowDrop="True"
+    DragOver="Page_DragOver"
+    Drop="Page_Drop"
     Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+    ScrollViewer.CanContentScroll="False"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -180,7 +184,7 @@
                 Icon="{ui:SymbolIcon Search24}"
                 IconPlacement="Right"
                 IsEnabled="{Binding ViewModel.IsTopbarEnabled, Mode=OneWay}"
-                PlaceholderText="快速查找ISBN、书名、作者、书架号..."
+                PlaceholderText="输入姓名开始查找"
                 PreviewKeyDown="SearchBox_PreviewKeyDown"
                 Text="{Binding ViewModel.AutoSuggestBoxText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Delay=500}" />
             <ui:Button
@@ -214,7 +218,7 @@
                 x:Name="DelButton"
                 Grid.Column="4"
                 Margin="8,0,0,0"
-                Command="{Binding ViewModel.DelBooksCommand, Mode=OneWay}"
+                Command="{Binding ViewModel.DelFacesCommand, Mode=OneWay}"
                 IsEnabled="{Binding ViewModel.IsDelButtonEnabled, Mode=TwoWay}"
                 Style="{StaticResource DelButton}"
                 ToolTip="删除所选人物" />
@@ -272,6 +276,7 @@
                     Text="什么都没有 ┑(￣Д ￣)┍" />
             </StackPanel>
         </Grid>
+
         <Grid Grid.Row="2" Margin="0,12,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
