@@ -5,6 +5,7 @@ using Shared.Helpers;
 using Shared.Services;
 using Shared.Services.Contracts;
 using SmartLibrary.Services;
+using System.Diagnostics;
 using System.Windows.Threading;
 using Wpf.Ui;
 
@@ -78,7 +79,15 @@ namespace SmartLibrary
             }
             else
             {
-                NativeMethods.PostMessage(NativeMethods.HWND_BROADCAST, NativeMethods.WM_SHOWME, IntPtr.Zero, IntPtr.Zero);
+                Process current = Process.GetCurrentProcess();
+                foreach (Process process in Process.GetProcessesByName(current.ProcessName))
+                {
+                    if (process.Id != current.Id)
+                    {
+                        Win32Helper.SendMessageString(process.MainWindowHandle, "SmartLibrary");
+                        break;
+                    }
+                }
                 Current.Shutdown();
             }
         }

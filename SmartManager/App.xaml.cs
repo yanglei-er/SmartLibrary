@@ -5,6 +5,7 @@ using Shared.Helpers;
 using Shared.Services;
 using Shared.Services.Contracts;
 using SmartManager.Services;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Threading;
 using Wpf.Ui;
@@ -74,7 +75,15 @@ namespace SmartManager
             }
             else
             {
-                NativeMethods.PostMessage(NativeMethods.HWND_BROADCAST, NativeMethods.WM_SHOWME, IntPtr.Zero, IntPtr.Zero);
+                Process current = Process.GetCurrentProcess();
+                foreach (Process process in Process.GetProcessesByName(current.ProcessName))
+                {
+                    if (process.Id != current.Id)
+                    {
+                        Win32Helper.SendMessageString(process.MainWindowHandle, "SmartManager");
+                        break;
+                    }
+                }
                 Current.Shutdown();
             }
         }

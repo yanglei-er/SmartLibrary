@@ -2,6 +2,7 @@
 using Shared.Services.Contracts;
 using SmartManager.Helpers;
 using SmartManager.ViewModels;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
 using Wpf.Ui;
@@ -55,18 +56,26 @@ namespace SmartManager.Views
 
         private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wparam, IntPtr lparam, ref bool handled)
         {
-            if (msg == NativeMethods.WM_SHOWME)
+            if (msg == Win32Helper.WM_COPYDATA)
             {
-                if (WindowState == WindowState.Minimized || Visibility != Visibility.Visible)
+                object? o = Marshal.PtrToStructure(lparam, typeof(Win32Helper.COPYDATASTRUCT));
+                if(o != null)
                 {
-                    Show();
-                    WindowState = WindowState.Normal;
+                    Win32Helper.COPYDATASTRUCT cds = (Win32Helper.COPYDATASTRUCT)o;
+                    string? receivedMessage = Marshal.PtrToStringUni(cds.lpData);
+                    if(receivedMessage == "SmartManager")
+                    {
+                        if (WindowState == WindowState.Minimized || Visibility != Visibility.Visible)
+                        {
+                            Show();
+                            WindowState = WindowState.Normal;
+                        }
+                        Activate();
+                        Topmost = true;
+                        Topmost = false;
+                        Focus();
+                    }
                 }
-
-                Activate();
-                Topmost = true;
-                Topmost = false;
-                Focus();
             }
             return IntPtr.Zero;
         }
