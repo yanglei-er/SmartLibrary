@@ -17,7 +17,8 @@ namespace SmartManager.ViewModels
         private readonly INavigationService _navigationService;
         private readonly ISnackbarService _snackbarService;
         private readonly IContentDialogService _contentDialogService;
-        private readonly Database UsersDb = Database.GetDatabase("faces.smartmanager");
+        private readonly Database FacesDb = Database.GetDatabase("faces.smartmanager");
+        private bool Unknown = true;
 
         [ObservableProperty]
         private bool _isCameraOpened = false;
@@ -33,6 +34,9 @@ namespace SmartManager.ViewModels
 
         [ObservableProperty]
         private bool _isDrawFaceRectangle = SettingsHelper.GetBoolean("IsDrawFaceRectangle");
+
+        [ObservableProperty]
+        private bool _isFaceComparison = SettingsHelper.GetBoolean("IsFaceComparison");
 
         [ObservableProperty]
         private string _cameraImageSource = $"pack://application:,,,/Assets/DynamicPic/{ResourceManager.CurrentTheme}/cameraEmpty.jpg";
@@ -80,6 +84,11 @@ namespace SmartManager.ViewModels
         partial void OnIsDrawFaceRectangleChanged(bool value)
         {
             SettingsHelper.SetConfig("IsDrawFaceRectangle", value.ToString());
+        }
+
+        partial void OnIsFaceComparisonChanged(bool value)
+        {
+            SettingsHelper.SetConfig("IsFaceComparison", value.ToString());
         }
 
         public void DeviceComboBox_DropDownOpened()
@@ -148,12 +157,36 @@ namespace SmartManager.ViewModels
             }
 
             int sleepTime = FaceRecognition.SleepTime;
+            int totalCount = FacesDb.GetRecordCount();
 
             while (FaceRecognition.IsCameraOpened)
             {
                 using Bitmap image = FaceRecognition.GetImage();
 
-                if (IsDrawFaceRectangle)
+                if (IsFaceComparison)
+                {
+                    (Bitmap, float[], int, int) result = FaceRecognition.GetMaskAndName(image);
+                    Bitmap mask = result.Item1;
+                    float[] feature = result.Item2;
+
+                    Unknown = true;
+
+                    for (int i = 0; i < totalCount; i++)
+                    {
+                        if (FaceRecognition.IsSelf(feature, FaceRecognition.GetFaceFeatureFromString(FacesDb.GetOneFaceFeatureStringByIndex(i))))
+                        {
+                            mask.DrawText(FacesDb.GetOneNameByIndex(i), result.Item3, result.Item4);
+                            Unknown = false;
+                            break;
+                        }
+                    }
+                    if (Unknown)
+                    {
+                        mask.DrawText("未知", result.Item3, result.Item4);
+                    }
+                    maskImage.Dispatcher.Invoke(new Action(() => { maskImage.Source = ImageProcess.BitmapToPngBitmapImage(mask); }));
+                }
+                else if (IsDrawFaceRectangle)
                 {
                     maskImage.Dispatcher.Invoke(new Action(() => { maskImage.Source = ImageProcess.BitmapToPngBitmapImage(FaceRecognition.GetMaskImage(image)); }));
                 }
@@ -217,7 +250,7 @@ namespace SmartManager.ViewModels
             int MaxIndex = faceQualitys.IndexOf(faceQualitys.Max());
             string faceFuture = FaceRecognition.GetFaceFeatureString(FaceList[MaxIndex]);
 
-            UsersDb.AddFaceAsync(new(Name, Sex, Age, JoinTime, faceFuture, FaceList[MaxIndex].FaceImage));
+            FacesDb.AddFaceAsync(new(Name, Sex, Age, JoinTime, faceFuture, FaceList[MaxIndex].FaceImage));
 
             System.Media.SystemSounds.Asterisk.Play();
             _snackbarService.Show("添加成功", $"用户 {Name} 已添加到数据库中。", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));

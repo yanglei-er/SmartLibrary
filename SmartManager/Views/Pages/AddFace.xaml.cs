@@ -64,10 +64,23 @@ namespace SmartManager.Views.Pages
             }
         }
 
-        private void CheckBox_Unchecked(object sender, RoutedEventArgs e)
+        private void DrawFaceRectangle_Unchecked(object sender, RoutedEventArgs e)
         {
-            BitmapSource mask = BitmapImage.Create(2, 2, 96, 96, PixelFormats.Indexed1, new BitmapPalette(new List<Color> { Colors.Transparent }), new byte[] { 0, 0, 0, 0 }, 1);
-            MaskImage.Source = mask;
+            if(!FaceComparison_CheckBox.IsChecked ?? false)
+            {
+                BitmapSource mask = BitmapImage.Create(2, 2, 96, 96, PixelFormats.Indexed1, new BitmapPalette(new List<Color> { Colors.Transparent }), new byte[] { 0, 0, 0, 0 }, 1);
+                MaskImage.Source = mask;
+            }
+            
+        }
+
+        private void FaceComparison_Unchecked(object sender, RoutedEventArgs e)
+        {
+            if(!DrawFaceRectangle_CheckBox.IsChecked ?? false)
+            {
+                BitmapSource mask = BitmapImage.Create(2, 2, 96, 96, PixelFormats.Indexed1, new BitmapPalette(new List<Color> { Colors.Transparent }), new byte[] { 0, 0, 0, 0 }, 1);
+                MaskImage.Source = mask;
+            }
         }
 
         private void DeviceComboBox_DropDownOpened(object sender, EventArgs e)

@@ -223,59 +223,6 @@
                 Style="{StaticResource DelButton}"
                 ToolTip="删除所选人脸数据" />
         </Grid>
-        <Grid Grid.Row="1" Visibility="{Binding ViewModel.MissingDatabase, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
-            <StackPanel
-                Margin="0,0,0,20"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center">
-                <ui:Image
-                    Width="168"
-                    Height="168"
-                    RenderOptions.BitmapScalingMode="HighQuality"
-                    Source="/Shared;Component/Assets/warning.png" />
-                <ui:TextBlock
-                    HorizontalAlignment="Center"
-                    FontSize="36"
-                    FontTypography="Title"
-                    Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                    Text="糟糕！数据库找不到了w(ﾟДﾟ)w" />
-                <StackPanel
-                    Margin="0,16,0,0"
-                    HorizontalAlignment="Center"
-                    Orientation="Horizontal">
-                    <ui:Button
-                        MinWidth="180"
-                        Margin="0,0,8,0"
-                        Command="{Binding ViewModel.RefreshDatabaseCommand, Mode=OneWay}"
-                        Content="刷新"
-                        FontSize="24" />
-                    <ui:Button
-                        MinWidth="180"
-                        Margin="8,0,0,0"
-                        Command="{Binding ViewModel.CreateDatabaseCommand, Mode=OneWay}"
-                        Content="新建"
-                        FontSize="24" />
-                </StackPanel>
-            </StackPanel>
-        </Grid>
-        <Grid Grid.Row="1" Visibility="{Binding ViewModel.DatabaseEmpty, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
-            <StackPanel
-                Margin="0,0,0,8"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center">
-                <ui:Image
-                    Width="148"
-                    Height="148"
-                    RenderOptions.BitmapScalingMode="HighQuality"
-                    Source="/Shared;Component/Assets/databaseEmpty.png" />
-                <ui:TextBlock
-                    Margin="0,12,0,0"
-                    FontSize="36"
-                    FontTypography="Title"
-                    Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                    Text="什么都没有 ┑(￣Д ￣)┍" />
-            </StackPanel>
-        </Grid>
         <ui:DataGrid
             x:Name="DataGrid"
             Grid.Row="1"
@@ -359,6 +306,59 @@
                 </DataGridTemplateColumn>
             </ui:DataGrid.Columns>
         </ui:DataGrid>
+        <Grid Grid.Row="1" Visibility="{Binding ViewModel.DatabaseEmpty, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <StackPanel
+                Margin="0,0,0,8"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center">
+                <ui:Image
+                    Width="148"
+                    Height="148"
+                    RenderOptions.BitmapScalingMode="HighQuality"
+                    Source="/Shared;Component/Assets/databaseEmpty.png" />
+                <ui:TextBlock
+                    Margin="0,12,0,0"
+                    FontSize="36"
+                    FontTypography="Title"
+                    Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                    Text="什么都没有 ┑(￣Д ￣)┍" />
+            </StackPanel>
+        </Grid>
+        <Grid Grid.Row="1" Visibility="{Binding ViewModel.MissingDatabase, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <StackPanel
+                Margin="0,0,0,20"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center">
+                <ui:Image
+                    Width="168"
+                    Height="168"
+                    RenderOptions.BitmapScalingMode="HighQuality"
+                    Source="/Shared;Component/Assets/warning.png" />
+                <ui:TextBlock
+                    HorizontalAlignment="Center"
+                    FontSize="36"
+                    FontTypography="Title"
+                    Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                    Text="糟糕！数据库找不到了w(ﾟДﾟ)w" />
+                <StackPanel
+                    Margin="0,16,0,0"
+                    HorizontalAlignment="Center"
+                    Orientation="Horizontal">
+                    <ui:Button
+                        MinWidth="180"
+                        Margin="0,0,8,0"
+                        Command="{Binding ViewModel.RefreshDatabaseCommand, Mode=OneWay}"
+                        Content="刷新"
+                        FontSize="24" />
+                    <ui:Button
+                        MinWidth="180"
+                        Margin="8,0,0,0"
+                        Command="{Binding ViewModel.CreateDatabaseCommand, Mode=OneWay}"
+                        Content="新建"
+                        FontSize="24" />
+                </StackPanel>
+            </StackPanel>
+        </Grid>
         <Grid Grid.Row="2" Margin="0,12,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />

@@ -80,6 +80,12 @@ namespace SmartManager.Helpers
             return await ExecuteDataTableAsync(sbr.ToString());
         }
 
+        public int GetRecordCount()
+        {
+            object result = ExecuteScalar("SELECT count(name) FROM main");
+            return Convert.ToInt32(result);
+        }
+
         public async ValueTask<int> GetRecordCountAsync()
         {
             object? result = await ExecuteScalarAsync("SELECT count(name) FROM main");
@@ -100,7 +106,33 @@ namespace SmartManager.Helpers
             }
         }
 
-        public async void AddFaceAsync(User user)
+        public async ValueTask<User> GetOneUserAsync(string name)
+        {
+            string sql = $"SELECT * FROM main WHERE name = '{name}'";
+
+            using SQLiteConnection DbConnection = GetSQLiteConnection();
+            if (DbConnection.State != ConnectionState.Open)
+            {
+                await DbConnection.OpenAsync();
+            }
+            using SQLiteCommand command = new(sql, DbConnection);
+            using DbDataReader reader = await command.ExecuteReaderAsync();
+            reader.Read();
+            User user = new(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4), ImageProcess.ByteToBitmapImage((byte[])reader.GetValue(5)));
+            return user;
+        }
+
+        public string GetOneFaceFeatureStringByIndex(int index)
+        {
+            return (string)ExecuteScalar($"SELECT feature FROM main LIMIT 1 OFFSET {index}");
+        }
+
+        public string GetOneNameByIndex(int index)
+        {
+            return (string)ExecuteScalar($"SELECT name FROM main LIMIT 1 OFFSET {index}");
+        }
+
+        public void AddFaceAsync(User user)
         {
             string sqlStr = $"INSERT INTO main VALUES ('{user.Name}','{user.Sex}','{user.Age}','{user.JoinTime}','{user.Feature}',@faceImage)";
             byte[] image = ImageProcess.BitmapImageToByte(user.FaceImage);
@@ -108,12 +140,23 @@ namespace SmartManager.Helpers
             {
                 Value = image
             };
-            await ExecuteNonQueryAsync(sqlStr, parameter);
+            _ = ExecuteNonQueryAsync(sqlStr, parameter);
         }
 
-        public async void DelFaceAsync(string name)
+        public void DelFaceAsync(string name)
         {
-            await ExecuteNonQueryAsync($"DELETE FROM main WHERE name = '{name}'");
+            _ = ExecuteNonQueryAsync($"DELETE FROM main WHERE name = '{name}'");
+        }
+
+        public void UpdateFaceAsync(User user)
+        {
+            string sqlStr = $"INSERT INTO main VALUES ('{user.Name}','{user.Sex}','{user.Age}','{user.JoinTime}','{user.Feature}',@faceImage)";
+            byte[] image = ImageProcess.BitmapImageToByte(user.FaceImage);
+            SQLiteParameter parameter = new("@faceImage", DbType.Binary, image.Length)
+            {
+                Value = image
+            };
+            _ = ExecuteNonQueryAsync(sqlStr, parameter);
         }
 
         public async void UpdateSimpleAsync(string name, string? sex, string? age, string? joinTime)

@@ -224,10 +224,18 @@
             </StackPanel>
             <StackPanel Grid.Row="1" Margin="0,8,0,0">
                 <CheckBox
+                    Name="DrawFaceRectangle_CheckBox"
                     Content="人脸检测"
                     FontSize="20"
                     IsChecked="{Binding ViewModel.IsDrawFaceRectangle, Mode=TwoWay}"
-                    Unchecked="CheckBox_Unchecked" />
+                    Unchecked="DrawFaceRectangle_Unchecked" />
+                <CheckBox
+                    x:Name="FaceComparison_CheckBox"
+                    Margin="0,8,0,0"
+                    Content="人脸比对"
+                    FontSize="20"
+                    IsChecked="{Binding ViewModel.IsFaceComparison, Mode=TwoWay}"
+                    Unchecked="FaceComparison_Unchecked" />
                 <ui:Button
                     Margin="0,8,0,0"
                     HorizontalAlignment="Stretch"

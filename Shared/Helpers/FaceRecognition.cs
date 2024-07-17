@@ -95,6 +95,21 @@ namespace Shared.Helpers
             return mask;
         }
 
+        public static (Bitmap, float[], int, int) GetMaskAndName(Bitmap cameraImage)
+        {
+            Bitmap mask = new(cameraImage.Width, cameraImage.Height);
+            using Graphics maskGraphics = Graphics.FromImage(mask);
+
+            FaceInfo faceInfo = faceDetector.Detect(cameraImage)[0];
+            FaceMarkPoint[] faceMarkPoint = faceMark.Mark(cameraImage, faceInfo);
+
+            maskGraphics.DrawRectangle(pen, faceInfo.Location.X, faceInfo.Location.Y, faceInfo.Location.Width, faceInfo.Location.Height);
+
+            float[] feature = faceRecognizer.Extract(cameraImage, faceMarkPoint);
+
+            return (mask, feature, faceInfo.Location.X, faceInfo.Location.Y);
+        }
+
         public async static ValueTask<EncodingFace> GetFace(Bitmap cameraImage)
         {
             FaceInfo[] faceInfos = await faceDetector.DetectAsync(cameraImage);
@@ -140,6 +155,11 @@ namespace Shared.Helpers
         public static float[] GetFaceFeatureFromString(string faceFeature)
         {
             return JsonConvert.DeserializeObject<float[]>(faceFeature) ?? [];
+        }
+
+        public static bool IsSelf(float[] a, float[] b)
+        {
+            return faceRecognizer.IsSelf(a, b);
         }
 
         public static bool OpenCamera(int videoCapture_id, out string message)

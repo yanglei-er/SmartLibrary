@@ -127,6 +127,14 @@ namespace Shared.Helpers
             }
         }
 
+        public static void DrawText(this Bitmap image, string text, int x, int y)
+        {
+            using Graphics graphics = Graphics.FromImage(image);
+            using Font font = new("Microsoft YaHei", 16);
+            using SolidBrush brush = new(System.Drawing.Color.Red);
+            graphics.DrawString(text, font, brush, x-6, y-40);
+        }
+
         public static Bitmap ImageSourceToBitmap(ImageSource imageSource)
         {
             BitmapSource m = (BitmapSource)imageSource;
@@ -199,9 +207,9 @@ namespace Shared.Helpers
             return buffer;
         }
 
-        public static BitmapImage? ByteToBitmapImage(byte[] bytes)
+        public static BitmapImage ByteToBitmapImage(byte[] bytes)
         {
-            BitmapImage? bitmapImage = new()
+            BitmapImage bitmapImage = new()
             {
                 CacheOption = BitmapCacheOption.OnLoad
             };
