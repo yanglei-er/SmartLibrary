@@ -199,25 +199,24 @@ namespace SmartLibrary.ViewModels
 
         partial void OnCurrentApplicationThemeIndexChanged(int value)
         {
-            //在不重启的情况下，咱不能完全更换主题
             if (value == 0)
             {
                 SettingsHelper.SetConfig("Theme", "System");
-                //ApplicationTheme theme = Helpers.APIHelper.GetUserApplicationTheme("System");
-                //ApplicationThemeManager.Apply(theme, Helpers.APIHelper.GetUserBackdrop(SettingsHelper.GetConfig("Backdrop")));
-                //ResourceManager.UpdateTheme(theme.ToString());
+                ApplicationTheme theme = Shared.Helpers.Utils.GetUserApplicationTheme("System");
+                ApplicationThemeManager.Apply(theme, Shared.Helpers.Utils.GetUserBackdrop(SettingsHelper.GetConfig("Backdrop")));
+                ResourceManager.UpdateTheme(theme.ToString());
             }
             else if (value == 1)
             {
                 SettingsHelper.SetConfig("Theme", "Light");
-                //ApplicationThemeManager.Apply(ApplicationTheme.Light, Helpers.APIHelper.GetUserBackdrop(SettingsHelper.GetConfig("Backdrop")));
-                //ResourceManager.UpdateTheme("Light");
+                ApplicationThemeManager.Apply(ApplicationTheme.Light, Shared.Helpers.Utils.GetUserBackdrop(SettingsHelper.GetConfig("Backdrop")));
+                ResourceManager.UpdateTheme("Light");
             }
             else
             {
                 SettingsHelper.SetConfig("Theme", "Dark");
-                //ApplicationThemeManager.Apply(ApplicationTheme.Dark, Helpers.APIHelper.GetUserBackdrop(SettingsHelper.GetConfig("Backdrop")));
-                //ResourceManager.UpdateTheme("Dark");
+                ApplicationThemeManager.Apply(ApplicationTheme.Dark, Shared.Helpers.Utils.GetUserBackdrop(SettingsHelper.GetConfig("Backdrop")));
+                ResourceManager.UpdateTheme("Dark");
             }
         }
 

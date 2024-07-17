@@ -132,7 +132,7 @@ namespace Shared.Helpers
             using Graphics graphics = Graphics.FromImage(image);
             using Font font = new("Microsoft YaHei", 16);
             using SolidBrush brush = new(System.Drawing.Color.Red);
-            graphics.DrawString(text, font, brush, x-6, y-40);
+            graphics.DrawString(text, font, brush, x - 6, y - 40);
         }
 
         public static Bitmap ImageSourceToBitmap(ImageSource imageSource)
@@ -209,15 +209,21 @@ namespace Shared.Helpers
 
         public static BitmapImage ByteToBitmapImage(byte[] bytes)
         {
-            BitmapImage bitmapImage = new()
-            {
-                CacheOption = BitmapCacheOption.OnLoad
-            };
-            bitmapImage.BeginInit();
-            bitmapImage.StreamSource = new MemoryStream(bytes);
-            bitmapImage.EndInit();
+            using MemoryStream decodeMemoryStream = new(bytes);
+            JpegBitmapDecoder decoder = new(decodeMemoryStream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
 
-            if (bitmapImage.CanFreeze)
+            JpegBitmapEncoder encoder = new();
+            encoder.Frames.Add(decoder.Frames[0]);
+            using MemoryStream encodeMemoryStream = new();
+            encoder.Save(encodeMemoryStream);
+            encodeMemoryStream.Position = 0;
+
+            BitmapImage bitmapImage = new();
+            bitmapImage.BeginInit();
+            bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+            bitmapImage.StreamSource = encodeMemoryStream;
+            bitmapImage.EndInit();
+            if(bitmapImage.CanFreeze)
             {
                 bitmapImage.Freeze();
             }

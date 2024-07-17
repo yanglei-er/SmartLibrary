@@ -100,14 +100,22 @@ namespace Shared.Helpers
             Bitmap mask = new(cameraImage.Width, cameraImage.Height);
             using Graphics maskGraphics = Graphics.FromImage(mask);
 
-            FaceInfo faceInfo = faceDetector.Detect(cameraImage)[0];
-            FaceMarkPoint[] faceMarkPoint = faceMark.Mark(cameraImage, faceInfo);
+            FaceInfo[] faceInfos = faceDetector.Detect(cameraImage);
+            if (faceInfos.Length > 0)
+            {
+                FaceInfo faceInfo = faceInfos[0];
+                FaceMarkPoint[] faceMarkPoint = faceMark.Mark(cameraImage, faceInfo);
 
-            maskGraphics.DrawRectangle(pen, faceInfo.Location.X, faceInfo.Location.Y, faceInfo.Location.Width, faceInfo.Location.Height);
+                maskGraphics.DrawRectangle(pen, faceInfo.Location.X, faceInfo.Location.Y, faceInfo.Location.Width, faceInfo.Location.Height);
 
-            float[] feature = faceRecognizer.Extract(cameraImage, faceMarkPoint);
+                float[] feature = faceRecognizer.Extract(cameraImage, faceMarkPoint);
+                return (mask, feature, faceInfo.Location.X, faceInfo.Location.Y);
+            }
+            else
+            {
+                return (mask, [], 0, 0);
+            }
 
-            return (mask, feature, faceInfo.Location.X, faceInfo.Location.Y);
         }
 
         public async static ValueTask<EncodingFace> GetFace(Bitmap cameraImage)

@@ -124,12 +124,12 @@ namespace SmartManager.Helpers
 
         public string GetOneFaceFeatureStringByIndex(int index)
         {
-            return (string)ExecuteScalar($"SELECT feature FROM main LIMIT 1 OFFSET {index}");
+            return (string)ExecuteScalar($"SELECT feature FROM main ORDER BY name DESC LIMIT 1 OFFSET {index}");
         }
 
         public string GetOneNameByIndex(int index)
         {
-            return (string)ExecuteScalar($"SELECT name FROM main LIMIT 1 OFFSET {index}");
+            return (string)ExecuteScalar($"SELECT name FROM main ORDER BY name DESC LIMIT 1 OFFSET {index}");
         }
 
         public void AddFaceAsync(User user)

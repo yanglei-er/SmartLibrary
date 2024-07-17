@@ -19,6 +19,7 @@ namespace SmartManager.ViewModels
         private readonly IContentDialogService _contentDialogService;
         private readonly Database FacesDb = Database.GetDatabase("faces.smartmanager");
         private bool Unknown = true;
+        private int TotalCount = 0;
 
         [ObservableProperty]
         private bool _isCameraOpened = false;
@@ -74,6 +75,8 @@ namespace SmartManager.ViewModels
             {
                 IsOpenCameraButtonEnabled = true;
             }
+
+            TotalCount = FacesDb.GetRecordCount();
         }
 
         partial void OnDeviceSelectedIndexChanged(int value)
@@ -157,7 +160,6 @@ namespace SmartManager.ViewModels
             }
 
             int sleepTime = FaceRecognition.SleepTime;
-            int totalCount = FacesDb.GetRecordCount();
 
             while (FaceRecognition.IsCameraOpened)
             {
@@ -169,20 +171,23 @@ namespace SmartManager.ViewModels
                     Bitmap mask = result.Item1;
                     float[] feature = result.Item2;
 
-                    Unknown = true;
+                    if (feature.Length != 0)
+                    {
+                        Unknown = true;
 
-                    for (int i = 0; i < totalCount; i++)
-                    {
-                        if (FaceRecognition.IsSelf(feature, FaceRecognition.GetFaceFeatureFromString(FacesDb.GetOneFaceFeatureStringByIndex(i))))
+                        for (int i = 0; i < TotalCount; i++)
                         {
-                            mask.DrawText(FacesDb.GetOneNameByIndex(i), result.Item3, result.Item4);
-                            Unknown = false;
-                            break;
+                            if (FaceRecognition.IsSelf(feature, FaceRecognition.GetFaceFeatureFromString(FacesDb.GetOneFaceFeatureStringByIndex(i))))
+                            {
+                                mask.DrawText(FacesDb.GetOneNameByIndex(i), result.Item3, result.Item4);
+                                Unknown = false;
+                                break;
+                            }
                         }
-                    }
-                    if (Unknown)
-                    {
-                        mask.DrawText("未知", result.Item3, result.Item4);
+                        if (Unknown)
+                        {
+                            mask.DrawText("未知", result.Item3, result.Item4);
+                        }
                     }
                     maskImage.Dispatcher.Invoke(new Action(() => { maskImage.Source = ImageProcess.BitmapToPngBitmapImage(mask); }));
                 }
@@ -251,7 +256,7 @@ namespace SmartManager.ViewModels
             string faceFuture = FaceRecognition.GetFaceFeatureString(FaceList[MaxIndex]);
 
             FacesDb.AddFaceAsync(new(Name, Sex, Age, JoinTime, faceFuture, FaceList[MaxIndex].FaceImage));
-
+            TotalCount++;
             System.Media.SystemSounds.Asterisk.Play();
             _snackbarService.Show("添加成功", $"用户 {Name} 已添加到数据库中。", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
             WeakReferenceMessenger.Default.Send("refresh", "FaceManage");

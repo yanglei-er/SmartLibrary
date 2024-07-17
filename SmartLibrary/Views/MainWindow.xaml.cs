@@ -39,9 +39,14 @@ namespace SmartLibrary.Views
             BluetoothHelper.BleStateChangedEvent += OnBleStateChanged;
         }
 
-        private static void LoadingSettings()
+        private void LoadingSettings()
         {
             ApplicationTheme theme = Shared.Helpers.Utils.GetUserApplicationTheme(SettingsHelper.GetConfig("Theme"));
+            if (SettingsHelper.GetConfig("Theme") == "System")
+            {
+                SystemThemeWatcher.Watch(this);
+                ApplicationThemeManager.Changed += (t, _) => { ResourceManager.UpdateTheme(Shared.Helpers.Utils.GetUserApplicationTheme(t.ToString()).ToString()); };
+            }
             ResourceManager.UpdateTheme(theme.ToString());
             ApplicationThemeManager.Apply(theme, Shared.Helpers.Utils.GetUserBackdrop(SettingsHelper.GetConfig("Backdrop")));
             if (SettingsHelper.GetBoolean("IsCustomizedAccentColor"))

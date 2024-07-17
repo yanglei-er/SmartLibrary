@@ -36,9 +36,14 @@ namespace SmartManager.Views
 #endif
         }
 
-        private static void LoadingSettings()
+        private void LoadingSettings()
         {
             ApplicationTheme theme = Utils.GetUserApplicationTheme(SettingsHelper.GetConfig("Theme"));
+            if (SettingsHelper.GetConfig("Theme") == "System")
+            {
+                SystemThemeWatcher.Watch(this);
+                ApplicationThemeManager.Changed += (t, _) => { ResourceManager.UpdateTheme(Utils.GetUserApplicationTheme(t.ToString()).ToString()); };
+            }
             ResourceManager.UpdateTheme(theme.ToString());
             ApplicationThemeManager.Apply(theme, Utils.GetUserBackdrop(SettingsHelper.GetConfig("Backdrop")));
             if (SettingsHelper.GetBoolean("IsCustomizedAccentColor"))
