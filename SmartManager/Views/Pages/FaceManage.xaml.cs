@@ -10,7 +10,7 @@ namespace SmartManager.Views.Pages
 {
     public partial class FaceManage : INavigableView<FaceManageViewModel>
     {
-        private readonly FaceInfoSimple faceInfo = new(string.Empty, string.Empty, string.Empty, string.Empty);
+        private readonly FaceInfoSimple faceInfo = new(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty);
 
         public FaceManageViewModel ViewModel { get; }
 
@@ -48,10 +48,10 @@ namespace SmartManager.Views.Pages
         {
             if (e.Row.Item is DataRowView dataRowView)
             {
-                faceInfo.Name = (string)dataRowView[0];
-                faceInfo.Sex = dataRowView[1].ToString();
-                faceInfo.Age = dataRowView[2].ToString();
-                faceInfo.JoinTime = dataRowView[3].ToString();
+                faceInfo.Name = (string)dataRowView[1];
+                faceInfo.Sex = dataRowView[2].ToString();
+                faceInfo.Age = dataRowView[3].ToString();
+                faceInfo.JoinTime = dataRowView[4].ToString();
             }
         }
 
@@ -59,17 +59,18 @@ namespace SmartManager.Views.Pages
         {
             if (e.Row.Item is DataRowView dataRowView)
             {
-                if (string.IsNullOrEmpty(dataRowView[0].ToString()))
+                if (string.IsNullOrEmpty(dataRowView[1].ToString()))
                 {
                     dataRowView[1] = faceInfo.Name;
                 }
 
-                if ((string)dataRowView[0] != faceInfo.Name || dataRowView[1].ToString() != faceInfo.Sex || dataRowView[2].ToString() != faceInfo.Age || dataRowView[3].ToString() != faceInfo.JoinTime)
+                if ((string)dataRowView[1] != faceInfo.Name || dataRowView[2].ToString() != faceInfo.Sex || dataRowView[3].ToString() != faceInfo.Age || dataRowView[4].ToString() != faceInfo.JoinTime)
                 {
-                    faceInfo.Name = (string)dataRowView[0];
-                    faceInfo.Sex = dataRowView[1].ToString();
-                    faceInfo.Age = dataRowView[2].ToString();
-                    faceInfo.JoinTime = dataRowView[3].ToString();
+                    faceInfo.Uid = (string)dataRowView[0];
+                    faceInfo.Name = (string)dataRowView[1];
+                    faceInfo.Sex = dataRowView[2].ToString();
+                    faceInfo.Age = dataRowView[3].ToString();
+                    faceInfo.JoinTime = dataRowView[4].ToString();
                     ViewModel.UpdateSimple(faceInfo);
                 }
             }

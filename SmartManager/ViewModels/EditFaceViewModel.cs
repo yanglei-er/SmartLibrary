@@ -18,6 +18,9 @@ namespace SmartManager.ViewModels
         private readonly Database FacesDb = Database.GetDatabase("faces.smartmanager");
 
         [ObservableProperty]
+        private string _uID = string.Empty;
+
+        [ObservableProperty]
         private string _name = string.Empty;
 
         [ObservableProperty]
@@ -50,6 +53,7 @@ namespace SmartManager.ViewModels
         private async void OnMessageReceived(object recipient, string message)
         {
             User user = await FacesDb.GetOneUserAsync(message);
+            UID = user.Uid;
             Name = user.Name;
             Sex = user.Sex;
             Age = user.Age;
@@ -74,7 +78,7 @@ namespace SmartManager.ViewModels
             }
             else
             {
-                FacesDb.UpdateFaceAsync(new(Name, Sex, Age, JoinTime, Feature, FaceImage));
+                FacesDb.UpdateFaceAsync(new(UID, Name, Sex, Age, JoinTime, Feature, FaceImage));
 
                 System.Media.SystemSounds.Asterisk.Play();
                 _snackbarService.Show("更改成功", $"用户 {Name} 信息已更改。", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));

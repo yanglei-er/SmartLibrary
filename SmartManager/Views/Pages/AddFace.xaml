@@ -109,6 +109,26 @@
                                         <ui:TextBlock
                                             Grid.Column="0"
                                             FontSize="24"
+                                            Text="UID：" />
+                                        <ui:TextBox
+                                            Grid.Column="1"
+                                            Margin="5,0,0,0"
+                                            BorderThickness="0"
+                                            FontSize="18"
+                                            InputMethod.IsInputMethodEnabled="False"
+                                            PlaceholderText="为空则自动生成"
+                                            PreviewKeyDown="TextBox_PreviewKeyDown"
+                                            Text="{Binding ViewModel.UID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                            TextWrapping="Wrap" />
+                                    </Grid>
+                                    <Grid Margin="0,6,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <ui:TextBlock
+                                            Grid.Column="0"
+                                            FontSize="24"
                                             Text="姓名：" />
                                         <ui:TextBox
                                             Grid.Column="1"

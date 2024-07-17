@@ -58,7 +58,8 @@ namespace SmartManager.Helpers
                 SQLiteConnection.CreateFile(DataSource);
                 StringBuilder sbr = new();
                 sbr.AppendLine("CREATE TABLE IF NOT EXISTS 'main' (");
-                sbr.AppendLine("'name' TEXT PRIMARY KEY NOT NULL,");
+                sbr.AppendLine("'uid' TEXT PRIMARY KEY NOT NULL,");
+                sbr.AppendLine("'name' TEXT NOT NULL,");
                 sbr.AppendLine("'sex' TEXT,");
                 sbr.AppendLine("'age' TEXT,");
                 sbr.AppendLine("'joinTime' TEXT,");
@@ -72,7 +73,7 @@ namespace SmartManager.Helpers
         public async ValueTask<DataTable> ExecutePagerSimpleAsync(int pageIndex, int pageSize)
         {
             StringBuilder sbr = new();
-            sbr.AppendLine("SELECT name, sex, age, joinTime FROM main LIMIT ");
+            sbr.AppendLine("SELECT uid, name, sex, age, joinTime FROM main LIMIT ");
             sbr.AppendLine(pageSize.ToString());
             sbr.AppendLine(" OFFSET ");
             int OffsetIndex = (pageIndex - 1) * pageSize;
@@ -82,20 +83,20 @@ namespace SmartManager.Helpers
 
         public int GetRecordCount()
         {
-            object result = ExecuteScalar("SELECT count(name) FROM main");
+            object result = ExecuteScalar("SELECT count(uid) FROM main");
             return Convert.ToInt32(result);
         }
 
         public async ValueTask<int> GetRecordCountAsync()
         {
-            object? result = await ExecuteScalarAsync("SELECT count(name) FROM main");
+            object? result = await ExecuteScalarAsync("SELECT count(uid) FROM main");
             return Convert.ToInt32(result);
         }
 
-        public async ValueTask<bool> ExistsAsync(string name)
+        public async ValueTask<bool> ExistsAsync(string uid)
         {
-            if (string.IsNullOrEmpty(name)) return false;
-            object? result = await ExecuteScalarAsync($"SELECT COUNT(*) FROM main WHERE name = '{name}'", null);
+            if (string.IsNullOrEmpty(uid)) return false;
+            object? result = await ExecuteScalarAsync($"SELECT COUNT(uid) FROM main WHERE uid = '{uid}'");
             if (Convert.ToInt32(result) > 0)
             {
                 return true;
@@ -106,9 +107,9 @@ namespace SmartManager.Helpers
             }
         }
 
-        public async ValueTask<User> GetOneUserAsync(string name)
+        public async ValueTask<User> GetOneUserAsync(string uid)
         {
-            string sql = $"SELECT * FROM main WHERE name = '{name}'";
+            string sql = $"SELECT * FROM main WHERE uid = '{uid}'";
 
             using SQLiteConnection DbConnection = GetSQLiteConnection();
             if (DbConnection.State != ConnectionState.Open)
@@ -118,23 +119,23 @@ namespace SmartManager.Helpers
             using SQLiteCommand command = new(sql, DbConnection);
             using DbDataReader reader = await command.ExecuteReaderAsync();
             reader.Read();
-            User user = new(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4), ImageProcess.ByteToBitmapImage((byte[])reader.GetValue(5)));
+            User user = new(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4), reader.GetString(5), ImageProcess.ByteToBitmapImage((byte[])reader.GetValue(6)));
             return user;
         }
 
         public string GetOneFaceFeatureStringByIndex(int index)
         {
-            return (string)ExecuteScalar($"SELECT feature FROM main ORDER BY name DESC LIMIT 1 OFFSET {index}");
+            return (string)ExecuteScalar($"SELECT feature FROM main ORDER BY uid DESC LIMIT 1 OFFSET {index}");
         }
 
         public string GetOneNameByIndex(int index)
         {
-            return (string)ExecuteScalar($"SELECT name FROM main ORDER BY name DESC LIMIT 1 OFFSET {index}");
+            return (string)ExecuteScalar($"SELECT name FROM main ORDER BY uid DESC LIMIT 1 OFFSET {index}");
         }
 
         public void AddFaceAsync(User user)
         {
-            string sqlStr = $"INSERT INTO main VALUES ('{user.Name}','{user.Sex}','{user.Age}','{user.JoinTime}','{user.Feature}',@faceImage)";
+            string sqlStr = $"INSERT INTO main VALUES ({user.Uid},'{user.Name}','{user.Sex}','{user.Age}','{user.JoinTime}','{user.Feature}',@faceImage)";
             byte[] image = ImageProcess.BitmapImageToByte(user.FaceImage);
             SQLiteParameter parameter = new("@faceImage", DbType.Binary, image.Length)
             {
@@ -143,14 +144,14 @@ namespace SmartManager.Helpers
             _ = ExecuteNonQueryAsync(sqlStr, parameter);
         }
 
-        public void DelFaceAsync(string name)
+        public void DelFaceAsync(string uid)
         {
-            _ = ExecuteNonQueryAsync($"DELETE FROM main WHERE name = '{name}'");
+            _ = ExecuteNonQueryAsync($"DELETE FROM main WHERE uid = '{uid}'");
         }
 
         public void UpdateFaceAsync(User user)
         {
-            string sqlStr = $"INSERT INTO main VALUES ('{user.Name}','{user.Sex}','{user.Age}','{user.JoinTime}','{user.Feature}',@faceImage)";
+            string sqlStr = $"UPDATE main SET name = '{user.Name}', sex = '{user.Sex}', age = '{user.Age}', joinTime = '{user.JoinTime}', image = @faceImage WHERE uid = '{user.Uid}'";
             byte[] image = ImageProcess.BitmapImageToByte(user.FaceImage);
             SQLiteParameter parameter = new("@faceImage", DbType.Binary, image.Length)
             {
@@ -159,15 +160,15 @@ namespace SmartManager.Helpers
             _ = ExecuteNonQueryAsync(sqlStr, parameter);
         }
 
-        public async void UpdateSimpleAsync(string name, string? sex, string? age, string? joinTime)
+        public async void UpdateSimpleAsync(string uid, string name, string? sex, string? age, string? joinTime)
         {
-            string sql = $"UPDATE main SET name = '{name}', sex = '{sex}', age = '{age}', joinTime = '{joinTime}' WHERE name = '{name}'";
+            string sql = $"UPDATE main SET name = '{name}', sex = '{sex}', age = '{age}', joinTime = '{joinTime}' WHERE uid = '{uid}'";
             await ExecuteNonQueryAsync(sql);
         }
 
         public async ValueTask<DataTable> AutoSuggestByStringAsync(string str)
         {
-            string sql = $"SELECT name,sex,age,joinTime FROM main WHERE name LIKE '%{str}%'";
+            string sql = $"SELECT uid,name,sex,age,joinTime FROM main WHERE name LIKE '%{str}%'";
             return await ExecuteDataTableAsync(sql);
         }
 
@@ -196,11 +197,11 @@ namespace SmartManager.Helpers
 
             while (reader.Read())
             {
-                string name = reader.GetString(0);
-                if (!await ExistsAsync(name))
+                string uid = reader.GetString(0);
+                if (!await ExistsAsync(uid))
                 {
-                    string sqlStr = $"INSERT INTO main VALUES ('{name}','{reader.GetString(1)}','{reader.GetString(2)}','{reader.GetString(3)}','{reader.GetString(4)}',@faceImage)";
-                    byte[] image = (byte[])reader.GetValue(5);
+                    string sqlStr = $"INSERT INTO main VALUES ('uid', '{reader.GetString(1)}','{reader.GetString(2)}','{reader.GetString(3)}','{reader.GetString(4)}','{reader.GetString(5)}', @faceImage)";
+                    byte[] image = (byte[])reader.GetValue(6);
                     SQLiteParameter parameter = new("@faceImage", DbType.Binary, image.Length) { Value = image };
                     await PrepareCommandAsync(command, oldDbConnection, sqlStr, parameter);
                     command.Transaction = transaction;

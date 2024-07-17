@@ -219,6 +219,7 @@
                 Grid.Column="4"
                 Margin="8,0,0,0"
                 Command="{Binding ViewModel.DelFacesCommand, Mode=OneWay}"
+                CommandParameter="{Binding ElementName=DataGrid, Path=SelectedItems}"
                 IsEnabled="{Binding ViewModel.IsDelButtonEnabled, Mode=TwoWay}"
                 Style="{StaticResource DelButton}"
                 ToolTip="删除所选人脸数据" />
@@ -261,6 +262,13 @@
                 </Style>
             </ui:DataGrid.RowStyle>
             <ui:DataGrid.Columns>
+                <DataGridTextColumn
+                    Width="200"
+                    Binding="{Binding uid, Mode=OneWay}"
+                    CanUserResize="False"
+                    ElementStyle="{StaticResource CenterAlignmentStyle}"
+                    Header="UID"
+                    IsReadOnly="True" />
                 <DataGridTextColumn
                     Width="*"
                     Binding="{Binding name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"

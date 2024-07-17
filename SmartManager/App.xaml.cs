@@ -6,9 +6,11 @@ using Shared.Services;
 using Shared.Services.Contracts;
 using SmartManager.Services;
 using System.Diagnostics;
+using System.Security.Cryptography;
 using System.Windows;
 using System.Windows.Threading;
 using Wpf.Ui;
+using Yitter.IdGenerator;
 
 namespace SmartManager
 {
@@ -70,6 +72,8 @@ namespace SmartManager
             mutex = new Mutex(true, "SmartManager", out bool aIsNewInstance);
             if (aIsNewInstance)
             {
+                //IdGenerator全局初始化
+                YitIdHelper.SetIdGenerator(new((ushort)RandomNumberGenerator.GetInt32(60)));
                 _host.Start();
                 mutex.ReleaseMutex();
             }

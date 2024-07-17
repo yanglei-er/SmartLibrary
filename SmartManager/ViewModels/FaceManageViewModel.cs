@@ -152,8 +152,8 @@ namespace SmartManager.ViewModels
         private void EditFace(DataRowView selectedItem)
         {
             _navigationService.NavigateWithHierarchy(typeof(EditFace));
-            string name = (string)selectedItem[0];
-            WeakReferenceMessenger.Default.Send(name, "EditFace");
+            string uid = (string)selectedItem[0];
+            WeakReferenceMessenger.Default.Send(uid, "EditFace");
         }
 
         private async void RefreshAsync()
@@ -413,8 +413,8 @@ namespace SmartManager.ViewModels
                 {
                     foreach (DataRowView item in selectedItems)
                     {
-                        string isbn = (string)item[0];
-                        FacesDb.DelFaceAsync(isbn);
+                        string uid = (string)item[0];
+                        FacesDb.DelFaceAsync(uid);
                         if (!IsBottombarEnabled)
                         {
                             indexs.Add(DataGridItems.Table.Rows.IndexOf(item.Row));
@@ -451,8 +451,8 @@ namespace SmartManager.ViewModels
         [RelayCommand]
         private void DelOneFace(DataRowView selectedItem)
         {
-            string name = (string)selectedItem[0];
-            FacesDb.DelFaceAsync(name);
+            string uid = (string)selectedItem[0];
+            FacesDb.DelFaceAsync(uid);
             if (IsBottombarEnabled)
             {
                 RefreshAsync();
@@ -475,7 +475,7 @@ namespace SmartManager.ViewModels
 
         public void UpdateSimple(FaceInfoSimple faceInfo)
         {
-            FacesDb.UpdateSimpleAsync(faceInfo.Name, faceInfo.Sex, faceInfo.Age, faceInfo.JoinTime);
+            FacesDb.UpdateSimpleAsync(faceInfo.Uid, faceInfo.Name, faceInfo.Sex, faceInfo.Age, faceInfo.JoinTime);
         }
 
         partial void OnAutoSuggestBoxTextChanged(string value)

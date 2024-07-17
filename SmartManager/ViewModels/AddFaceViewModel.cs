@@ -9,6 +9,7 @@ using System.Drawing;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
 using Wpf.Ui.Extensions;
+using Yitter.IdGenerator;
 
 namespace SmartManager.ViewModels
 {
@@ -20,6 +21,7 @@ namespace SmartManager.ViewModels
         private readonly Database FacesDb = Database.GetDatabase("faces.smartmanager");
         private bool Unknown = true;
         private int TotalCount = 0;
+        private bool IsAddingFace = false;
 
         [ObservableProperty]
         private bool _isCameraOpened = false;
@@ -50,6 +52,9 @@ namespace SmartManager.ViewModels
 
         [ObservableProperty]
         private bool _isAddButtonEnabled = false;
+
+        [ObservableProperty]
+        private string _uID = YitIdHelper.NextId().ToString();
 
         [ObservableProperty]
         private string _name = string.Empty;
@@ -154,7 +159,7 @@ namespace SmartManager.ViewModels
                 }
                 else
                 {
-                    _snackbarService.Show("错误", $"开启摄像头失败：{message}", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(2));
+                    _snackbarService.Show("错误", $"开启摄像头失败：{message}", ControlAppearance.Danger, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
                     return;
                 }
             }
@@ -163,42 +168,49 @@ namespace SmartManager.ViewModels
 
             while (FaceRecognition.IsCameraOpened)
             {
-                using Bitmap image = FaceRecognition.GetImage();
-
-                if (IsFaceComparison)
+                if (IsAddingFace)
                 {
-                    (Bitmap, float[], int, int) result = FaceRecognition.GetMaskAndName(image);
-                    Bitmap mask = result.Item1;
-                    float[] feature = result.Item2;
+                    Thread.Sleep(500);
+                }
+                else
+                {
+                    using Bitmap image = FaceRecognition.GetImage();
 
-                    if (feature.Length != 0)
+                    if (IsFaceComparison)
                     {
-                        Unknown = true;
+                        (Bitmap, float[], int, int) result = FaceRecognition.GetMaskAndName(image);
+                        Bitmap mask = result.Item1;
+                        float[] feature = result.Item2;
 
-                        for (int i = 0; i < TotalCount; i++)
+                        if (feature.Length != 0)
                         {
-                            if (FaceRecognition.IsSelf(feature, FaceRecognition.GetFaceFeatureFromString(FacesDb.GetOneFaceFeatureStringByIndex(i))))
+                            Unknown = true;
+
+                            for (int i = 0; i < TotalCount; i++)
                             {
-                                mask.DrawText(FacesDb.GetOneNameByIndex(i), result.Item3, result.Item4);
-                                Unknown = false;
-                                break;
+                                if (FaceRecognition.IsSelf(feature, FaceRecognition.GetFaceFeatureFromString(FacesDb.GetOneFaceFeatureStringByIndex(i))))
+                                {
+                                    mask.DrawText(FacesDb.GetOneNameByIndex(i), result.Item3, result.Item4);
+                                    Unknown = false;
+                                    break;
+                                }
+                            }
+                            if (Unknown)
+                            {
+                                mask.DrawText("未知", result.Item3, result.Item4);
                             }
                         }
-                        if (Unknown)
-                        {
-                            mask.DrawText("未知", result.Item3, result.Item4);
-                        }
+                        maskImage.Dispatcher.Invoke(new Action(() => { maskImage.Source = ImageProcess.BitmapToPngBitmapImage(mask); }));
                     }
-                    maskImage.Dispatcher.Invoke(new Action(() => { maskImage.Source = ImageProcess.BitmapToPngBitmapImage(mask); }));
-                }
-                else if (IsDrawFaceRectangle)
-                {
-                    maskImage.Dispatcher.Invoke(new Action(() => { maskImage.Source = ImageProcess.BitmapToPngBitmapImage(FaceRecognition.GetMaskImage(image)); }));
-                }
+                    else if (IsDrawFaceRectangle)
+                    {
+                        maskImage.Dispatcher.Invoke(new Action(() => { maskImage.Source = ImageProcess.BitmapToPngBitmapImage(FaceRecognition.GetMaskImage(image)); }));
+                    }
 
-                cameraImage.Dispatcher.Invoke(new Action(() => { cameraImage.Source = ImageProcess.BitmapToBitmapImage(image); }));
+                    cameraImage.Dispatcher.Invoke(new Action(() => { cameraImage.Source = ImageProcess.BitmapToBitmapImage(image); }));
 
-                Thread.Sleep(sleepTime);
+                    Thread.Sleep(sleepTime);
+                }
             }
         }
 
@@ -208,7 +220,7 @@ namespace SmartManager.ViewModels
 
             if (face.FullImage.Width == 2)
             {
-                _snackbarService.Show("警告", $"未识别到人脸，无法添加！", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(2));
+                _snackbarService.Show("警告", $"未识别到人脸，无法添加！", ControlAppearance.Caution, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(2));
             }
             else
             {
@@ -220,15 +232,40 @@ namespace SmartManager.ViewModels
 
         public async void AddFace()
         {
+            if (await FacesDb.ExistsAsync(UID))
+            {
+                _snackbarService.Show("添加失败", $"UID {UID} 已存在，无法添加。", ControlAppearance.Caution, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
+                return;
+            }
+
+            IsAddingFace = true;
+
+            if (!Unknown)
+            {
+                System.Media.SystemSounds.Asterisk.Play();
+                if (await _contentDialogService.ShowSimpleDialogAsync(new SimpleContentDialogCreateOptions()
+                {
+                    Title = "录入人脸",
+                    Content = "已检测到数据库中存在相似人脸，是否继续添加？",
+                    PrimaryButtonText = "是",
+                    CloseButtonText = "否",
+                }) != ContentDialogResult.Primary)
+                {
+                    IsAddingFace = false;
+                    return;
+                }
+            }
+
             if (string.IsNullOrEmpty(Name))
             {
                 System.Media.SystemSounds.Asterisk.Play();
                 await _contentDialogService.ShowSimpleDialogAsync(new SimpleContentDialogCreateOptions()
                 {
                     Title = "录入人脸",
-                    Content = "您必须完善以下书籍信息， 才能将人脸数据添加到数据库中：\n\n姓名不能为空！",
+                    Content = "您必须完善以下信息， 才能将人脸数据添加到数据库中：\n\n姓名不能为空！",
                     CloseButtonText = "去完善",
                 });
+                IsAddingFace = false;
                 return;
             }
 
@@ -242,8 +279,14 @@ namespace SmartManager.ViewModels
                     CloseButtonText = "否",
                 }) != ContentDialogResult.Primary)
                 {
+                    IsAddingFace = false;
                     return;
                 }
+            }
+
+            if (string.IsNullOrEmpty(UID))
+            {
+                UID = YitIdHelper.NextId().ToString();
             }
 
             if (string.IsNullOrEmpty(JoinTime))
@@ -255,16 +298,21 @@ namespace SmartManager.ViewModels
             int MaxIndex = faceQualitys.IndexOf(faceQualitys.Max());
             string faceFuture = FaceRecognition.GetFaceFeatureString(FaceList[MaxIndex]);
 
-            FacesDb.AddFaceAsync(new(Name, Sex, Age, JoinTime, faceFuture, FaceList[MaxIndex].FaceImage));
+            FacesDb.AddFaceAsync(new(UID, Name, Sex, Age, JoinTime, faceFuture, FaceList[MaxIndex].FaceImage));
             TotalCount++;
+
             System.Media.SystemSounds.Asterisk.Play();
             _snackbarService.Show("添加成功", $"用户 {Name} 已添加到数据库中。", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
+
             WeakReferenceMessenger.Default.Send("refresh", "FaceManage");
             CleanAll();
+
+            IsAddingFace = false;
         }
 
         private void CleanAll()
         {
+            UID=YitIdHelper.NextId().ToString();
             Name = string.Empty;
             Sex = string.Empty;
             Age = string.Empty;
