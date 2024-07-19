@@ -230,6 +230,12 @@ namespace SmartManager.ViewModels
             }
         }
 
+        [RelayCommand]
+        private void RefreshUID()
+        {
+            UID = YitIdHelper.NextId().ToString();
+        }
+
         public async void AddFace()
         {
             if (await FacesDb.ExistsAsync(UID))
@@ -312,11 +318,11 @@ namespace SmartManager.ViewModels
 
         private void CleanAll()
         {
-            UID=YitIdHelper.NextId().ToString();
+            UID = YitIdHelper.NextId().ToString();
             Name = string.Empty;
             Sex = string.Empty;
             Age = string.Empty;
-            JoinTime = string.Empty;
+            JoinTime = DateTime.Now.ToString("d");
             FaceList.Clear();
             FaceCount = 0;
             IsAddButtonEnabled = false;

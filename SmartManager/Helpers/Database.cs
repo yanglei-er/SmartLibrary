@@ -200,7 +200,7 @@ namespace SmartManager.Helpers
                 string uid = reader.GetString(0);
                 if (!await ExistsAsync(uid))
                 {
-                    string sqlStr = $"INSERT INTO main VALUES ('uid', '{reader.GetString(1)}','{reader.GetString(2)}','{reader.GetString(3)}','{reader.GetString(4)}','{reader.GetString(5)}', @faceImage)";
+                    string sqlStr = $"INSERT INTO main VALUES ('{uid}', '{reader.GetString(1)}','{reader.GetString(2)}','{reader.GetString(3)}','{reader.GetString(4)}','{reader.GetString(5)}', @faceImage)";
                     byte[] image = (byte[])reader.GetValue(6);
                     SQLiteParameter parameter = new("@faceImage", DbType.Binary, image.Length) { Value = image };
                     await PrepareCommandAsync(command, oldDbConnection, sqlStr, parameter);

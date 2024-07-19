@@ -263,6 +263,12 @@
                     Content="采集图像"
                     FontSize="24"
                     IsEnabled="{Binding ViewModel.IsCameraOpened, Mode=OneWay}" />
+                <ui:Button
+                    Margin="0,8,0,0"
+                    HorizontalAlignment="Stretch"
+                    Command="{Binding ViewModel.RefreshUIDCommand, Mode=OneWay}"
+                    Content="刷新UID"
+                    FontSize="24" />
             </StackPanel>
             <StackPanel Grid.Row="2" Margin="0,8,0,0">
                 <ui:Button
