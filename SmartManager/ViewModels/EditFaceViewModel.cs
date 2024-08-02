@@ -16,6 +16,7 @@ namespace SmartManager.ViewModels
         private readonly ISnackbarService _snackbarService;
         private readonly IContentDialogService _contentDialogService;
         private readonly Database FacesDb = Database.GetDatabase("faces.smartmanager");
+        private bool _initial = true;
 
         [ObservableProperty]
         private string _uID = string.Empty;
@@ -52,6 +53,7 @@ namespace SmartManager.ViewModels
 
         private async void OnMessageReceived(object recipient, string message)
         {
+
             User user = await FacesDb.GetOneUserAsync(message);
             UID = user.Uid;
             Name = user.Name;
@@ -61,6 +63,7 @@ namespace SmartManager.ViewModels
             Feature = user.Feature;
             FaceImage = user.FaceImage;
             WeakReferenceMessenger.Default.Unregister<string>(this);
+            _initial = false;
         }
 
         [RelayCommand]
@@ -91,6 +94,22 @@ namespace SmartManager.ViewModels
         private void GoBack()
         {
             _navigationService.GoBack();
+        }
+
+        partial void OnAgeChanged(string? value)
+        {
+            if (!_initial)
+            {
+                IsEditButtonEnabled = true;
+            }
+        }
+
+        partial void OnJoinTimeChanged(string? value)
+        {
+            if (!_initial)
+            {
+                IsEditButtonEnabled = true;
+            }
         }
     }
 }

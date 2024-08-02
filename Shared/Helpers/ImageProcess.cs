@@ -179,51 +179,23 @@ namespace Shared.Helpers
             return result;
         }
 
-        public static Bitmap BitmapImageToBitmap(BitmapImage bitmapImage)
-        {
-
-            using MemoryStream outStream = new();
-            BitmapEncoder enc = new BmpBitmapEncoder();
-            enc.Frames.Add(BitmapFrame.Create(bitmapImage));
-            enc.Save(outStream);
-            Bitmap bitmap = new(outStream);
-
-            return bitmap;
-        }
-
         public static byte[] BitmapImageToByte(BitmapImage bmp)
         {
-            byte[] buffer = [];
             JpegBitmapEncoder encoder = new();
-            using MemoryStream memoryStream = new();
-            encoder.Frames.Add(BitmapFrame.Create(bmp.StreamSource));
-            encoder.Save(memoryStream);
-            memoryStream.Position = 0;
-            if (memoryStream.Length > 0)
-            {
-                using BinaryReader br = new(memoryStream);
-                buffer = br.ReadBytes((int)memoryStream.Length);
-            }
-            return buffer;
+            encoder.Frames.Add(BitmapFrame.Create(bmp));
+            using MemoryStream stream = new();
+            encoder.Save(stream);
+            return stream.ToArray();
         }
 
         public static BitmapImage ByteToBitmapImage(byte[] bytes)
         {
-            using MemoryStream decodeMemoryStream = new(bytes);
-            JpegBitmapDecoder decoder = new(decodeMemoryStream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
-
-            JpegBitmapEncoder encoder = new();
-            encoder.Frames.Add(decoder.Frames[0]);
-            using MemoryStream encodeMemoryStream = new();
-            encoder.Save(encodeMemoryStream);
-            encodeMemoryStream.Position = 0;
-
             BitmapImage bitmapImage = new();
             bitmapImage.BeginInit();
             bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
-            bitmapImage.StreamSource = encodeMemoryStream;
+            bitmapImage.StreamSource = new MemoryStream(bytes);
             bitmapImage.EndInit();
-            if(bitmapImage.CanFreeze)
+            if (bitmapImage.CanFreeze)
             {
                 bitmapImage.Freeze();
             }

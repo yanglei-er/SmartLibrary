@@ -42,9 +42,9 @@
                     </Grid.RowDefinitions>
                     <Grid Grid.Row="0">
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="0.06*" />
+                            <RowDefinition Height="0.2*" />
                             <RowDefinition Height="1*" />
-                            <RowDefinition Height="0.06*" />
+                            <RowDefinition Height="0.2*" />
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="0.5*" />
@@ -55,37 +55,33 @@
                             <ui:Image
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch"
-                                CornerRadius="4"
+                                CornerRadius="8"
                                 RenderOptions.BitmapScalingMode="HighQuality"
                                 Source="{Binding ViewModel.FaceImage, Mode=OneWay}"
                                 Stretch="UniformToFill" />
                         </Grid>
                     </Grid>
-                    <ws:ScrollViewer
+                    <StackPanel
                         Grid.Row="1"
-                        ws:StylusTouchDevice.Simulate="True"
-                        PanningMode="VerticalOnly">
-                        <StackPanel
-                            Margin="32,48,32,0"
+                        Margin="32,48,32,0"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Top">
+                        <ui:TextBox
                             HorizontalAlignment="Center"
-                            VerticalAlignment="Top">
-                            <ui:TextBox
-                                HorizontalAlignment="Center"
-                                FontSize="24"
-                                Style="{StaticResource SelectableTextBlockStyle}"
-                                Text="{Binding ViewModel.UID, Mode=OneWay}"
-                                TextAlignment="Center"
-                                TextWrapping="Wrap" />
-                            <ui:TextBox
-                                Margin="0,6,0,0"
-                                HorizontalAlignment="Center"
-                                FontSize="24"
-                                Style="{StaticResource SelectableTextBlockStyle}"
-                                Text="{Binding ViewModel.Name, Mode=OneWay}"
-                                TextAlignment="Center"
-                                TextWrapping="Wrap" />
-                        </StackPanel>
-                    </ws:ScrollViewer>
+                            FontSize="24"
+                            Style="{StaticResource SelectableTextBlockStyle}"
+                            Text="{Binding ViewModel.UID, Mode=OneWay}"
+                            TextAlignment="Center"
+                            TextWrapping="Wrap" />
+                        <ui:TextBox
+                            Margin="0,6,0,0"
+                            HorizontalAlignment="Center"
+                            FontSize="24"
+                            Style="{StaticResource SelectableTextBlockStyle}"
+                            Text="{Binding ViewModel.Name, Mode=OneWay}"
+                            TextAlignment="Center"
+                            TextWrapping="Wrap" />
+                    </StackPanel>
                     <Grid
                         Grid.Row="2"
                         Margin="16"

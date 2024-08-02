@@ -240,7 +240,7 @@ namespace SmartManager.ViewModels
         {
             if (await FacesDb.ExistsAsync(UID))
             {
-                _snackbarService.Show("添加失败", $"UID {UID} 已存在，无法添加。", ControlAppearance.Caution, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
+                _snackbarService.Show("添加失败", $"用户 {UID} 已存在，无法添加。", ControlAppearance.Caution, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
                 return;
             }
 
