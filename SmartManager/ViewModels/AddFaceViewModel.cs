@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Win32;
 using Shared.Helpers;
 using Shared.Models;
 using SmartManager.Helpers;
@@ -220,13 +221,48 @@ namespace SmartManager.ViewModels
 
             if (face.FullImage.Width == 2)
             {
-                _snackbarService.Show("警告", $"未识别到人脸，无法添加！", ControlAppearance.Caution, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(2));
+                _snackbarService.Show("警告", "未识别到人脸，无法添加！", ControlAppearance.Caution, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(2));
             }
             else
             {
                 FaceList.Add(face);
                 IsAddButtonEnabled = true;
                 FaceCount++;
+            }
+        }
+
+        [RelayCommand]
+        private async Task ImportImage()
+        {
+            OpenFileDialog openFileDialog = new()
+            {
+                Title = "导入图像",
+                Filter = "图像文件 (*.bmp;*.jpg;*.jpeg;*.png)|*.bmp;*.jpg;*.jpeg;*.png",
+                Multiselect = true,
+            };
+            if (openFileDialog.ShowDialog() == true)
+            {
+                List<string> fileNames = new(openFileDialog.FileNames);
+                int MissingFace = 0;
+                foreach (string fileName in fileNames)
+                {
+                    EncodingFace face = await FaceRecognition.GetFace((Bitmap)Bitmap.FromFile(fileName));
+                    if (face.FullImage.Width == 2)
+                    {
+                        MissingFace++;
+                    }
+                    else
+                    {
+                        FaceList.Add(face);
+                        IsAddButtonEnabled = true;
+                        FaceCount++;
+                    }
+                }
+                if (MissingFace > 0)
+                {
+                    System.Media.SystemSounds.Asterisk.Play();
+                    _snackbarService.Show("警告", $"{MissingFace}张图片未识别到人脸，无法添加！", ControlAppearance.Caution, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(2));
+                }
             }
         }
 
@@ -255,7 +291,7 @@ namespace SmartManager.ViewModels
                     Content = "已检测到数据库中存在相似人脸，是否继续添加？",
                     PrimaryButtonText = "是",
                     CloseButtonText = "否",
-                }) != ContentDialogResult.Primary)
+                }) == ContentDialogResult.Secondary)
                 {
                     IsAddingFace = false;
                     return;
@@ -280,7 +316,7 @@ namespace SmartManager.ViewModels
                 if (await _contentDialogService.ShowSimpleDialogAsync(new SimpleContentDialogCreateOptions()
                 {
                     Title = "录入人脸",
-                    Content = "您的人脸图片数据太少，会导致训练识别结果精确度下降，是否继续添加？",
+                    Content = "您的人脸图片数据太少(<3)，可能会导致训练识别结果精确度下降，是否继续添加？",
                     PrimaryButtonText = "是",
                     CloseButtonText = "否",
                 }) != ContentDialogResult.Primary)

@@ -53,7 +53,6 @@ namespace SmartManager.ViewModels
 
         private async void OnMessageReceived(object recipient, string message)
         {
-
             User user = await FacesDb.GetOneUserAsync(message);
             UID = user.Uid;
             Name = user.Name;

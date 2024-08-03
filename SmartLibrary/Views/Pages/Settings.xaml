@@ -63,7 +63,7 @@
                             <ui:TextBlock FontSize="16" Text="开机自启动" />
                             <ui:TextBlock
                                 FontSize="13"
-                                Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
                                 Text="系统启动时程序自动运行" />
                         </StackPanel>
                     </ui:CardControl.Header>
@@ -79,7 +79,7 @@
                             <ui:TextBlock FontSize="16" Text="启动时最小化到托盘" />
                             <ui:TextBlock
                                 FontSize="13"
-                                Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
                                 Text="设置后程序启动时不再主动显示主窗口" />
                         </StackPanel>
                     </ui:CardControl.Header>
@@ -95,7 +95,7 @@
                             <ui:TextBlock FontSize="16" Text="启用托盘图标" />
                             <ui:TextBlock
                                 FontSize="13"
-                                Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
                                 Text="禁用此选项时关闭窗口将直接退出程序" />
                         </StackPanel>
                     </ui:CardControl.Header>
@@ -111,7 +111,7 @@
                             <ui:TextBlock FontSize="16" Text="自动检查更新" />
                             <ui:TextBlock
                                 FontSize="13"
-                                Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
                                 Text="程序将在每次启动时检查是否有更新" />
                         </StackPanel>
                     </ui:CardControl.Header>
@@ -137,7 +137,7 @@
                                 <ui:TextBlock FontSize="16" Text="存储空间" />
                                 <ui:TextBlock
                                     FontSize="13"
-                                    Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                    Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
                                     Text="查看程序详细存储空间占用" />
                             </StackPanel>
                             <ui:Button
@@ -173,11 +173,11 @@
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Center"
                                     FontSize="13"
-                                    Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                    Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
                                     Text="{Binding ViewModel.DataCount, Mode=OneWay}" />
                                 <ui:SymbolIcon
                                     Grid.Column="2"
-                                    Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                    Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
                                     Symbol="Open24" />
                             </Grid>
                         </ui:Button>
@@ -205,11 +205,11 @@
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Center"
                                     FontSize="13"
-                                    Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                    Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
                                     Text="{Binding ViewModel.PictureCacheCount, Mode=OneWay}" />
                                 <ui:SymbolIcon
                                     Grid.Column="2"
-                                    Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                    Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
                                     Symbol="Open24" />
                             </Grid>
                         </ui:Button>
@@ -237,11 +237,11 @@
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Center"
                                     FontSize="13"
-                                    Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                    Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
                                     Text="{Binding ViewModel.TempCount, Mode=OneWay}" />
                                 <ui:SymbolIcon
                                     Grid.Column="2"
-                                    Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                    Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
                                     Symbol="Open24" />
                             </Grid>
                         </ui:Button>
@@ -293,7 +293,7 @@
                             <ui:TextBlock FontSize="16" Text="主题" />
                             <ui:TextBlock
                                 FontSize="13"
-                                Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
                                 Text="设置程序的主题风格" />
                         </StackPanel>
                     </ui:CardControl.Header>
@@ -322,7 +322,7 @@
                                 <ui:TextBlock FontSize="16" Text="主题色" />
                                 <ui:TextBlock
                                     FontSize="13"
-                                    Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                    Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
                                     Text="设置程序中显示的强调色" />
                             </StackPanel>
                             <StackPanel Grid.Column="1" Orientation="Horizontal">
@@ -485,7 +485,7 @@
                             <ui:TextBlock FontSize="16" Text="窗口背景透明材质" />
                             <ui:TextBlock
                                 FontSize="13"
-                                Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
                                 Text="设置窗口背景透明效果和透明材质" />
                         </StackPanel>
                     </ui:CardControl.Header>
@@ -509,7 +509,7 @@
                             <ui:TextBlock FontSize="16" Text="管理员模式" />
                             <ui:TextBlock
                                 FontSize="13"
-                                Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
                                 Text="获取管理员权限以进行书籍添加、删除等操作" />
                         </StackPanel>
                     </ui:CardControl.Header>
@@ -534,7 +534,7 @@
                                 <ui:TextBlock FontSize="16" Text="API Key" />
                                 <ui:TextBlock
                                     FontSize="13"
-                                    Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                    Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
                                     Text="填写您的个人ISBN查询API秘钥" />
                             </StackPanel>
                             <ui:PasswordBox
@@ -559,7 +559,7 @@
                                 <ui:TextBlock
                                     Margin="0,4,0,0"
                                     FontSize="12"
-                                    Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                    Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
                                     Text="注意：本程序使用的API接口仅作为示例，不含任何广告推广，请勿随意付费购买，您可自行更换其他接口使用。所有数据皆加密保存在本地，不会上传云端。"
                                     TextWrapping="Wrap" />
                             </StackPanel>
@@ -600,7 +600,7 @@
                                     Text="智慧图书馆" />
                                 <TextBox
                                     FontSize="13"
-                                    Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                    Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
                                     Style="{StaticResource SelectableTextBlockStyle}"
                                     Text="©2024 赵杨磊.All Rights Reserved." />
                             </StackPanel>
@@ -695,7 +695,7 @@
                                     VerticalAlignment="Center"
                                     DockPanel.Dock="Right"
                                     FontSize="14"
-                                    Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                    Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
                                     Style="{StaticResource SelectableTextBlockStyle}"
                                     Text="git clone https://github.com/yanglei-er/SmartLibrary.git" />
                             </DockPanel>

@@ -72,7 +72,7 @@
                                 <ui:TextBlock FontSize="16" Text="存储空间" />
                                 <ui:TextBlock
                                     FontSize="13"
-                                    Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                    Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
                                     Text="查看程序详细存储空间占用" />
                             </StackPanel>
                             <ui:Button
@@ -108,11 +108,11 @@
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Center"
                                     FontSize="13"
-                                    Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                    Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
                                     Text="{Binding ViewModel.DataCount, Mode=OneWay}" />
                                 <ui:SymbolIcon
                                     Grid.Column="2"
-                                    Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                    Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
                                     Symbol="Open24" />
                             </Grid>
                         </ui:Button>
@@ -151,7 +151,7 @@
                             <ui:TextBlock FontSize="16" Text="主题" />
                             <ui:TextBlock
                                 FontSize="13"
-                                Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
                                 Text="设置程序的主题风格" />
                         </StackPanel>
                     </ui:CardControl.Header>
@@ -180,7 +180,7 @@
                                 <ui:TextBlock FontSize="16" Text="主题色" />
                                 <ui:TextBlock
                                     FontSize="13"
-                                    Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                    Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
                                     Text="设置程序中显示的强调色" />
                             </StackPanel>
                             <StackPanel Grid.Column="1" Orientation="Horizontal">
@@ -343,7 +343,7 @@
                             <ui:TextBlock FontSize="16" Text="窗口背景透明材质" />
                             <ui:TextBlock
                                 FontSize="13"
-                                Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
                                 Text="设置窗口背景透明效果和透明材质" />
                         </StackPanel>
                     </ui:CardControl.Header>
@@ -383,7 +383,7 @@
                                     Text="智慧管理员" />
                                 <TextBox
                                     FontSize="13"
-                                    Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                    Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
                                     Style="{StaticResource SelectableTextBlockStyle}"
                                     Text="©2024 赵杨磊.All Rights Reserved." />
                             </StackPanel>
@@ -478,7 +478,7 @@
                                     VerticalAlignment="Center"
                                     DockPanel.Dock="Right"
                                     FontSize="14"
-                                    Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                    Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
                                     Style="{StaticResource SelectableTextBlockStyle}"
                                     Text="git clone https://github.com/yanglei-er/SmartLibrary.git" />
                             </DockPanel>

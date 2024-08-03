@@ -15,8 +15,8 @@
 	    <ApplicationIcon>applicationIcon.ico</ApplicationIcon>
 		<Description>Smart library</Description>
 		<Copyright>Copyright © 2024 赵杨磊.All Rights Reserved.</Copyright>
-		<AssemblyVersion>0.5.4.24215</AssemblyVersion>
-		<FileVersion>0.5.4.24215</FileVersion>
+		<AssemblyVersion>0.5.5.24216</AssemblyVersion>
+		<FileVersion>0.5.5.24216</FileVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -89,7 +89,7 @@
 		<PackageReference Include="EleCho.WpfSuite" Version="0.6.1" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
 		<PackageReference Include="System.Data.SQLite" Version="1.0.118" />
-		<PackageReference Include="WPF-UI" Version="3.0.4" />
+		<PackageReference Include="WPF-UI" Version="3.0.5" />
 		<PackageReference Include="WpfAnimatedGif" Version="2.0.2" />
 	</ItemGroup>
 

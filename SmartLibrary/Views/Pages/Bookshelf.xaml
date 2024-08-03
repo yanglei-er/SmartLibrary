@@ -156,7 +156,7 @@
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
                                         FontSize="12"
-                                        Foreground="{StaticResource TextFillColorSecondaryBrush}"
+                                        Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
                                         Text="详细信息" />
                                 </Border>
                             </Grid>

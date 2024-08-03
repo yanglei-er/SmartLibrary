@@ -12,8 +12,8 @@
 	<PropertyGroup>
 		<Description>Smart library共享资源库</Description>
 		<Copyright>Copyright © 2024 赵杨磊.All Rights Reserved.</Copyright>
-		<AssemblyVersion>0.5.4.24215</AssemblyVersion>
-		<FileVersion>0.5.4.24215</FileVersion>
+		<AssemblyVersion>0.5.5.24216</AssemblyVersion>
+		<FileVersion>0.5.5.24216</FileVersion>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 
@@ -52,7 +52,7 @@
     <PackageReference Include="ViewFaceCore.model.face_recognizer" Version="6.0.7" />
     <PackageReference Include="ViewFaceCore.model.quality_lbn" Version="6.0.7" />
     <PackageReference Include="ViewFaceCore.runtime.win.x64" Version="6.0.7" />
-    <PackageReference Include="WPF-UI" Version="3.0.4" />
+    <PackageReference Include="WPF-UI" Version="3.0.5" />
   </ItemGroup>
 
 </Project>

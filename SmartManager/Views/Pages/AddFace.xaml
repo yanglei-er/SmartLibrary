@@ -266,6 +266,12 @@
                 <ui:Button
                     Margin="0,8,0,0"
                     HorizontalAlignment="Stretch"
+                    Command="{Binding ViewModel.ImportImageCommand}"
+                    Content="导入照片"
+                    FontSize="24" />
+                <ui:Button
+                    Margin="0,8,0,0"
+                    HorizontalAlignment="Stretch"
                     Command="{Binding ViewModel.RefreshUIDCommand, Mode=OneWay}"
                     Content="刷新UID"
                     FontSize="24" />

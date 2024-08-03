@@ -2,7 +2,7 @@
 
 namespace Shared.Helpers
 {
-    public sealed class SettingsHelper
+    public static class SettingsHelper
     {
         private static readonly Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
 
@@ -10,7 +10,7 @@ namespace Shared.Helpers
         public static void SetConfig(string key, string value)
         {
             config.AppSettings.Settings[key].Value = value;
-            config.Save(ConfigurationSaveMode.Modified);
+            config.Save(ConfigurationSaveMode.Minimal);
             ConfigurationManager.RefreshSection("appSettings");
         }
 
