@@ -8,24 +8,24 @@ using System.Text;
 
 namespace SmartLibrary.Helpers
 {
-    public class Database : SQLiteHelper
+    public class BooksDb : SQLiteHelper
     {
-        private static readonly Dictionary<string, Database> DataBaceList = [];
+        private static readonly Dictionary<string, BooksDb> DataBaceList = [];
 
-        private Database(string filename) : base(filename)
+        private BooksDb(string filename) : base(filename)
         {
             DataSource = @".\database\" + filename;
         }
 
-        public static Database GetDatabase(string filename)
+        public static BooksDb GetDatabase(string filename)
         {
-            if (DataBaceList.TryGetValue(filename, out Database? value))
+            if (DataBaceList.TryGetValue(filename, out BooksDb? value))
             {
                 return value;
             }
             else
             {
-                Database db = new(filename);
+                BooksDb db = new(filename);
                 if (File.Exists(@".\database\" + filename))
                 {
                     DataBaceList.Add(filename, db);
@@ -204,7 +204,7 @@ namespace SmartLibrary.Helpers
             sbr.AppendLine("SELECT isbn,bookName,author,press,picture FROM main LIMIT ");
             sbr.AppendLine(pageSize.ToString());
             sbr.AppendLine(" OFFSET ");
-            sbr.AppendLine((pageIndex - 1 * pageSize).ToString());
+            sbr.AppendLine(((pageIndex - 1) * pageSize).ToString());
             return await ExecuteDataTableAsync(sbr.ToString());
         }
 

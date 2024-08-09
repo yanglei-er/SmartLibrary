@@ -32,6 +32,15 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <TextBox Name="XuNiBox" Width="0" />
+        <Image
+            Name="CameraImage"
+            Grid.Row="1"
+            Margin="0,8,0,0"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            Panel.ZIndex="999"
+            Stretch="UniformToFill"
+            Visibility="{Binding ViewModel.IsCameraOpened, Converter={StaticResource BooleanToVisibilityConverter}}" />
         <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
@@ -170,7 +179,7 @@
                             Margin="0,0,8,0"
                             HorizontalAlignment="Stretch"
                             Appearance="Primary"
-                            Command="{Binding ViewModel.BorrowOrReturnCommand, Mode=OneTime}"
+                            Click="BorrowOrReturn_Click"
                             Content="{Binding ViewModel.IsBorrowed, Converter={StaticResource BoolToBorrowOrReturnTextConverter}, Mode=OneWay}"
                             FontSize="24"
                             IsEnabled="{Binding ViewModel.Borrow_Return_ButtonEnabled, Mode=OneWay}" />

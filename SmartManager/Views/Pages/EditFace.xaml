@@ -114,7 +114,7 @@
                 Margin="8,0,0,0"
                 ws:StylusTouchDevice.Simulate="True"
                 PanningMode="VerticalOnly">
-                <StackPanel Margin="0,0,12,0">
+                <StackPanel>
                     <ui:CardExpander IsExpanded="True">
                         <ui:CardExpander.Header>
                             <ui:TextBlock FontSize="24" Text="必要信息" />

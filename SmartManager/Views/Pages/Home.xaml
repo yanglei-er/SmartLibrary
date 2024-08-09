@@ -89,7 +89,6 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <ui:CardAction
                 Grid.Column="0"
@@ -117,36 +116,7 @@
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         FontSize="22"
-                        Text="人脸识别管理" />
-                </Grid>
-            </ui:CardAction>
-            <ui:CardAction
-                Grid.Column="1"
-                Margin="8,0,4,0"
-                Padding="0"
-                VerticalAlignment="Stretch"
-                Command="{Binding ViewModel.CardClickCommand, Mode=OneWay}"
-                CommandParameter="RFID"
-                IsChevronVisible="False">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <ui:Image
-                        Width="60"
-                        Height="60"
-                        Margin="32,0,0,0"
-                        RenderOptions.BitmapScalingMode="HighQuality"
-                        Source="pack://application:,,,/Assets/rfid.png"
-                        Stretch="UniformToFill" />
-                    <ui:TextBlock
-                        Grid.Column="1"
-                        Margin="14"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        FontSize="22"
-                        Text="RFID管理" />
+                        Text="用户管理" />
                 </Grid>
             </ui:CardAction>
             <ui:CardAction

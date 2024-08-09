@@ -14,7 +14,7 @@ namespace SmartLibrary.ViewModels
     public partial class BookshelfViewModel : ObservableObject, INavigationAware
     {
         private readonly INavigationService _navigationService;
-        private readonly Database BooksDb = Database.GetDatabase("books.smartlibrary");
+        private readonly BooksDb BooksDb = BooksDb.GetDatabase("books.smartlibrary");
         private int TotalPageCount;
         private bool needRefresh = false;
 
@@ -68,7 +68,7 @@ namespace SmartLibrary.ViewModels
             _navigationService = navigationService;
             WeakReferenceMessenger.Default.Register<string, string>(this, "Bookshelf", OnMessageReceived);
 
-            if (Database.IsDatabaseConnected("books.smartlibrary"))
+            if (BooksDb.IsDatabaseConnected("books.smartlibrary"))
             {
                 needRefresh = true;
             }

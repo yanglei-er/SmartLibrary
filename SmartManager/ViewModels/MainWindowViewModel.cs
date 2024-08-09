@@ -24,15 +24,9 @@ namespace SmartManager.ViewModels
                     },
                     new NavigationViewItem()
                     {
-                        Content = "人脸",
+                        Content = "用户",
                         Icon = new SymbolIcon { Symbol = SymbolRegular.People24 },
                         TargetPageType = typeof(Views.Pages.FaceManage)
-                    },
-                    new NavigationViewItem()
-                    {
-                        Content = "RFID",
-                        Icon = new SymbolIcon { Symbol = SymbolRegular.ContactCard24 },
-                        TargetPageType = typeof(Views.Pages.RFIDManage)
                     }
                 ];
 

@@ -177,21 +177,29 @@ namespace SmartLibrary.Helpers
                     await bluetoothStream.WriteAsync(Encoding.UTF8.GetBytes(message));
 
                     await Task.Delay(6000);
-                    if (bluetoothStream.CanRead)
+                    try
                     {
-                        byte[] buffer = new byte[1024];
-                        bluetoothStream.Read(buffer, 0, 1024);
-                        string info = Encoding.UTF8.GetString(buffer).Replace("\0", "");
-                        ReceiveEvent(info);
-                        bluetoothStream.Flush();
+                        if (bluetoothStream.CanRead)
+                        {
+                            byte[] buffer = new byte[1024];
+                            bluetoothStream.Read(buffer, 0, 1024);
+                            string info = Encoding.UTF8.GetString(buffer).Replace("\0", "");
+                            ReceiveEvent(info);
+                            bluetoothStream.Flush();
+                        }
+                        else
+                        {
+                            ReceiveEvent("!ERR");
+                        }
                     }
-                    else
+                    catch
                     {
                         ReceiveEvent("!ERR");
                     }
                 }
             }
         }
+
         public static async void SendOnly(string message)
         {
             if (!string.IsNullOrEmpty(message))

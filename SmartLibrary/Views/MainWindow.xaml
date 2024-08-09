@@ -7,9 +7,9 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     Title="智慧图书馆"
-    Width="1180"
+    Width="1244"
     Height="700"
-    MinWidth="1180"
+    MinWidth="1244"
     MinHeight="700"
     d:DataContext="{d:DesignInstance local:MainWindow,
                                      IsDesignTimeCreatable=False}"

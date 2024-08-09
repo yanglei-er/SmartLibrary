@@ -15,7 +15,7 @@ namespace SmartLibrary.ViewModels
         private readonly INavigationService _navigationService;
         private readonly ISnackbarService _snackbarService;
         private readonly IContentDialogService _contentDialogService;
-        private readonly Database BooksDb = Database.GetDatabase("books.smartlibrary");
+        private readonly BooksDb BooksDb = BooksDb.GetDatabase("books.smartlibrary");
 
         [ObservableProperty]
         private bool _autoStart = SettingsHelper.GetBoolean("AutoStart");
@@ -139,7 +139,7 @@ namespace SmartLibrary.ViewModels
             if (parameter == "CleanDatabase")
             {
                 System.Media.SystemSounds.Asterisk.Play();
-                if (Database.IsDatabaseConnected("books.smartlibrary"))
+                if (BooksDb.IsDatabaseConnected("books.smartlibrary"))
                 {
                     ContentDialogResult result = await _contentDialogService.ShowSimpleDialogAsync(new SimpleContentDialogCreateOptions()
                     {

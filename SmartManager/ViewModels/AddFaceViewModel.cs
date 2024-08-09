@@ -19,7 +19,7 @@ namespace SmartManager.ViewModels
         private readonly INavigationService _navigationService;
         private readonly ISnackbarService _snackbarService;
         private readonly IContentDialogService _contentDialogService;
-        private readonly Database FacesDb = Database.GetDatabase("faces.smartmanager");
+        private readonly UsersDb UsersDb = UsersDb.GetDatabase("faces.smartmanager");
         private bool Unknown = true;
         private int TotalCount = 0;
         private bool IsAddingFace = false;
@@ -82,7 +82,7 @@ namespace SmartManager.ViewModels
                 IsOpenCameraButtonEnabled = true;
             }
 
-            TotalCount = FacesDb.GetRecordCount();
+            TotalCount = UsersDb.GetRecordCount();
         }
 
         partial void OnDeviceSelectedIndexChanged(int value)
@@ -189,9 +189,9 @@ namespace SmartManager.ViewModels
 
                             for (int i = 0; i < TotalCount; i++)
                             {
-                                if (FaceRecognition.IsSelf(feature, FaceRecognition.GetFaceFeatureFromString(FacesDb.GetOneFaceFeatureStringByIndex(i))))
+                                if (FaceRecognition.IsSelf(feature, FaceRecognition.GetFaceFeatureFromString(UsersDb.GetOneFaceFeatureStringByIndex(i))))
                                 {
-                                    mask.DrawText(FacesDb.GetOneNameByIndex(i), result.Item3, result.Item4);
+                                    mask.DrawText(UsersDb.GetOneNameByIndex(i), result.Item3, result.Item4);
                                     Unknown = false;
                                     break;
                                 }
@@ -274,7 +274,7 @@ namespace SmartManager.ViewModels
 
         public async void AddFace()
         {
-            if (await FacesDb.ExistsAsync(UID))
+            if (await UsersDb.ExistsAsync(UID))
             {
                 _snackbarService.Show("添加失败", $"用户 {UID} 已存在，无法添加。", ControlAppearance.Caution, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
                 return;
@@ -340,7 +340,7 @@ namespace SmartManager.ViewModels
             int MaxIndex = faceQualitys.IndexOf(faceQualitys.Max());
             string faceFuture = FaceRecognition.GetFaceFeatureString(FaceList[MaxIndex]);
 
-            FacesDb.AddFaceAsync(new(UID, Name, Sex, Age, JoinTime, faceFuture, FaceList[MaxIndex].FaceImage));
+            UsersDb.AddUserAsync(new(UID, Name, Sex, Age, JoinTime, faceFuture, FaceList[MaxIndex].FaceImage));
             TotalCount++;
 
             System.Media.SystemSounds.Asterisk.Play();

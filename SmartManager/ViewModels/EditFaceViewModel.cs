@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using Shared.Helpers;
 using Shared.Models;
 using SmartManager.Helpers;
 using System.Windows.Media.Imaging;
@@ -15,7 +16,7 @@ namespace SmartManager.ViewModels
         private readonly INavigationService _navigationService;
         private readonly ISnackbarService _snackbarService;
         private readonly IContentDialogService _contentDialogService;
-        private readonly Database FacesDb = Database.GetDatabase("faces.smartmanager");
+        private readonly UsersDb UsersDb = UsersDb.GetDatabase("faces.smartmanager");
         private bool _initial = true;
 
         [ObservableProperty]
@@ -53,7 +54,7 @@ namespace SmartManager.ViewModels
 
         private async void OnMessageReceived(object recipient, string message)
         {
-            User user = await FacesDb.GetOneUserAsync(message);
+            User user = await UsersDb.GetOneUserAsync(message);
             UID = user.Uid;
             Name = user.Name;
             Sex = user.Sex;
@@ -80,7 +81,7 @@ namespace SmartManager.ViewModels
             }
             else
             {
-                FacesDb.UpdateFaceAsync(new(UID, Name, Sex, Age, JoinTime, Feature, FaceImage));
+                UsersDb.UpdateFaceAsync(new(UID, Name, Sex, Age, JoinTime, Feature, FaceImage));
 
                 System.Media.SystemSounds.Asterisk.Play();
                 _snackbarService.Show("更改成功", $"用户 {Name} 信息已更改。", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));

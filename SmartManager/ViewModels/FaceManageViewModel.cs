@@ -22,7 +22,7 @@ namespace SmartManager.ViewModels
         private readonly INavigationService _navigationService;
         private readonly ISnackbarService _snackbarService;
         private readonly IContentDialogService _contentDialogService;
-        private Database FacesDb = Database.GetDatabase("faces.smartmanager");
+        private UsersDb FacesDb = UsersDb.GetDatabase("faces.smartmanager");
         private int TotalPageCount;
         private bool needRefresh = false;
 
@@ -85,7 +85,7 @@ namespace SmartManager.ViewModels
 
             WeakReferenceMessenger.Default.Register<string, string>(this, "FaceManage", (_, _) => needRefresh = true);
 
-            if (Database.IsDatabaseConnected("faces.smartmanager"))
+            if (UsersDb.IsDatabaseConnected("faces.smartmanager"))
             {
                 needRefresh = true;
             }
@@ -122,8 +122,8 @@ namespace SmartManager.ViewModels
         [RelayCommand]
         private void RefreshDatabase()
         {
-            FacesDb = Database.GetDatabase("faces.smartmanager");
-            if (Database.IsDatabaseConnected("faces.smartmanager"))
+            FacesDb = UsersDb.GetDatabase("faces.smartmanager");
+            if (UsersDb.IsDatabaseConnected("faces.smartmanager"))
             {
                 MissingDatabase = false;
                 IsTopbarEnabled = true;
@@ -136,7 +136,7 @@ namespace SmartManager.ViewModels
         private async Task CreateDatabase()
         {
             await FacesDb.CreateDataBaseAsync();
-            FacesDb = Database.GetDatabase("faces.smartmanager");
+            FacesDb = UsersDb.GetDatabase("faces.smartmanager");
             MissingDatabase = false;
             IsTopbarEnabled = true;
             RefreshAsync();
@@ -286,7 +286,7 @@ namespace SmartManager.ViewModels
 
         private async void ImportDatabase(List<string> files)
         {
-            if (!Database.IsDatabaseConnected("faces.smartmanager"))
+            if (!UsersDb.IsDatabaseConnected("faces.smartmanager"))
             {
                 await CreateDatabase();
             }
@@ -489,7 +489,7 @@ namespace SmartManager.ViewModels
             {
                 IsBottombarEnabled = false;
 
-                DataGridItems = (await FacesDb.AutoSuggestByStringAsync(value)).DefaultView;
+                DataGridItems = (await FacesDb.AutoSuggestByNameAsync(value)).DefaultView;
 
                 if (DataGridItems.Count > 0)
                 {

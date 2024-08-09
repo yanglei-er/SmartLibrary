@@ -1,6 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
+using Shared.Helpers;
 using SmartLibrary.Helpers;
 using SmartLibrary.Models;
+using System.Drawing;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
 
@@ -8,10 +10,13 @@ namespace SmartLibrary.ViewModels
 {
     public partial class Borrow_Return_BookViewModel : ObservableObject, INavigationAware
     {
-        private readonly Database BooksDb = Database.GetDatabase("books.smartlibrary");
+        private readonly BooksDb BooksDb = BooksDb.GetDatabase("books.smartlibrary");
         private readonly LocalStorage localStorage = new();
         private readonly INavigationService _navigationService;
         private readonly ISnackbarService _snackbarService;
+
+        private readonly UsersDb UsersDb = UsersDb.GetDatabase("faces.smartmanager");
+        private readonly int TotalCount = 0;
 
         [ObservableProperty]
         private bool _isScanButtonEnabled = true;
@@ -88,6 +93,12 @@ namespace SmartLibrary.ViewModels
         [ObservableProperty]
         private bool _isBorrowed = false;
 
+        [ObservableProperty]
+        private List<string> _devicesName = [];
+
+        [ObservableProperty]
+        private bool _isCameraOpened = false;
+
         public Borrow_Return_BookViewModel(INavigationService navigationService, ISnackbarService snackbarService)
         {
             _navigationService = navigationService;
@@ -96,6 +107,13 @@ namespace SmartLibrary.ViewModels
             localStorage.LoadingCompleted += LoadingCompleted;
             BluetoothHelper.ReceiveEvent += OnBluetoothReceived;
             WeakReferenceMessenger.Default.Register<string, string>(this, "Borrow_Return_Book", OnMessageReceived);
+
+            if(UsersDb.IsDatabaseConnected("faces.smartmanager"))
+            {
+                TotalCount = UsersDb.GetRecordCount();
+            }
+           
+            DevicesName = [.. FaceRecognition.SystemCameraDevices.Keys];
         }
 
         public void OnNavigatedTo()
@@ -261,30 +279,99 @@ namespace SmartLibrary.ViewModels
             }
         }
 
-        [RelayCommand]
-        private void BorrowOrReturn()
+        private void PlayVideo(System.Windows.Controls.Image cameraImage)
         {
-            if (IsBorrowed)
+            if (FaceRecognition.SystemCameraDevices.TryGetValue(DevicesName[0], out int videoCapture_id))
             {
-                if (BluetoothHelper.IsBleConnected)
+                FaceRecognition.OpenCamera(videoCapture_id, out string message);
+            }
+
+            int sleepTime = FaceRecognition.SleepTime;
+            string name = string.Empty;
+            int scanTime = 0;
+
+            while (FaceRecognition.IsCameraOpened && scanTime < 10)
+            {
+                using Bitmap image = FaceRecognition.GetImage();
+
+                cameraImage.Dispatcher.Invoke(new Action(() => { cameraImage.Source = ImageProcess.BitmapToBitmapImage(image); }));
+
+                (Bitmap, float[], int, int) result = FaceRecognition.GetMaskAndName(image);
+                float[] feature = result.Item2;
+
+                if (feature.Length != 0)
                 {
-                    _snackbarService.Show("操作成功", $"{BookNameText}已还，小车即将启动，把书送回{ShelfNum}号书架。", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
-                    BluetoothHelper.Send("");
+                    for (int i = 0; i < TotalCount; i++)
+                    {
+                        if (FaceRecognition.IsSelf(feature, FaceRecognition.GetFaceFeatureFromString(UsersDb.GetOneFaceFeatureStringByIndex(i))))
+                        {
+                            name = UsersDb.GetOneNameByIndex(i);
+                            break;
+                        }
+                    }
+                    if (!string.IsNullOrEmpty(name))
+                    {
+                        cameraImage.Dispatcher.BeginInvoke(new Action(() =>
+                        {
+                            Success(name);
+                        }));
+                        return;
+                    }
+                    else
+                    {
+                        scanTime++;
+                    }
+                }
+                Thread.Sleep(sleepTime);
+            }
+            cameraImage.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                Success(name);
+            }));
+        }
+
+        public void BorrowOrReturn(System.Windows.Controls.Image image)
+        {
+            IsCameraOpened = true;
+            Thread video_thread = new(() => PlayVideo(image))
+            {
+                IsBackground = true
+            };
+            video_thread.Start();
+        }
+
+        private void Success(string name)
+        {
+            FaceRecognition.CloseCamera();
+            IsCameraOpened = false;
+            if (!string.IsNullOrEmpty(name))
+            {
+                if (IsBorrowed)
+                {
+                    if (BluetoothHelper.IsBleConnected)
+                    {
+                        _snackbarService.Show("操作成功", $"用户 {name} 已将{BookNameText}还回，小车即将启动，把书送回{ShelfNum}号书架。", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
+                        BluetoothHelper.Send("");
+                    }
+                    else
+                    {
+                        _snackbarService.Show("操作成功", $"用户 {name} 已将{BookNameText}还回，蓝牙未连接，小车无法自动将书送回", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
+                    }
+                    BooksDb.ReturnBookAsync(IsbnText);
                 }
                 else
                 {
-                    _snackbarService.Show("操作成功", $"{BookNameText}已还，蓝牙未连接，小车无法自动将书送回", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
+                    _snackbarService.Show("操作成功", $"用户{name}已将{BookNameText}借出", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
+                    BooksDb.BorrowBookAsync(IsbnText);
                 }
-                BooksDb.ReturnBookAsync(IsbnText);
+                IsBorrowed = !IsBorrowed;
+                WeakReferenceMessenger.Default.Send("refresh", "BookInfo");
+                WeakReferenceMessenger.Default.Send("refresh", "BookManage");
             }
             else
             {
-                _snackbarService.Show("操作成功", $"{BookNameText}已借出", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
-                BooksDb.BorrowBookAsync(IsbnText);
+                _snackbarService.Show("操作失败", "该用户未录入数据库，请先录入人脸数据。", ControlAppearance.Caution, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
             }
-            IsBorrowed = !IsBorrowed;
-            WeakReferenceMessenger.Default.Send("refresh", "BookInfo");
-            WeakReferenceMessenger.Default.Send("refresh", "BookManage");
         }
 
         [RelayCommand]

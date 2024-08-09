@@ -85,12 +85,19 @@ namespace SmartLibrary.Helpers
             {
                 httpClient.DefaultRequestHeaders.Clear();
                 httpClient.DefaultRequestHeaders.Add("User-Agent", GetUserAgent());
-                using HttpResponseMessage result = await httpClient.GetAsync(url);
-                if (result.IsSuccessStatusCode)
+                try
                 {
-                    return await result.Content.ReadAsByteArrayAsync();
+                    using HttpResponseMessage result = await httpClient.GetAsync(url);
+                    if (result.IsSuccessStatusCode)
+                    {
+                        return await result.Content.ReadAsByteArrayAsync();
+                    }
+                    else
+                    {
+                        return [];
+                    }
                 }
-                else
+                catch
                 {
                     return [];
                 }

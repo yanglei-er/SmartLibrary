@@ -20,7 +20,7 @@ namespace SmartLibrary.ViewModels
         private readonly INavigationService _navigationService;
         private readonly ISnackbarService _snackbarService;
         private readonly IContentDialogService _contentDialogService;
-        private Database BooksDb = Database.GetDatabase("books.smartlibrary");
+        private BooksDb BooksDb = BooksDb.GetDatabase("books.smartlibrary");
         private int TotalPageCount;
         private bool needRefresh = false;
 
@@ -83,7 +83,7 @@ namespace SmartLibrary.ViewModels
 
             WeakReferenceMessenger.Default.Register<string, string>(this, "BookManage", (_, _) => needRefresh = true);
 
-            if (Database.IsDatabaseConnected("books.smartlibrary"))
+            if (BooksDb.IsDatabaseConnected("books.smartlibrary"))
             {
                 needRefresh = true;
             }
@@ -120,8 +120,8 @@ namespace SmartLibrary.ViewModels
         [RelayCommand]
         private void RefreshDatabase()
         {
-            BooksDb = Database.GetDatabase("books.smartlibrary");
-            if (Database.IsDatabaseConnected("books.smartlibrary"))
+            BooksDb = BooksDb.GetDatabase("books.smartlibrary");
+            if (BooksDb.IsDatabaseConnected("books.smartlibrary"))
             {
                 MissingDatabase = false;
                 IsTopbarEnabled = true;
@@ -134,7 +134,7 @@ namespace SmartLibrary.ViewModels
         private async Task CreateDatabase()
         {
             await BooksDb.CreateDataBaseAsync();
-            BooksDb = Database.GetDatabase("books.smartlibrary");
+            BooksDb = BooksDb.GetDatabase("books.smartlibrary");
             MissingDatabase = false;
             IsTopbarEnabled = true;
             RefreshAsync();
@@ -285,7 +285,7 @@ namespace SmartLibrary.ViewModels
 
         private async void ImportDatabase(List<string> files)
         {
-            if (!Database.IsDatabaseConnected("books.smartlibrary"))
+            if (!BooksDb.IsDatabaseConnected("books.smartlibrary"))
             {
                 await CreateDatabase();
             }

@@ -7,7 +7,7 @@ namespace SmartLibrary.ViewModels
 {
     public partial class BookInfoViewModel : ObservableObject, INavigationAware
     {
-        private readonly Database BooksDb = Database.GetDatabase("books.smartlibrary");
+        private readonly BooksDb BooksDb = BooksDb.GetDatabase("books.smartlibrary");
         private readonly LocalStorage localStorage = new();
         private readonly INavigationService _navigationService;
         private readonly ISnackbarService _snackbarService;

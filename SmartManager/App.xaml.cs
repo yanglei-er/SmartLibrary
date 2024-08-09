@@ -42,8 +42,6 @@ namespace SmartManager
                     services.AddSingleton<ViewModels.HomeViewModel>();
                     services.AddSingleton<Views.Pages.FaceManage>();
                     services.AddSingleton<ViewModels.FaceManageViewModel>();
-                    services.AddSingleton<Views.Pages.RFIDManage>();
-                    services.AddSingleton<ViewModels.RFIDManageViewModel>();
 
                     services.AddSingleton<Views.Pages.Settings>();
                     services.AddSingleton<ViewModels.SettingsViewModel>();

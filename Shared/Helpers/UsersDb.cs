@@ -6,26 +6,26 @@ using System.Data.SQLite;
 using System.IO;
 using System.Text;
 
-namespace SmartManager.Helpers
+namespace Shared.Helpers
 {
-    public class Database : SQLiteHelper
+    public class UsersDb : SQLiteHelper
     {
-        private static readonly Dictionary<string, Database> DataBaceList = [];
+        private static readonly Dictionary<string, UsersDb> DataBaceList = [];
 
-        private Database(string filename) : base(filename)
+        private UsersDb(string filename) : base(filename)
         {
             DataSource = @".\database\" + filename;
         }
 
-        public static Database GetDatabase(string filename)
+        public static UsersDb GetDatabase(string filename)
         {
-            if (DataBaceList.TryGetValue(filename, out Database? value))
+            if (DataBaceList.TryGetValue(filename, out UsersDb? value))
             {
                 return value;
             }
             else
             {
-                Database db = new(filename);
+                UsersDb db = new(filename);
                 if (File.Exists(@".\database\" + filename))
                 {
                     DataBaceList.Add(filename, db);
@@ -133,7 +133,7 @@ namespace SmartManager.Helpers
             return (string)ExecuteScalar($"SELECT name FROM main ORDER BY uid DESC LIMIT 1 OFFSET {index}");
         }
 
-        public void AddFaceAsync(User user)
+        public void AddUserAsync(User user)
         {
             string sqlStr = $"INSERT INTO main VALUES ({user.Uid},'{user.Name}','{user.Sex}','{user.Age}','{user.JoinTime}','{user.Feature}',@faceImage)";
             byte[] image = ImageProcess.BitmapImageToByte(user.FaceImage);
@@ -166,7 +166,7 @@ namespace SmartManager.Helpers
             await ExecuteNonQueryAsync(sql);
         }
 
-        public async ValueTask<DataTable> AutoSuggestByStringAsync(string str)
+        public async ValueTask<DataTable> AutoSuggestByNameAsync(string str)
         {
             string sql = $"SELECT uid,name,sex,age,joinTime FROM main WHERE name LIKE '%{str}%'";
             return await ExecuteDataTableAsync(sql);

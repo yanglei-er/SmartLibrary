@@ -14,7 +14,7 @@ namespace SmartManager.ViewModels
     {
         private readonly ISnackbarService _snackbarService;
         private readonly IContentDialogService _contentDialogService;
-        private readonly Database FacesDb = Database.GetDatabase("faces.smartmanager");
+        private readonly UsersDb FacesDb = UsersDb.GetDatabase("faces.smartmanager");
 
         #region FileOccupancy
         [ObservableProperty]
@@ -82,7 +82,7 @@ namespace SmartManager.ViewModels
             if (parameter == "CleanDatabase")
             {
                 System.Media.SystemSounds.Asterisk.Play();
-                if (Database.IsDatabaseConnected("faces.smartmanager"))
+                if (UsersDb.IsDatabaseConnected("faces.smartmanager"))
                 {
                     ContentDialogResult result = await _contentDialogService.ShowSimpleDialogAsync(new SimpleContentDialogCreateOptions()
                     {

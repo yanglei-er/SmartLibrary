@@ -102,7 +102,7 @@
                                     Grid.Column="0"
                                     Margin="8,0,0,0"
                                     FontSize="16"
-                                    Text="人脸数据库" />
+                                    Text="用户数据库" />
                                 <TextBlock
                                     Margin="0,0,8,0"
                                     HorizontalAlignment="Right"

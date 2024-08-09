@@ -33,5 +33,10 @@ namespace SmartLibrary.Views.Pages
                 }
             }
         }
+
+        private void BorrowOrReturn_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.BorrowOrReturn(CameraImage);
+        }
     }
 }

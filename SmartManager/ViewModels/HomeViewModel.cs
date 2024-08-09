@@ -21,10 +21,6 @@ namespace SmartManager.ViewModels
             {
                 _navigationService.Navigate(typeof(FaceManage));
             }
-            else if (parameter == "RFID")
-            {
-                _navigationService.Navigate(typeof(RFIDManage));
-            }
             else
             {
                 _navigationService.Navigate(typeof(Settings));
