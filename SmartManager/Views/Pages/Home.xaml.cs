@@ -1,5 +1,5 @@
 ﻿using SmartManager.ViewModels;
-using Wpf.Ui.Controls;
+using Wpf.Ui.Abstractions.Controls;
 
 namespace SmartManager.Views.Pages
 {

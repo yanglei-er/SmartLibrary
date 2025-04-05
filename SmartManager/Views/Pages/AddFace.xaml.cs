@@ -5,7 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using Wpf.Ui.Controls;
+using Wpf.Ui.Abstractions.Controls;
 
 namespace SmartManager.Views.Pages
 {
@@ -66,17 +66,17 @@ namespace SmartManager.Views.Pages
 
         private void DrawFaceRectangle_Unchecked(object sender, RoutedEventArgs e)
         {
-            if(!FaceComparison_CheckBox.IsChecked ?? false)
+            if (!FaceComparison_CheckBox.IsChecked ?? false)
             {
                 BitmapSource mask = BitmapImage.Create(2, 2, 96, 96, PixelFormats.Indexed1, new BitmapPalette(new List<Color> { Colors.Transparent }), new byte[] { 0, 0, 0, 0 }, 1);
                 MaskImage.Source = mask;
             }
-            
+
         }
 
         private void FaceComparison_Unchecked(object sender, RoutedEventArgs e)
         {
-            if(!DrawFaceRectangle_CheckBox.IsChecked ?? false)
+            if (!DrawFaceRectangle_CheckBox.IsChecked ?? false)
             {
                 BitmapSource mask = BitmapImage.Create(2, 2, 96, 96, PixelFormats.Indexed1, new BitmapPalette(new List<Color> { Colors.Transparent }), new byte[] { 0, 0, 0, 0 }, 1);
                 MaskImage.Source = mask;

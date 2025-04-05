@@ -1,6 +1,6 @@
 ﻿using SmartLibrary.ViewModels;
 using System.Windows.Input;
-using Wpf.Ui.Controls;
+using Wpf.Ui.Abstractions.Controls;
 
 namespace SmartLibrary.Views.Pages
 {

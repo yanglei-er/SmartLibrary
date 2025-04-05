@@ -252,9 +252,6 @@
             <ui:DataGrid.RowStyle>
                 <Style BasedOn="{StaticResource DefaultDataGridRowStyle}" TargetType="DataGridRow">
                     <Style.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Foreground" Value="{DynamicResource DataGridRowIsMouseOverForeground}" />
-                        </Trigger>
                         <Trigger Property="IsSelected" Value="True">
                             <Setter Property="Foreground" Value="{StaticResource AccentTextFillColorTertiaryBrush}" />
                         </Trigger>

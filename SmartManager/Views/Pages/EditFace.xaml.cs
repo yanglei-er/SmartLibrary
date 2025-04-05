@@ -1,6 +1,6 @@
 ﻿using SmartManager.ViewModels;
 using System.Windows.Input;
-using Wpf.Ui.Controls;
+using Wpf.Ui.Abstractions.Controls;
 
 namespace SmartManager.Views.Pages
 {

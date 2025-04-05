@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using SmartLibrary.Helpers;
 using Wpf.Ui;
+using Wpf.Ui.Abstractions.Controls;
 using Wpf.Ui.Controls;
 
 namespace SmartLibrary.ViewModels
@@ -97,7 +98,7 @@ namespace SmartLibrary.ViewModels
             WeakReferenceMessenger.Default.Register<string, string>(this, "BookInfo", OnMessageReceived);
         }
 
-        public void OnNavigatedTo()
+        public Task OnNavigatedToAsync()
         {
             if (BluetoothHelper.IsBleConnected)
             {
@@ -107,11 +108,12 @@ namespace SmartLibrary.ViewModels
             {
                 IsScanButtonVisible = false;
             }
+            return Task.CompletedTask;
         }
 
-        public void OnNavigatedFrom()
+        public Task OnNavigatedFromAsync()
         {
-
+            return Task.CompletedTask;
         }
 
         private async void OnMessageReceived(object recipient, string message)

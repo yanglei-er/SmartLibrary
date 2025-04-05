@@ -385,7 +385,7 @@
                                     FontSize="13"
                                     Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
                                     Style="{StaticResource SelectableTextBlockStyle}"
-                                    Text="©2024 赵杨磊.All Rights Reserved." />
+                                    Text="©2025 赵杨磊.All Rights Reserved." />
                             </StackPanel>
                             <TextBox
                                 x:Name="AppVersion"
@@ -526,14 +526,15 @@
                             Background="Transparent"
                             BorderThickness="0,1,0,0"
                             CornerRadius="0"
-                            NavigateUri="https://space.bilibili.com/620100162"
-                            ToolTipService.ToolTip="https://space.bilibili.com/620100162">
+                            MouseRightButtonUp="CopyMailAddress"
+                            NavigateUri="mailto:zhao.yanglei@foxmail.com"
+                            ToolTipService.ToolTip="zhao.yanglei@foxmail.com">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Column="0" Text="联系我们 (Bilibili)" />
+                                <TextBlock Grid.Column="0" Text="联系我们 (右键复制邮箱地址)" />
                                 <ui:SymbolIcon Grid.Column="1" Symbol="Link24" />
                             </Grid>
                         </ui:Anchor>

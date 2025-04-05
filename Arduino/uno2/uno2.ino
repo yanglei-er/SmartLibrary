@@ -103,7 +103,15 @@ void loop()
         {
           nuidPICC[i] = mfrc522.uid.uidByte[i];
         }
-        byte buffer[18];、2
+        byte buffer[18];
+        byte size = sizeof(buffer);
+        MFRC522::StatusCode status;
+        status = (MFRC522::StatusCode)mfrc522.MIFARE_Read(pageAddr, buffer, &size);
+        if(status == MFRC522::STATUS_OK)
+        {
+          //检测卡号
+          check_Num(buffer[0]-48);
+          mfrc522.PICC_HaltA();
           mfrc522.PCD_StopCrypto1();
         }
       }

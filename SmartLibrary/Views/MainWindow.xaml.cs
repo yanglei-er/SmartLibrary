@@ -67,7 +67,7 @@ namespace SmartLibrary.Views
         {
             if (msg == Win32Helper.WM_COPYDATA)
             {
-                object? o = Marshal.PtrToStructure(lparam, typeof(Win32Helper.COPYDATASTRUCT));
+                object? o = Marshal.PtrToStructure<Win32Helper.COPYDATASTRUCT>(lparam);
                 if (o != null)
                 {
                     Win32Helper.COPYDATASTRUCT cds = (Win32Helper.COPYDATASTRUCT)o;

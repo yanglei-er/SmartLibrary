@@ -8,6 +8,7 @@ using SmartManager.Helpers;
 using System.Collections.ObjectModel;
 using System.Drawing;
 using Wpf.Ui;
+using Wpf.Ui.Abstractions.Controls;
 using Wpf.Ui.Controls;
 using Wpf.Ui.Extensions;
 using Yitter.IdGenerator;
@@ -105,14 +106,15 @@ namespace SmartManager.ViewModels
             DevicesName = [.. FaceRecognition.SystemCameraDevices.Keys];
         }
 
-        public void OnNavigatedTo()
+        public Task OnNavigatedToAsync()
         {
-
+            return Task.CompletedTask;
         }
 
-        public void OnNavigatedFrom()
+        public Task OnNavigatedFromAsync()
         {
             FaceRecognition.CloseCamera();
+            return Task.CompletedTask;
         }
 
         public void OpenCamera(System.Windows.Controls.Image image, System.Windows.Controls.Image maskImage)

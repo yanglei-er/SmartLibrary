@@ -3,7 +3,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Windows;
-using Wpf.Ui.Controls;
+using System.Windows.Input;
+using Wpf.Ui.Abstractions.Controls;
 namespace SmartManager.Views.Pages
 {
     public partial class Settings : INavigableView<SettingsViewModel>
@@ -43,6 +44,11 @@ namespace SmartManager.Views.Pages
             string path = Environment.CurrentDirectory + @".\database\";
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
             Process.Start("explorer.exe", path);
+        }
+
+        private void CopyMailAddress(object sender, MouseButtonEventArgs e)
+        {
+            ViewModel.CopyMailAddress();
         }
     }
 }

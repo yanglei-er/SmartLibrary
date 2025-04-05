@@ -10,6 +10,7 @@ using System.Security.Cryptography;
 using System.Windows;
 using System.Windows.Threading;
 using Wpf.Ui;
+using Wpf.Ui.DependencyInjection;
 using Yitter.IdGenerator;
 
 namespace SmartManager
@@ -26,6 +27,8 @@ namespace SmartManager
             .ConfigureServices(
                 (context, services) =>
                 {
+                    services.AddNavigationViewPageProvider();
+
                     // App Host
                     services.AddHostedService<ApplicationHostService>();
 

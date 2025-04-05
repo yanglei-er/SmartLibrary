@@ -1,5 +1,5 @@
 ﻿using SmartLibrary.ViewModels;
-using Wpf.Ui.Controls;
+using Wpf.Ui.Abstractions.Controls;
 
 namespace SmartLibrary.Views.Pages
 {

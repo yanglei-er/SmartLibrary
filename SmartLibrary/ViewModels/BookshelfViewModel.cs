@@ -7,7 +7,7 @@ using SmartLibrary.Views.Pages;
 using System.Collections.ObjectModel;
 using System.Data;
 using Wpf.Ui;
-using Wpf.Ui.Controls;
+using Wpf.Ui.Abstractions.Controls;
 
 namespace SmartLibrary.ViewModels
 {
@@ -91,7 +91,7 @@ namespace SmartLibrary.ViewModels
             needRefresh = true;
         }
 
-        public void OnNavigatedTo()
+        public Task OnNavigatedToAsync()
         {
             if (needRefresh)
             {
@@ -106,11 +106,12 @@ namespace SmartLibrary.ViewModels
                 }
                 needRefresh = false;
             }
+            return Task.CompletedTask;
         }
 
-        public void OnNavigatedFrom()
+        public Task OnNavigatedFromAsync()
         {
-
+            return Task.CompletedTask;
         }
 
         private async void RefreshAsync()

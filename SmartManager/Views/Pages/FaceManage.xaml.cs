@@ -4,6 +4,7 @@ using System.Data;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
+using Wpf.Ui.Abstractions.Controls;
 using Wpf.Ui.Controls;
 
 namespace SmartManager.Views.Pages

@@ -46,7 +46,7 @@
                         FontSize="48"
                         FontTypography="TitleLarge"
                         Foreground="#FFFFFF"
-                        Text="未来书海领航员">
+                        Text="智慧图书馆">
                         <ui:TextBlock.Effect>
                             <DropShadowEffect
                                 BlurRadius="12"

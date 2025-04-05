@@ -4,6 +4,7 @@ using SmartLibrary.Helpers;
 using SmartLibrary.Models;
 using System.Drawing;
 using Wpf.Ui;
+using Wpf.Ui.Abstractions.Controls;
 using Wpf.Ui.Controls;
 
 namespace SmartLibrary.ViewModels
@@ -108,15 +109,15 @@ namespace SmartLibrary.ViewModels
             BluetoothHelper.ReceiveEvent += OnBluetoothReceived;
             WeakReferenceMessenger.Default.Register<string, string>(this, "Borrow_Return_Book", OnMessageReceived);
 
-            if(UsersDb.IsDatabaseConnected("faces.smartmanager"))
+            if (UsersDb.IsDatabaseConnected("faces.smartmanager"))
             {
                 TotalCount = UsersDb.GetRecordCount();
             }
-           
+
             DevicesName = [.. FaceRecognition.SystemCameraDevices.Keys];
         }
 
-        public void OnNavigatedTo()
+        public Task OnNavigatedToAsync()
         {
             if (BluetoothHelper.IsBleConnected)
             {
@@ -126,11 +127,12 @@ namespace SmartLibrary.ViewModels
             {
                 IsScanButtonVisible = false;
             }
+            return Task.CompletedTask;
         }
 
-        public void OnNavigatedFrom()
+        public Task OnNavigatedFromAsync()
         {
-
+            return Task.CompletedTask;
         }
 
         private async void OnMessageReceived(object recipient, string message)

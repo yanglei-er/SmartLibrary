@@ -2,8 +2,10 @@
 using CommunityToolkit.Mvvm.Input;
 using Shared.Helpers;
 using SmartManager.Helpers;
+using System.Windows;
 using System.Windows.Media;
 using Wpf.Ui;
+using Wpf.Ui.Abstractions.Controls;
 using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
 using Wpf.Ui.Extensions;
@@ -57,14 +59,15 @@ namespace SmartManager.ViewModels
             _contentDialogService = contentDialogService;
         }
 
-        public void OnNavigatedTo()
+        public Task OnNavigatedToAsync()
         {
             FileOccupancyExpander_Expanded();
+            return Task.CompletedTask;
         }
 
-        public void OnNavigatedFrom()
+        public Task OnNavigatedFromAsync()
         {
-
+            return Task.CompletedTask;
         }
 
         public void FileOccupancyExpander_Expanded()
@@ -213,6 +216,20 @@ namespace SmartManager.ViewModels
             else
             {
                 SettingsHelper.SetConfig("Backdrop", "Tabbed");
+            }
+        }
+
+        public void CopyMailAddress()
+        {
+            try
+            {
+                Clipboard.Clear();
+                Clipboard.SetText("zhao.yanglei@foxmail.com");
+                _snackbarService.Show("复制成功", "邮箱地址已复制到剪贴板", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
+            }
+            catch (Exception e)
+            {
+                _snackbarService.Show("复制失败", $"{e.Message}", ControlAppearance.Caution, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
             }
         }
     }

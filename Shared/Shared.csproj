@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-	<TargetFramework>net8.0-windows10.0.22621.0</TargetFramework>
+	<TargetFramework>net9.0-windows10.0.26100.0</TargetFramework>
 	<SupportedOSPlatformVersion>10.0.18362.0</SupportedOSPlatformVersion>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
@@ -11,9 +11,9 @@
 
 	<PropertyGroup>
 		<Description>Smart library共享资源库</Description>
-		<Copyright>Copyright © 2024 赵杨磊.All Rights Reserved.</Copyright>
-		<AssemblyVersion>0.5.6.24220</AssemblyVersion>
-		<FileVersion>0.5.6.24220</FileVersion>
+		<Copyright>Copyright © 2025 赵杨磊.All Rights Reserved.</Copyright>
+		<AssemblyVersion>0.6.0.25095</AssemblyVersion>
+		<FileVersion>0.6.0.25095</FileVersion>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 
@@ -36,15 +36,16 @@
 	</ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="EleCho.WpfSuite" Version="0.6.3" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageReference Include="EleCho.WpfSuite" Version="0.10.7" />
     <PackageReference Include="Hompus.VideoInputDevices" Version="0.5.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.3" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="OpenCvSharp4" Version="4.10.0.20240616" />
-    <PackageReference Include="OpenCvSharp4.runtime.win" Version="4.10.0.20240616" />
-    <PackageReference Include="OpenCvSharp4.WpfExtensions" Version="4.10.0.20240616" />
-    <PackageReference Include="System.Data.SQLite" Version="1.0.118" />
-    <PackageReference Include="System.Drawing.Common" Version="8.0.7" />
+    <PackageReference Include="OpenCvSharp4" Version="4.10.0.20241108" />
+    <PackageReference Include="OpenCvSharp4.runtime.win" Version="4.10.0.20241108" />
+    <PackageReference Include="OpenCvSharp4.WpfExtensions" Version="4.10.0.20241108" />
+    <PackageReference Include="System.Data.SQLite" Version="1.0.119" />
+    <PackageReference Include="System.Drawing.Common" Version="9.0.3" />
     <PackageReference Include="ViewFaceCore" Version="0.3.8" />
     <PackageReference Include="ViewFaceCore.Extension.SystemDrawing" Version="0.3.7" />
     <PackageReference Include="ViewFaceCore.model.face_detector" Version="6.0.7" />
@@ -52,7 +53,7 @@
     <PackageReference Include="ViewFaceCore.model.face_recognizer" Version="6.0.7" />
     <PackageReference Include="ViewFaceCore.model.quality_lbn" Version="6.0.7" />
     <PackageReference Include="ViewFaceCore.runtime.win.x64" Version="6.0.7" />
-    <PackageReference Include="WPF-UI" Version="3.0.5" />
+    <PackageReference Include="WPF-UI" Version="4.0.2" />
   </ItemGroup>
 
 </Project>

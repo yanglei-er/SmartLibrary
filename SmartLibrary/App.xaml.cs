@@ -8,7 +8,7 @@ using SmartLibrary.Services;
 using System.Diagnostics;
 using System.Windows.Threading;
 using Wpf.Ui;
-
+using Wpf.Ui.DependencyInjection;
 namespace SmartLibrary
 {
     public partial class App : Application
@@ -23,6 +23,8 @@ namespace SmartLibrary
             .ConfigureServices(
                 (context, services) =>
                 {
+                    services.AddNavigationViewPageProvider();
+
                     // App Host
                     services.AddHostedService<ApplicationHostService>();
 

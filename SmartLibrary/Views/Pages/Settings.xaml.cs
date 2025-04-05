@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Windows.Input;
-using Wpf.Ui.Controls;
+using Wpf.Ui.Abstractions.Controls;
 
 namespace SmartLibrary.Views.Pages
 {
@@ -66,6 +66,11 @@ namespace SmartLibrary.Views.Pages
             string path = Environment.CurrentDirectory + @".\temp\";
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
             Process.Start("explorer.exe", path);
+        }
+
+        private void CopyMailAddress(object sender, MouseButtonEventArgs e)
+        {
+            ViewModel.CopyMailAddress();
         }
     }
 }

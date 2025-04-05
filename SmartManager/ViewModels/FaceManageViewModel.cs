@@ -12,6 +12,7 @@ using System.Collections.ObjectModel;
 using System.Data;
 using System.IO;
 using Wpf.Ui;
+using Wpf.Ui.Abstractions.Controls;
 using Wpf.Ui.Controls;
 using Wpf.Ui.Extensions;
 
@@ -97,7 +98,7 @@ namespace SmartManager.ViewModels
             }
         }
 
-        public void OnNavigatedTo()
+        public Task OnNavigatedToAsync()
         {
             if (needRefresh)
             {
@@ -112,11 +113,12 @@ namespace SmartManager.ViewModels
                 }
                 needRefresh = false;
             }
+            return Task.CompletedTask;
         }
 
-        public void OnNavigatedFrom()
+        public Task OnNavigatedFromAsync()
         {
-
+            return Task.CompletedTask;
         }
 
         [RelayCommand]
