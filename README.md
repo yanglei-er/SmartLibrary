@@ -19,13 +19,14 @@
 我们的设计目标是图书馆采用图书馆智慧机器人后，实现图书管理智慧化，用机器人代替人工，实现图书分拣、搬运、查重、贴码、上下架等日常操作，简化找书、借书、还书的环节，将人员从繁重传统操作中解放出来，为读者提供更加优质、便捷的图书阅读服务。
 
 ## 功能介绍
-我们采用 .Net8和 WPF 框架设计了智慧图书馆软件，用户可在软件上快速浏览或查找图书馆所有藏书详细信息，包括所在书架号、借阅状态、出版信息等。如要找书，通过软件，小车可直接引导顾客到达图书对应书架，缩短在书海中徘徊寻找时间。同时，借书、还书功能仅需通过扫描图书条形码即可完成。还书后，小车可自动将书送到对应书架前的收集框中，管理员仅需将框中的书放入书架即可。同时，该软件还具备图书管理功能，图书管理员可通过程序向本地数据库进行增、删、查、改等操作，界面美观，操作简单；以及添加图书时，可通过书籍 ISBN 号，进行图书数据联网查询，免去了大量图书信息手动录入的时间。
+我们采用 .Net 9和 WPF 框架设计了智慧图书馆软件，用户可在软件上快速浏览或查找图书馆所有藏书详细信息，包括所在书架号、借阅状态、出版信息等。如要找书，通过软件，小车可直接引导顾客到达图书对应书架，缩短在书海中徘徊寻找时间。同时，借书、还书功能仅需通过扫描图书条形码即可完成。还书后，小车可自动将书送到对应书架前的收集框中，管理员仅需将框中的书放入书架即可。同时，该软件还具备图书管理功能，图书管理员可通过程序向本地数据库进行增、删、查、改等操作，界面美观，操作简单；以及添加图书时，可通过书籍 ISBN 号，进行图书数据联网查询，免去了大量图书信息手动录入的时间。
 另外，我们还使用 C++语言编写了小车的 Arduino 主控板控制程序，通过红外巡线模块使小车按照指定路线前进；通过 PID 算法控制小车电机，使小车能够平稳前行和转弯；采用 RFID 识别技术，判断是否到达指定书架，并通过蓝牙通信与电脑交换数据，自主设计了通信数据结构，达到控制小车执行多种任务的目的，实现小车与电脑协同工作。
 
-## 🧩 截图
+## 🖼 截图
 <img src="./docs/screenshot.webp"/>
 <p align="center">主界面</p>
 <img src="./docs/screenshot1.webp"/>
+
 <p align="center">书架界面</p>
 <img src="./docs/screenshot2.webp"/>
 <p align="center">管理界面</p>
@@ -56,6 +57,18 @@
 -   [WPF UI](https://github.com/lepoco/wpfui)
 -   [32feet.NET](https://github.com/inthehand/32feet)
 -   [.NET Community Toolkit](https://github.com/CommunityToolkit/dotnet)
+
+## 💡技术分享
+- [可复制的TextBlock](Shared/Style/SelectableTextBlock.xaml)
+- [TextBox数字限定](Shared/Extensions/TextBoxAttachedProperties.cs)
+- [DataGrid分页](SmartLibrary/ViewModels/BookManageViewModel.cs)
+- [图像等比例缩放](Shared/Helpers/ImageProcess.cs)
+- [图片队列下载](SmartLibrary/Helpers/ImageQueue.cs)
+- [文件大小计算](Shared/Helpers/FileOccupancy.cs)
+- [本地人脸识别](Shared/Helpers/FaceRecognition.cs)
+- [无需管理员设置开机自启](SmartLibrary/Helpers/Utilities.cs)
+- [互斥锁实现程序单例及后台激活](SmartLibrary/App.xaml.cs)
+- [蓝牙通信](SmartLibrary/Helpers/Bluetooth.cs)
 
 ## 图标
 <a href="https://www.flaticon.com/free-icons/reading" title="reading icons">Reading icons created by Freepik - Flaticon</a>
