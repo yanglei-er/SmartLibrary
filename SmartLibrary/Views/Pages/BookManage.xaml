@@ -249,15 +249,6 @@
                     <Setter Property="HorizontalContentAlignment" Value="Center" />
                 </Style>
             </ui:DataGrid.ColumnHeaderStyle>
-            <ui:DataGrid.RowStyle>
-                <Style BasedOn="{StaticResource DefaultDataGridRowStyle}" TargetType="DataGridRow">
-                    <Style.Triggers>
-                        <Trigger Property="IsSelected" Value="True">
-                            <Setter Property="Foreground" Value="{StaticResource AccentTextFillColorTertiaryBrush}" />
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-            </ui:DataGrid.RowStyle>
             <ui:DataGrid.Columns>
                 <DataGridTemplateColumn
                     Width="130"
@@ -278,23 +269,24 @@
                 <DataGridTextColumn
                     Width="2*"
                     Binding="{Binding bookName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                    ElementStyle="{StaticResource LeftAlignmentStyle}"
+                    ElementStyle="{StaticResource CenterAlignmentStyle}"
                     Header="书名" />
                 <DataGridTextColumn
                     Width="*"
                     Binding="{Binding author, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                    ElementStyle="{StaticResource LeftAlignmentStyle}"
+                    ElementStyle="{StaticResource CenterAlignmentStyle}"
                     Header="作者" />
                 <DataGridTextColumn
-                    Width="60"
+                    Width="80"
                     Binding="{Binding shelfNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                     CanUserResize="False"
                     ElementStyle="{StaticResource CenterAlignmentStyle}"
                     Header="书架号" />
                 <DataGridTemplateColumn
-                    Width="70"
+                    Width="95"
                     CanUserResize="False"
-                    Header="是否借出">
+                    Header="是否借出"
+                    SortMemberPath="isBorrowed">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <CheckBox

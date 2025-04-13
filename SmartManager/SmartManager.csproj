@@ -15,8 +15,8 @@
 		<ApplicationIcon>applicationIcon.ico</ApplicationIcon>
 		<Description>Smart Manage</Description>
 		<Copyright>Copyright © 2025 赵杨磊.All Rights Reserved.</Copyright>
-		<AssemblyVersion>0.6.0.25095</AssemblyVersion>
-		<FileVersion>0.6.0.25095</FileVersion>
+		<AssemblyVersion>0.6.1.25103</AssemblyVersion>
+		<FileVersion>0.6.1.25103</FileVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -44,7 +44,7 @@
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="EleCho.WpfSuite" Version="0.10.7" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.3" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.4" />
     <PackageReference Include="WPF-UI" Version="4.0.2" />
     <PackageReference Include="WPF-UI.DependencyInjection" Version="4.0.2" />
     <PackageReference Include="Yitter.IdGenerator" Version="1.0.14" />
