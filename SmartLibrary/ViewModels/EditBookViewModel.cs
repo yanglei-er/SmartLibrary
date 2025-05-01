@@ -19,6 +19,9 @@ namespace SmartLibrary.ViewModels
         private readonly LocalStorage localStorage = new();
 
         [ObservableProperty]
+        private bool _isFlyoutOpen = false;
+
+        [ObservableProperty]
         private bool _isPictureLoading = false;
 
         [ObservableProperty]
@@ -121,8 +124,15 @@ namespace SmartLibrary.ViewModels
         }
 
         [RelayCommand]
-        private async Task OnSelectPictureButtonClickAsync()
+        private void ShowFlyout()
         {
+            IsFlyoutOpen = true;
+        }
+
+        [RelayCommand]
+        private void OnSelectPictureButtonClick()
+        {
+            IsFlyoutOpen = false;
             OpenFileDialog openFileDialog = new()
             {
                 Title = "选择图书封面图片",
@@ -137,24 +147,15 @@ namespace SmartLibrary.ViewModels
                     IsEditButtonEnabled = true;
                 }
             }
-            else
-            {
-                if (Picture != ResourceManager.EmptyImage)
-                {
-                    if (await _contentDialogService.ShowSimpleDialogAsync(new SimpleContentDialogCreateOptions()
-                    {
-                        Title = "更改书籍信息",
-                        Content = "是否将书籍图片设为空？",
-                        PrimaryButtonText = "是",
-                        CloseButtonText = "否",
-                    }) == ContentDialogResult.Primary)
-                    {
-                        Picture = ResourceManager.EmptyImage;
-                        PictureUrl = string.Empty;
-                        IsEditButtonEnabled = true;
-                    }
-                }
-            }
+        }
+
+        [RelayCommand]
+        private void OnCleanPictureButtonClick()
+        {
+            IsFlyoutOpen = false;
+            PictureUrl = string.Empty;
+            Picture = ResourceManager.EmptyImage;
+            IsEditButtonEnabled = true;
         }
 
         [RelayCommand]

@@ -160,11 +160,23 @@
                                 RenderOptions.BitmapScalingMode="HighQuality"
                                 Source="{Binding ViewModel.Picture, Converter={StaticResource StringToImageSourceConverter}, Mode=OneWay}"
                                 Stretch="UniformToFill" />
+                            <ui:Flyout IsOpen="{Binding ViewModel.IsFlyoutOpen, Mode=TwoWay}" Placement="Mouse">
+                                <StackPanel Orientation="Horizontal">
+                                    <ui:Button
+                                        Margin="4"
+                                        Command="{Binding ViewModel.SelectPictureButtonClickCommand, Mode=OneWay}"
+                                        Content="选择图片" />
+                                    <ui:Button
+                                        Margin="4"
+                                        Command="{Binding ViewModel.CleanPictureButtonClickCommand, Mode=OneWay}"
+                                        Content="清除图片" />
+                                </StackPanel>
+                            </ui:Flyout>
                             <ui:Button
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch"
                                 Background="Transparent"
-                                Command="{Binding ViewModel.SelectPictureButtonClickCommand, Mode=OneWay}"
+                                Command="{Binding ViewModel.ShowFlyoutCommand, Mode=OneWay}"
                                 Cursor="Hand"
                                 IsEnabled="{Binding ViewModel.IsPictureLoading, Converter={StaticResource InverseBooleanConverter}, Mode=OneWay}" />
                         </Grid>
