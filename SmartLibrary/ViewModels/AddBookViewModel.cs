@@ -223,7 +223,7 @@ namespace SmartLibrary.ViewModels
                         IsLoading = true;
                         IsbnBoxEnabled = false;
                         IsError = false;
-                        string result = await network.GetAsync($"http://api.tanshuapi.com/api/isbn/v1/index?key={APIKey}&isbn={IsbnText}");
+                        string result = await network.GetAsync($"https://api.tanshuapi.com/api/isbn_base/v1/index?key={APIKey}&isbn={IsbnText}");
 
                         if (result.StartsWith("Error"))
                         {
@@ -246,11 +246,11 @@ namespace SmartLibrary.ViewModels
                                 PressDate = dataElement.GetProperty("pubdate").GetString() ?? string.Empty;
                                 PressPlace = dataElement.GetProperty("pubplace").GetString() ?? string.Empty;
                                 Price = dataElement.GetProperty("price").GetString() ?? string.Empty;
-                                ClcName = dataElement.GetProperty("class").GetString() ?? string.Empty;
-                                Keyword = dataElement.GetProperty("keyword").GetString() ?? string.Empty;
+                                ClcName = string.Empty;
+                                Keyword = string.Empty;
                                 Pages = dataElement.GetProperty("pages").GetString() ?? string.Empty;
                                 BookDesc = dataElement.GetProperty("summary").GetString() ?? string.Empty;
-                                Language = dataElement.GetProperty("language").GetString() ?? string.Empty;
+                                Language = string.Empty;
                                 PictureUrl = dataElement.GetProperty("img").GetString() ?? string.Empty;
                                 Picture = string.Empty;
                                 IsPictureLoading = true;

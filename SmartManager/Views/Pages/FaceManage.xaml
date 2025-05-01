@@ -249,15 +249,6 @@
                     <Setter Property="HorizontalContentAlignment" Value="Center" />
                 </Style>
             </ui:DataGrid.ColumnHeaderStyle>
-            <ui:DataGrid.RowStyle>
-                <Style BasedOn="{StaticResource DefaultDataGridRowStyle}" TargetType="DataGridRow">
-                    <Style.Triggers>
-                        <Trigger Property="IsSelected" Value="True">
-                            <Setter Property="Foreground" Value="{StaticResource AccentTextFillColorTertiaryBrush}" />
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-            </ui:DataGrid.RowStyle>
             <ui:DataGrid.Columns>
                 <DataGridTextColumn
                     Width="200"

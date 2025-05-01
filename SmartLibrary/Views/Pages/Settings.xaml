@@ -568,8 +568,8 @@
                                     Width="108"
                                     BorderThickness="0"
                                     Content="打开网址"
-                                    NavigateUri="https://www.tanshuapi.com/market/detail-78"
-                                    ToolTipService.ToolTip="https://www.tanshuapi.com/market/detail-78" />
+                                    NavigateUri="https://www.tanshuapi.com/market/detail-134"
+                                    ToolTipService.ToolTip="https://www.tanshuapi.com/market/detail-134" />
                             </StackPanel>
                         </Grid>
                     </ui:Card>

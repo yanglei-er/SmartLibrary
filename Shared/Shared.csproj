@@ -7,13 +7,14 @@
     <UseWPF>true</UseWPF>
     <ImplicitUsings>enable</ImplicitUsings>
     <Platforms>x64</Platforms>
+	<BaseOutputPath>../bin</BaseOutputPath>
   </PropertyGroup>
 
 	<PropertyGroup>
 		<Description>Smart library共享资源库</Description>
 		<Copyright>Copyright © 2025 赵杨磊.All Rights Reserved.</Copyright>
-		<AssemblyVersion>0.6.1.25103</AssemblyVersion>
-		<FileVersion>0.6.1.25103</FileVersion>
+		<AssemblyVersion>0.6.2.25121</AssemblyVersion>
+		<FileVersion>0.6.2.25121</FileVersion>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 
@@ -37,7 +38,7 @@
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-    <PackageReference Include="EleCho.WpfSuite" Version="0.10.7" />
+    <PackageReference Include="EleCho.WpfSuite" Version="0.10.12" />
     <PackageReference Include="Hompus.VideoInputDevices" Version="0.5.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.4" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
