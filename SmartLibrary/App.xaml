@@ -15,6 +15,7 @@
                 <ResourceDictionary Source="/Shared;Component/Style/MyButton.xaml" />
                 <ResourceDictionary Source="/Shared;Component/Style/SelectableTextBlock.xaml" />
                 <ResourceDictionary Source="/Shared;Component/Style/MyScrollBar.xaml" />
+                <ResourceDictionary Source="/Shared;component/Style/MyCheckBox.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <converters:StringToImageSourceConverter x:Key="StringToImageSourceConverter" />
             <converters:InverseBooleanConverter x:Key="InverseBooleanConverter" />

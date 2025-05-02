@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
+using Newtonsoft.Json.Linq;
 using Shared.Appearance;
 using Shared.Helpers;
 using SmartLibrary.Helpers;
@@ -18,6 +19,7 @@ namespace SmartLibrary.ViewModels
         private readonly ISnackbarService _snackbarService;
         private readonly IContentDialogService _contentDialogService;
         private readonly BooksDb BooksDb = BooksDb.GetDatabase("books.smartlibrary");
+        private readonly UsersDb UsersDb = UsersDb.GetDatabase("users.smartmanager");
 
         [ObservableProperty]
         private bool _autoStart = SettingsHelper.GetBoolean("AutoStart");
@@ -47,6 +49,21 @@ namespace SmartLibrary.ViewModels
         [ObservableProperty]
         private bool _isCleanTempEnabled = true;
         #endregion FileOccupancy
+
+        [ObservableProperty]
+        private List<string> _devicesName = [.. FaceRecognition.SystemCameraDevices.Keys];
+
+        [ObservableProperty]
+        private int _devicesIndex = 0;
+
+        [ObservableProperty]
+        private bool _isFlyoutOpen = false;
+
+        [ObservableProperty]
+        private string _flyoutText = string.Empty;
+
+        [ObservableProperty]
+        private int _timeOut = SettingsHelper.GetInt("TimedOut");
 
         [ObservableProperty]
         private int _currentApplicationThemeIndex = Shared.Helpers.Utils.GetCurrentApplicationThemeIndex(SettingsHelper.GetConfig("Theme"));
@@ -88,6 +105,16 @@ namespace SmartLibrary.ViewModels
             _navigationService = navigationService;
             _contentDialogService = contentDialogService;
             _snackbarService = snackbarService;
+            int _deviceIndex = SettingsHelper.GetInt("DeviceIndex");
+            if(_deviceIndex > DevicesName.Count)
+            {
+                DevicesIndex = 0;
+                SettingsHelper.SetConfig("DeviceIndex", "0");
+            }
+            else
+            {
+                DevicesIndex = _deviceIndex;
+            }
         }
 
         public Task OnNavigatedToAsync()
@@ -126,7 +153,7 @@ namespace SmartLibrary.ViewModels
         {
             if (IsFileOccupancyExpanded)
             {
-                DataCount = "数据库文件已占用 " + FileOccupancy.GetFileSize(Environment.CurrentDirectory + @".\database\books.smartlibrary");
+                DataCount = "数据库文件已占用 " + FileOccupancy.GetDirectorySize(Environment.CurrentDirectory + @".\database\");
                 PictureCacheCount = "缓存文件已占用 " + FileOccupancy.GetDirectorySize(Environment.CurrentDirectory + @".\pictures\");
                 TempCount = "临时文件已占用 " + FileOccupancy.GetDirectorySize(Environment.CurrentDirectory + @".\temp\");
 
@@ -147,17 +174,18 @@ namespace SmartLibrary.ViewModels
                     ContentDialogResult result = await _contentDialogService.ShowSimpleDialogAsync(new SimpleContentDialogCreateOptions()
                     {
                         Title = "重置数据库",
-                        Content = "您的所有图书数据将被删除，且无法恢复，您确定要继续吗?",
+                        Content = "您的所有数据将被删除，且无法恢复，您确定要继续吗?",
                         PrimaryButtonText = "是",
                         CloseButtonText = "否",
                     });
                     if (result == ContentDialogResult.Primary)
                     {
                         BooksDb.CleanDatabaseAsync();
+                        UsersDb.CleanDatabaseAsync();
                         DataCount = "数据库文件已占用 " + FileOccupancy.GetFileSize(Environment.CurrentDirectory + @".\database\books.smartlibrary");
                         WeakReferenceMessenger.Default.Send("refresh", "BookManage");
                         WeakReferenceMessenger.Default.Send("refresh", "Bookshelf");
-                        _snackbarService.Show("重置成功", "所有图书数据已清除。", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
+                        _snackbarService.Show("重置成功", "所有数据已清除。", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
                         IsCleanDatabaseEnabled = false;
                     }
                 }
@@ -198,6 +226,54 @@ namespace SmartLibrary.ViewModels
                 }
                 IsCleanTempEnabled = false;
             }
+        }
+
+        [RelayCommand]
+        private void OnRefreshDeviceButtonClick()
+        {
+            DevicesName = [.. FaceRecognition.SystemCameraDevices.Keys];
+        }
+
+        partial void OnDevicesIndexChanged(int value)
+        {
+            SettingsHelper.SetConfig("DeviceIndex", DevicesIndex.ToString());
+            WeakReferenceMessenger.Default.Send(DevicesIndex.ToString(), "deviceRefresh");
+        }
+
+        partial void OnTimeOutChanged(int value)
+        {
+           if (value > 15)
+            {
+                FlyoutText = $"等待时长不能超过15秒";
+                IsFlyoutOpen = true;
+                TimeOut = 15;
+            }
+            else if (value < 1)
+            {
+                FlyoutText = $"等待时长至少为1秒";
+                IsFlyoutOpen = true;
+                TimeOut = 1;
+            }
+            else if (value > 1 && value < 15)
+            {
+                if (IsFlyoutOpen)
+                {
+                    IsFlyoutOpen = false;
+                }
+            }
+        }
+
+        public void SetTimeOut(string timeOut)
+        {
+            if(string.IsNullOrEmpty(timeOut))
+            {
+                TimeOut = 5;
+            }
+            if (IsFlyoutOpen)
+            {
+                IsFlyoutOpen = false;
+            }
+            SettingsHelper.SetConfig("TimedOut", TimeOut.ToString());
         }
 
         partial void OnCurrentApplicationThemeIndexChanged(int value)
@@ -297,17 +373,17 @@ namespace SmartLibrary.ViewModels
             }
             else if (value == 1)
             {
-                SettingsHelper.SetConfig("Backdrop", "Acrylic"); 
+                SettingsHelper.SetConfig("Backdrop", "Acrylic");
                 BackgroundManager.UpdateBackground(UiApplication.Current.MainWindow, theme, WindowBackdropType.Acrylic);
             }
             else if (value == 2)
             {
-                SettingsHelper.SetConfig("Backdrop", "Mica"); 
+                SettingsHelper.SetConfig("Backdrop", "Mica");
                 BackgroundManager.UpdateBackground(UiApplication.Current.MainWindow, theme, WindowBackdropType.Mica);
             }
             else
             {
-                SettingsHelper.SetConfig("Backdrop", "Tabbed"); 
+                SettingsHelper.SetConfig("Backdrop", "Tabbed");
                 BackgroundManager.UpdateBackground(UiApplication.Current.MainWindow, theme, WindowBackdropType.Tabbed);
             }
         }
@@ -323,9 +399,16 @@ namespace SmartLibrary.ViewModels
                     Icon = new SymbolIcon { Symbol = SymbolRegular.Apps24 },
                     TargetPageType = typeof(Views.Pages.BookManage)
                 });
+                _navigationService.GetNavigationControl().FooterMenuItems.Insert(0, new NavigationViewItem()
+                {
+                    Content = "用户",
+                    Icon = new SymbolIcon { Symbol = SymbolRegular.Accessibility24 },
+                    TargetPageType = typeof(Views.Pages.UserManage)
+                });
             }
             else
             {
+                _navigationService.GetNavigationControl().FooterMenuItems.RemoveAt(0);
                 _navigationService.GetNavigationControl().FooterMenuItems.RemoveAt(0);
             }
         }

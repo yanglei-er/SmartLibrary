@@ -24,51 +24,60 @@
         <Style BasedOn="{StaticResource MyButtonStyle}" TargetType="ui:Button" />
         <converters:BoolToImageSourceConverter x:Key="BoolToImageSourceConverter" />
         <converters:BoolToBorrowOrReturnTextConverter x:Key="BoolToBorrowOrReturnTextConverter" />
-        <converters:BoolToPlaceholderTextConverter x:Key="BoolToPlaceholderTextConverter" />
     </Page.Resources>
     <Grid Margin="16">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <TextBox Name="XuNiBox" Width="0" />
+        <ui:InfoBar
+            Title="提示"
+            Grid.Row="1"
+            Margin="0,8,0,0"
+            FontSize="16"
+            IsOpen="{Binding ViewModel.IsNotCamerasAvailable, Mode=TwoWay}"
+            Message="暂无可用摄像头，无法完成借还流程，请连接摄像头后重试。"
+            Severity="Warning"
+            Visibility="{Binding ViewModel.IsNotCamerasAvailable, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
         <Image
             Name="CameraImage"
-            Grid.Row="1"
+            Grid.Row="2"
             Margin="0,8,0,0"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch"
-            Panel.ZIndex="999"
+            Panel.ZIndex="10"
             Stretch="UniformToFill"
+            Visibility="{Binding ViewModel.IsCameraOpened, Converter={StaticResource BooleanToVisibilityConverter}}" />
+        <ui:Button
+            Grid.Row="2"
+            Width="160"
+            Margin="0,0,0,16"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Bottom"
+            Panel.ZIndex="50"
+            Command="{Binding ViewModel.StopCameraCommand}"
+            Content="停止识别"
+            FontSize="24"
             Visibility="{Binding ViewModel.IsCameraOpened, Converter={StaticResource BooleanToVisibilityConverter}}" />
         <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <ui:Button
-                Grid.Column="0"
-                MinWidth="130"
-                Margin="0,0,8,0"
-                Appearance="Primary"
-                Command="{Binding ViewModel.ScanButtonClickCommand, Mode=OneWay}"
-                Content="扫描"
-                FontSize="24"
-                IsEnabled="{Binding ViewModel.IsScanButtonEnabled, Mode=OneWay}"
-                Visibility="{Binding ViewModel.IsScanButtonVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
             <ui:TextBox
                 Name="IsbnBox"
-                Grid.Column="1"
+                Grid.Column="0"
                 extensions:TextBoxAttachedProperties.IsOnlyNumber="True"
                 FontSize="20"
                 MaxLength="13"
-                PlaceholderText="{Binding ViewModel.IsScanButtonVisible, Converter={StaticResource BoolToPlaceholderTextConverter}, Mode=OneWay}"
+                PlaceholderText="请输入13位ISBN码"
                 PreviewKeyDown="IsbnBox_PreviewKeyDown"
                 Text="{Binding ViewModel.IsbnText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <ui:Image
-                Grid.Column="2"
+                Grid.Column="1"
                 Width="40"
                 Height="40"
                 Margin="6,0,0,0"
@@ -76,7 +85,7 @@
                 Source="{Binding ViewModel.IsbnAttitudeImage, Mode=OneWay}"
                 Visibility="{Binding ViewModel.IsbnAttitudeVisible, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}" />
             <ui:Button
-                Grid.Column="3"
+                Grid.Column="2"
                 MinWidth="130"
                 Margin="8,0,0,0"
                 Command="{Binding ViewModel.SearchButtonClickCommand, Mode=OneWay}"
@@ -84,7 +93,7 @@
                 FontSize="24"
                 IsEnabled="{Binding ViewModel.IsSearchButtonEnabled, Mode=OneWay}" />
         </Grid>
-        <Grid Grid.Row="1" Margin="0,8,0,0">
+        <Grid Grid.Row="2" Margin="0,8,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="0.5*" />
                 <ColumnDefinition Width="*" />

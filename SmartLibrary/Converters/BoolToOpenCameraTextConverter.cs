@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 using System.Windows.Data;
 
-namespace SmartManager.Converters
+namespace SmartLibrary.Converters
 {
     public sealed class BoolToOpenCameraTextConverter : IValueConverter
     {

@@ -16,30 +16,12 @@
 		<ApplicationIcon>applicationIcon.ico</ApplicationIcon>
 		<Description>Smart Manage</Description>
 		<Copyright>Copyright © 2025 赵杨磊.All Rights Reserved.</Copyright>
-		<AssemblyVersion>0.7.0.25122</AssemblyVersion>
-		<FileVersion>0.7.0.25122</FileVersion>
+		<AssemblyVersion>1.0.0.25122</AssemblyVersion>
+		<FileVersion>1.0.0.25122</FileVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\Shared\Shared.csproj" />
-	</ItemGroup>
-
-  <ItemGroup>
-    <None Remove="Assets\applicationIcon-512.png" />
-    <None Remove="Assets\applicationIcon.ico" />
-    <None Remove="Assets\background.jpg" />
-    <None Remove="Assets\face-scan.png" />
-    <None Remove="Assets\rfid.png" />
-  </ItemGroup>
-
-	<ItemGroup>
-		<Resource Include="applicationIcon.ico" />
-		<Resource Include="Assets\applicationIcon-512.png" />
-		<Resource Include="Assets\background.jpg" />
-		<Resource Include="Assets\face-scan.png" />
-		<Resource Include="Assets\rfid.png" />
-		<Resource Include="Assets\DynamicPic\dark\cameraEmpty.jpg" />
-		<Resource Include="Assets\DynamicPic\light\cameraEmpty.jpg" />
 	</ItemGroup>
 
   <ItemGroup>

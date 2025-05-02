@@ -22,17 +22,9 @@ namespace SmartLibrary.ViewModels
             {
                 _navigationService.Navigate(typeof(Views.Pages.Borrow_Return_Book));
             }
-            else if (parameter == "图书信息查询")
-            {
-                _navigationService.Navigate(typeof(Views.Pages.BookInfo));
-            }
             else if (parameter == "管理")
             {
                 _navigationService.Navigate(typeof(Views.Pages.BookManage));
-            }
-            else if (parameter == "蓝牙")
-            {
-                _navigationService.Navigate(typeof(Views.Pages.BluetoothSettings));
             }
             else if (parameter == "设置")
             {

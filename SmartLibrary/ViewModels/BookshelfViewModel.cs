@@ -3,7 +3,6 @@ using Shared.Helpers;
 using Shared.Models;
 using SmartLibrary.Helpers;
 using SmartLibrary.Models;
-using SmartLibrary.Views.Pages;
 using System.Collections.ObjectModel;
 using System.Data;
 using Wpf.Ui;
@@ -77,9 +76,6 @@ namespace SmartLibrary.ViewModels
                 MissingDatabase = true;
                 IsBottombarEnabled = false;
             }
-
-            _navigationService.Navigate(typeof(Borrow_Return_Book));
-            _navigationService.GoBack();
         }
 
         private void OnMessageReceived(object recipient, string message)
@@ -322,8 +318,7 @@ namespace SmartLibrary.ViewModels
         [RelayCommand]
         private void BookInfo(string isbn)
         {
-            _navigationService.Navigate(typeof(Views.Pages.BookInfo));
-            WeakReferenceMessenger.Default.Send(isbn, "BookInfo");
+            _navigationService.Navigate(typeof(Views.Pages.Borrow_Return_Book));
             WeakReferenceMessenger.Default.Send(isbn, "Borrow_Return_Book");
         }
     }

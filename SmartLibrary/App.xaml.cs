@@ -6,9 +6,11 @@ using Shared.Services;
 using Shared.Services.Contracts;
 using SmartLibrary.Services;
 using System.Diagnostics;
+using System.Security.Cryptography;
 using System.Windows.Threading;
 using Wpf.Ui;
 using Wpf.Ui.DependencyInjection;
+using Yitter.IdGenerator;
 namespace SmartLibrary
 {
     public partial class App : Application
@@ -43,19 +45,21 @@ namespace SmartLibrary
                     services.AddSingleton<ViewModels.BookshelfViewModel>();
                     services.AddSingleton<Views.Pages.Borrow_Return_Book>();
                     services.AddSingleton<ViewModels.Borrow_Return_BookViewModel>();
-                    services.AddSingleton<Views.Pages.BookInfo>();
-                    services.AddSingleton<ViewModels.BookInfoViewModel>();
+                    services.AddSingleton<Views.Pages.UserManage>();
+                    services.AddSingleton<ViewModels.UserManageViewModel>();
                     services.AddSingleton<Views.Pages.BookManage>();
                     services.AddSingleton<ViewModels.BookManageViewModel>();
-                    services.AddSingleton<Views.Pages.BluetoothSettings>();
-                    services.AddSingleton<ViewModels.BluetoothSettingsViewModel>();
                     services.AddSingleton<Views.Pages.Settings>();
                     services.AddSingleton<ViewModels.SettingsViewModel>();
 
                     services.AddTransient<Views.Pages.AddBook>();
                     services.AddTransient<ViewModels.AddBookViewModel>();
                     services.AddTransient<Views.Pages.EditBook>();
-                    services.AddTransient<ViewModels.EditBookViewModel>();
+                    services.AddTransient<ViewModels.EditBookViewModel>(); 
+                    services.AddTransient<Views.Pages.AddUser>();
+                    services.AddTransient<ViewModels.AddUserViewModel>();
+                    services.AddTransient<Views.Pages.EditUser>();
+                    services.AddTransient<ViewModels.EditUserViewModel>();
                 }
             ).Build();
 
@@ -76,6 +80,8 @@ namespace SmartLibrary
             mutex = new Mutex(true, "SmartLibrary", out bool aIsNewInstance);
             if (aIsNewInstance)
             {
+                //IdGenerator全局初始化
+                YitIdHelper.SetIdGenerator(new((ushort)RandomNumberGenerator.GetInt32(60)));
                 _host.Start();
                 mutex.ReleaseMutex();
             }

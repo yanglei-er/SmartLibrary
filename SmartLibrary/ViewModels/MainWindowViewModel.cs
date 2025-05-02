@@ -33,12 +33,6 @@ namespace SmartLibrary.ViewModels
                         Content = "借还",
                         Icon = new SymbolIcon { Symbol = SymbolRegular.CheckboxCheckedSync20 },
                         TargetPageType = typeof(Views.Pages.Borrow_Return_Book)
-                    },
-                    new NavigationViewItem()
-                    {
-                        Content = "信息",
-                        Icon = new SymbolIcon { Symbol = SymbolRegular.BookInformation24 },
-                        TargetPageType = typeof(Views.Pages.BookInfo)
                     }
                 ];
 
@@ -46,19 +40,17 @@ namespace SmartLibrary.ViewModels
             {
                 NavigationFooter.Add(new NavigationViewItem()
                 {
+                    Content = "用户",
+                    Icon = new SymbolIcon { Symbol = SymbolRegular.Accessibility24 },
+                    TargetPageType = typeof (Views.Pages.UserManage)
+                });
+                NavigationFooter.Add(new NavigationViewItem()
+                {
                     Content = "管理",
                     Icon = new SymbolIcon { Symbol = SymbolRegular.Apps24 },
                     TargetPageType = typeof(Views.Pages.BookManage)
                 });
             }
-
-
-            NavigationFooter.Add(new NavigationViewItem()
-            {
-                Content = "蓝牙",
-                Icon = new SymbolIcon { Symbol = SymbolRegular.Bluetooth24 },
-                TargetPageType = typeof(Views.Pages.BluetoothSettings)
-            });
 
             NavigationFooter.Add(new NavigationViewItem()
             {

@@ -1,4 +1,4 @@
-﻿namespace SmartManager.Models
+﻿namespace SmartLibrary.Models
 {
     public record class FaceInfoSimple
     {

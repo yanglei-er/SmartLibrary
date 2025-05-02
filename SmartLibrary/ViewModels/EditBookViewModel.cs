@@ -208,7 +208,6 @@ namespace SmartLibrary.ViewModels
                 IsEditButtonEnabled = false;
                 WeakReferenceMessenger.Default.Send("refresh", "BookManage");
                 WeakReferenceMessenger.Default.Send("refresh", "Bookshelf");
-                WeakReferenceMessenger.Default.Send("." + IsbnText, "BookInfo");
                 WeakReferenceMessenger.Default.Send("." + IsbnText, "Borrow_Return_Book");
             }
             else

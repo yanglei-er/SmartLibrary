@@ -167,7 +167,7 @@
                                     Grid.Column="0"
                                     Margin="8,0,0,0"
                                     FontSize="16"
-                                    Text="图书数据库" />
+                                    Text="数据库" />
                                 <TextBlock
                                     Margin="0,0,8,0"
                                     HorizontalAlignment="Right"
@@ -283,6 +283,73 @@
                         </ui:Card>
                     </StackPanel>
                 </ui:CardExpander>
+                <ui:TextBlock
+                    Margin="0,12,0,0"
+                    FontTypography="Subtitle"
+                    Text="视频设置" />
+                <ui:CardControl Margin="0,8,0,0" Icon="{ui:SymbolIcon Camera24}">
+                    <ui:CardControl.Header>
+                        <StackPanel>
+                            <ui:TextBlock FontSize="16" Text="摄像头" />
+                            <ui:TextBlock
+                                FontSize="13"
+                                Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
+                                Text="选择要使用的摄像头" />
+                        </StackPanel>
+                    </ui:CardControl.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <ui:Button
+                            MinWidth="80"
+                            MinHeight="35"
+                            Command="{Binding ViewModel.RefreshDeviceButtonClickCommand}"
+                            Content="刷新"
+                            FontSize="16" />
+                        <ComboBox
+                            Width="Auto"
+                            MinWidth="140"
+                            Margin="8,0,0,0"
+                            ItemsSource="{Binding ViewModel.DevicesName, Mode=OneWay}"
+                            SelectedIndex="{Binding ViewModel.DevicesIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
+                </ui:CardControl>
+                <ui:CardControl Margin="0,8,0,0" Icon="{ui:SymbolIcon Timer24}">
+                    <ui:CardControl.Header>
+                        <StackPanel>
+                            <ui:TextBlock FontSize="16" Text="超时等待" />
+                            <ui:TextBlock
+                                FontSize="13"
+                                Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
+                                Text="设置未识别出用户时的最长等待时间" />
+                        </StackPanel>
+                    </ui:CardControl.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <ui:Flyout
+                            VerticalAlignment="Center"
+                            IsOpen="{Binding ViewModel.IsFlyoutOpen, Mode=TwoWay}"
+                            Placement="Top">
+                            <TextBlock
+                                Width="200"
+                                HorizontalAlignment="Center"
+                                FontSize="18"
+                                Text="{Binding ViewModel.FlyoutText, Mode=OneWay}"
+                                TextWrapping="WrapWithOverflow" />
+                        </ui:Flyout>
+                        <ui:TextBox
+                            x:Name="textBox"
+                            Width="Auto"
+                            MinWidth="118"
+                            extensions:TextBoxAttachedProperties.IsOnlyNumber="True"
+                            FontSize="16"
+                            PreviewKeyDown="TextBox_PreviewKeyDown"
+                            Text="{Binding ViewModel.TimeOut, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBlock
+                            Margin="6,0,0,0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            FontSize="16"
+                            Text="秒" />
+                    </StackPanel>
+                </ui:CardControl>
                 <ui:TextBlock
                     Margin="0,12,0,0"
                     FontTypography="Subtitle"

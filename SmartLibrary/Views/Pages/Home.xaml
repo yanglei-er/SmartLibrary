@@ -91,7 +91,6 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <ui:CardAction
                 Grid.Column="0"
@@ -151,39 +150,9 @@
                         Text="我要借/还书" />
                 </Grid>
             </ui:CardAction>
-            <ui:CardAction
-                Grid.Column="2"
-                Margin="8,0,0,0"
-                Padding="0"
-                VerticalAlignment="Stretch"
-                Command="{Binding ViewModel.CardClickCommand, Mode=OneWay}"
-                CommandParameter="图书信息查询"
-                IsChevronVisible="False">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <ui:Image
-                        Width="50"
-                        Height="50"
-                        Margin="32,0,0,0"
-                        RenderOptions.BitmapScalingMode="HighQuality"
-                        Source="pack://application:,,,/Assets/bookinfo-512x512.png"
-                        Stretch="UniformToFill" />
-                    <ui:TextBlock
-                        Grid.Column="1"
-                        Margin="12"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        FontSize="22"
-                        Text="图书信息查询" />
-                </Grid>
-            </ui:CardAction>
         </Grid>
         <Grid Grid.Row="2" Margin="16,8,16,16">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
@@ -214,35 +183,6 @@
                         VerticalAlignment="Center"
                         FontSize="22"
                         Text="图书管理" />
-                </Grid>
-            </ui:CardAction>
-            <ui:CardAction
-                Grid.Column="1"
-                Margin="8,0,4,0"
-                Padding="0"
-                VerticalAlignment="Stretch"
-                Command="{Binding ViewModel.CardClickCommand, Mode=OneWay}"
-                CommandParameter="蓝牙"
-                IsChevronVisible="False">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <ui:Image
-                        Width="50"
-                        Height="50"
-                        Margin="32,0,0,0"
-                        RenderOptions.BitmapScalingMode="HighQuality"
-                        Source="pack://application:,,,/Assets/homeBluetooth.png"
-                        Stretch="UniformToFill" />
-                    <ui:TextBlock
-                        Grid.Column="1"
-                        Margin="29,20,24,20"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        FontSize="22"
-                        Text="蓝牙设置" />
                 </Grid>
             </ui:CardAction>
             <ui:CardAction

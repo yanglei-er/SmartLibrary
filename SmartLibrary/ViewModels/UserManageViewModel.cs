@@ -2,7 +2,6 @@
 using Microsoft.Win32;
 using Shared.Helpers;
 using Shared.Models;
-using SmartLibrary.Helpers;
 using SmartLibrary.Models;
 using SmartLibrary.Views.Pages;
 using System.Collections;
@@ -16,12 +15,12 @@ using Wpf.Ui.Extensions;
 
 namespace SmartLibrary.ViewModels
 {
-    public partial class BookManageViewModel : ObservableObject, INavigationAware
+    public partial class UserManageViewModel : ObservableObject, INavigationAware
     {
         private readonly INavigationService _navigationService;
         private readonly ISnackbarService _snackbarService;
         private readonly IContentDialogService _contentDialogService;
-        private BooksDb BooksDb = BooksDb.GetDatabase("books.smartlibrary");
+        private UsersDb FacesDb = UsersDb.GetDatabase("users.smartmanager");
         private int TotalPageCount;
         private bool needRefresh = false;
 
@@ -53,7 +52,7 @@ namespace SmartLibrary.ViewModels
         private int _totalCount = 0;
 
         [ObservableProperty]
-        private int _displayIndex = SettingsHelper.GetInt("BookManageDisplayIndex");
+        private int _displayIndex = SettingsHelper.GetInt("FaceManageDisplayIndex");
 
         [ObservableProperty]
         private ObservableCollection<PageButton> _pageButtonList = [];
@@ -76,15 +75,15 @@ namespace SmartLibrary.ViewModels
         [ObservableProperty]
         private string _flyoutText = string.Empty;
 
-        public BookManageViewModel(INavigationService navigationService, ISnackbarService snackbarService, IContentDialogService contentDialogService)
+        public UserManageViewModel(INavigationService navigationService, ISnackbarService snackbarService, IContentDialogService contentDialogService)
         {
             _navigationService = navigationService;
             _snackbarService = snackbarService;
             _contentDialogService = contentDialogService;
 
-            WeakReferenceMessenger.Default.Register<string, string>(this, "BookManage", (_, _) => needRefresh = true);
+            WeakReferenceMessenger.Default.Register<string, string>(this, "FaceManage", (_, _) => needRefresh = true);
 
-            if (BooksDb.IsDatabaseConnected("books.smartlibrary"))
+            if (UsersDb.IsDatabaseConnected("users.smartmanager"))
             {
                 needRefresh = true;
             }
@@ -122,8 +121,8 @@ namespace SmartLibrary.ViewModels
         [RelayCommand]
         private void RefreshDatabase()
         {
-            BooksDb = BooksDb.GetDatabase("books.smartlibrary");
-            if (BooksDb.IsDatabaseConnected("books.smartlibrary"))
+            FacesDb = UsersDb.GetDatabase("users.smartmanager");
+            if (UsersDb.IsDatabaseConnected("users.smartmanager"))
             {
                 MissingDatabase = false;
                 IsTopbarEnabled = true;
@@ -135,31 +134,30 @@ namespace SmartLibrary.ViewModels
         [RelayCommand]
         private async Task CreateDatabase()
         {
-            await BooksDb.CreateDataBaseAsync();
-            BooksDb = BooksDb.GetDatabase("books.smartlibrary");
+            await FacesDb.CreateDataBaseAsync();
+            FacesDb = UsersDb.GetDatabase("users.smartmanager");
             MissingDatabase = false;
             IsTopbarEnabled = true;
             RefreshAsync();
-            WeakReferenceMessenger.Default.Send("databaseCreat", "Bookshelf");
         }
 
         [RelayCommand]
-        private void AddBook()
+        private void AddFace()
         {
-            _navigationService.NavigateWithHierarchy(typeof(AddBook));
+            _navigationService.NavigateWithHierarchy(typeof(AddUser));
         }
 
         [RelayCommand]
-        private void EditBook(DataRowView selectedItem)
+        private void EditFace(DataRowView selectedItem)
         {
-            _navigationService.NavigateWithHierarchy(typeof(EditBook));
-            string isbn = (string)selectedItem[0];
-            WeakReferenceMessenger.Default.Send(isbn, "EditBook");
+            _navigationService.NavigateWithHierarchy(typeof(EditUser));
+            string uid = (string)selectedItem[0];
+            WeakReferenceMessenger.Default.Send(uid, "EditFace");
         }
 
         private async void RefreshAsync()
         {
-            TotalCount = await BooksDb.GetRecordCountAsync();
+            TotalCount = await FacesDb.GetRecordCountAsync();
             if (TotalCount == 0)
             {
                 DatabaseEmpty = true;
@@ -182,7 +180,7 @@ namespace SmartLibrary.ViewModels
         private async void PagerAsync()
         {
             IsDelButtonEnabled = false;
-            DataGridItems = (await BooksDb.ExecutePagerSimpleAsync(CurrentPage, PageCountList[DisplayIndex])).DefaultView;
+            DataGridItems = (await FacesDb.ExecutePagerSimpleAsync(CurrentPage, PageCountList[DisplayIndex])).DefaultView;
 
             PageButtonList.Clear();
             if (TotalPageCount <= 7)
@@ -228,7 +226,7 @@ namespace SmartLibrary.ViewModels
 
         partial void OnDisplayIndexChanged(int value)
         {
-            SettingsHelper.SetConfig("BookManageDisplayIndex", value.ToString());
+            SettingsHelper.SetConfig("FaceManageDisplayIndex", value.ToString());
             RefreshAsync();
             if (CurrentPage == 1) PagerAsync();
             CurrentPage = 1;
@@ -242,7 +240,7 @@ namespace SmartLibrary.ViewModels
                 OpenFileDialog openFileDialog = new()
                 {
                     Title = "导入数据库",
-                    Filter = "SmartLibrary数据库 (*.smartlibrary)|*.smartlibrary",
+                    Filter = "人脸数据库 (*.smartmanager)|*.smartmanager",
                     Multiselect = true,
                 };
                 if (openFileDialog.ShowDialog() == true)
@@ -256,14 +254,14 @@ namespace SmartLibrary.ViewModels
                 SaveFileDialog saveFileDialog = new()
                 {
                     Title = "导出数据库",
-                    FileName = "智慧图书馆" + DateTime.Now.ToString("yyyyMMdd-HHmmss"),
-                    Filter = "SmartLibrary数据库 (*.smartlibrary)|*.smartlibrary",
+                    FileName = "智慧管理员" + DateTime.Now.ToString("yyyyMMdd-HHmmss"),
+                    Filter = "SmartManager数据库 (*.smartmanager)|*.smartmanager",
                     InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop)
                 };
                 if (saveFileDialog.ShowDialog() == true)
                 {
                     System.Media.SystemSounds.Asterisk.Play();
-                    File.Copy(@".\database\books.smartlibrary", saveFileDialog.FileName, true);
+                    File.Copy(@".\database\users.smartmanager", saveFileDialog.FileName, true);
                     _snackbarService.Show("导出数据库", $"{Path.GetFileName(saveFileDialog.FileName)} 已导出至 {Path.GetDirectoryName(saveFileDialog.FileName)} 下", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
                 }
             }
@@ -287,7 +285,7 @@ namespace SmartLibrary.ViewModels
 
         private async void ImportDatabase(List<string> files)
         {
-            if (!BooksDb.IsDatabaseConnected("books.smartlibrary"))
+            if (!UsersDb.IsDatabaseConnected("users.smartmanager"))
             {
                 await CreateDatabase();
             }
@@ -296,12 +294,12 @@ namespace SmartLibrary.ViewModels
 
             foreach (string fileName in files)
             {
-                if (fileName == Path.GetFullPath(@".\database\books.smartlibrary")) //避免重复
+                if (fileName == Path.GetFullPath(@".\database\users.smartmanager")) //避免重复
                 {
                     repeatFileNames.Add(fileName);
                     continue;
                 }
-                int[] _mergedResult = await BooksDb.MergeDatabaseAsync(fileName);
+                int[] _mergedResult = await FacesDb.MergeDatabaseAsync(fileName);
                 mergedResult[0] += _mergedResult[0];
                 mergedResult[1] += _mergedResult[1];
             }
@@ -310,7 +308,6 @@ namespace SmartLibrary.ViewModels
             {
                 RefreshAsync();
                 PagerAsync();
-                WeakReferenceMessenger.Default.Send("refresh", "Bookshelf");
             }
 
             _snackbarService.Show("导入数据库", $"{files.Count} 个数据库已导入，共 {mergedResult[0] + mergedResult[1]} 条数据，导入 {mergedResult[0]} 条，重复 {mergedResult[1]} 条。", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
@@ -397,13 +394,13 @@ namespace SmartLibrary.ViewModels
         }
 
         [RelayCommand]
-        private async Task DelBooks(IList selectedItems)
+        private async Task DelFaces(IList selectedItems)
         {
             System.Media.SystemSounds.Asterisk.Play();
             ContentDialogResult result = await _contentDialogService.ShowSimpleDialogAsync(new SimpleContentDialogCreateOptions()
             {
-                Title = "删除图书",
-                Content = $"是否删除你选择的 {selectedItems.Count} 本图书，此操作不可撤销！",
+                Title = "删除数据",
+                Content = $"是否删除你选择的 {selectedItems.Count} 个人脸数据，此操作不可撤销！",
                 PrimaryButtonText = "是",
                 CloseButtonText = "否",
             });
@@ -415,8 +412,8 @@ namespace SmartLibrary.ViewModels
                 {
                     foreach (DataRowView item in selectedItems)
                     {
-                        string isbn = (string)item[0];
-                        BooksDb.DelBookAsync(isbn);
+                        string uid = (string)item[0];
+                        FacesDb.DelFaceAsync(uid);
                         if (!IsBottombarEnabled)
                         {
                             indexs.Add(DataGridItems.Table.Rows.IndexOf(item.Row));
@@ -424,7 +421,7 @@ namespace SmartLibrary.ViewModels
                     }
                 }
 
-                _snackbarService.Show("删除图书", $"已删除你选择的 {selectedItems.Count} 本图书", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
+                _snackbarService.Show("删除数据", $"已删除你选择的 {selectedItems.Count} 个人脸数据", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
 
                 if (IsBottombarEnabled)
                 {
@@ -447,16 +444,15 @@ namespace SmartLibrary.ViewModels
                     }
                     TotalCount = DataGridItems.Count;
                 }
-                WeakReferenceMessenger.Default.Send("refresh", "Bookshelf");
-                WeakReferenceMessenger.Default.Send("refresh", "Borrow_Return_Book");
+                WeakReferenceMessenger.Default.Send("refreshUser", "Borrow_Return_Book");
             }
         }
 
         [RelayCommand]
-        private void DelOneBook(DataRowView selectedItem)
+        private void DelOneFace(DataRowView selectedItem)
         {
-            string isbn = (string)selectedItem[0];
-            BooksDb.DelBookAsync(isbn);
+            string uid = (string)selectedItem[0];
+            FacesDb.DelFaceAsync(uid);
             if (IsBottombarEnabled)
             {
                 RefreshAsync();
@@ -475,28 +471,12 @@ namespace SmartLibrary.ViewModels
                 }
                 TotalCount--;
             }
-            WeakReferenceMessenger.Default.Send("refresh", "Bookshelf");
-            WeakReferenceMessenger.Default.Send("." + isbn, "Borrow_Return_Book");
+            WeakReferenceMessenger.Default.Send("refreshUser", "Borrow_Return_Book");
         }
 
-        public void UpdateSimple(BookInfoSimple bookInfo)
+        public void UpdateSimple(FaceInfoSimple faceInfo)
         {
-            BooksDb.UpdateSimpleAsync(bookInfo.Isbn, bookInfo.BookName, bookInfo.Author, bookInfo.ShelfNumber, bookInfo.IsBorrowed);
-            WeakReferenceMessenger.Default.Send("refresh", "Bookshelf");
-            WeakReferenceMessenger.Default.Send("." + bookInfo.Isbn, "Borrow_Return_Book");
-        }
-
-        public void CheckBox_Click(string isbn, bool value)
-        {
-            if (value)
-            {
-                BooksDb.BorrowBookAsync(isbn);
-            }
-            else
-            {
-                BooksDb.ReturnBookAsync(isbn);
-            }
-            WeakReferenceMessenger.Default.Send("." + isbn, "Borrow_Return_Book");
+            FacesDb.UpdateSimpleAsync(faceInfo.Uid, faceInfo.Name, faceInfo.Sex, faceInfo.Age, faceInfo.JoinTime);
         }
 
         partial void OnAutoSuggestBoxTextChanged(string value)
@@ -509,14 +489,9 @@ namespace SmartLibrary.ViewModels
             if (!string.IsNullOrEmpty(value))
             {
                 IsBottombarEnabled = false;
-                if (int.TryParse(value, out int num))
-                {
-                    DataGridItems = (await BooksDb.AutoSuggestByNumAsync(num)).DefaultView;
-                }
-                else
-                {
-                    DataGridItems = (await BooksDb.AutoSuggestByStringAsync(value)).DefaultView;
-                }
+
+                DataGridItems = (await FacesDb.AutoSuggestByNameAsync(value)).DefaultView;
+
                 if (DataGridItems.Count > 0)
                 {
                     DatabaseEmpty = false;

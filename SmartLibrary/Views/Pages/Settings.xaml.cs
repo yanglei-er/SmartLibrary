@@ -28,6 +28,7 @@ namespace SmartLibrary.Views.Pages
         {
             if (e.Key == Key.Enter)
             {
+                ViewModel.SetTimeOut(textBox.Text);
                 XuNiBox.Focus();
             }
         }

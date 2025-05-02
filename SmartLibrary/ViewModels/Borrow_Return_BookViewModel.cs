@@ -15,15 +15,14 @@ namespace SmartLibrary.ViewModels
         private readonly LocalStorage localStorage = new();
         private readonly INavigationService _navigationService;
         private readonly ISnackbarService _snackbarService;
+        private bool needRefresh = false;
 
-        private readonly UsersDb UsersDb = UsersDb.GetDatabase("faces.smartmanager");
-        private readonly int TotalCount = 0;
+        private readonly UsersDb UsersDb = UsersDb.GetDatabase("users.smartmanager");
+        private int TotalCount = 0;
+        private int _deviceIndex = SettingsHelper.GetInt("DeviceIndex");
 
         [ObservableProperty]
-        private bool _isScanButtonEnabled = true;
-
-        [ObservableProperty]
-        private bool _isScanButtonVisible = false;
+        private bool _isNotCamerasAvailable = false;
 
         [ObservableProperty]
         private bool _isSearchButtonEnabled = false;
@@ -95,7 +94,7 @@ namespace SmartLibrary.ViewModels
         private bool _isBorrowed = false;
 
         [ObservableProperty]
-        private List<string> _devicesName = [];
+        private List<string> _devicesName = [.. FaceRecognition.SystemCameraDevices.Keys];
 
         [ObservableProperty]
         private bool _isCameraOpened = false;
@@ -106,26 +105,32 @@ namespace SmartLibrary.ViewModels
             _snackbarService = snackbarService;
 
             localStorage.LoadingCompleted += LoadingCompleted;
-            BluetoothHelper.ReceiveEvent += OnBluetoothReceived;
             WeakReferenceMessenger.Default.Register<string, string>(this, "Borrow_Return_Book", OnMessageReceived);
 
-            if (UsersDb.IsDatabaseConnected("faces.smartmanager"))
+            if (UsersDb.IsDatabaseConnected("users.smartmanager"))
             {
                 TotalCount = UsersDb.GetRecordCount();
             }
 
-            DevicesName = [.. FaceRecognition.SystemCameraDevices.Keys];
+
+            if (DevicesName[0] == "暂无摄像头")
+            {
+                IsNotCamerasAvailable = true;
+            }
+
+            if (_deviceIndex > DevicesName.Count)
+            {
+                _deviceIndex = 0;
+                SettingsHelper.SetConfig("DeviceIndex", "0");
+            }
         }
 
         public Task OnNavigatedToAsync()
         {
-            if (BluetoothHelper.IsBleConnected)
+            if (needRefresh)
             {
-                IsScanButtonVisible = true;
-            }
-            else
-            {
-                IsScanButtonVisible = false;
+                needRefresh = false;
+                _ = OnSearchButtonClick();
             }
             return Task.CompletedTask;
         }
@@ -135,23 +140,44 @@ namespace SmartLibrary.ViewModels
             return Task.CompletedTask;
         }
 
-        private async void OnMessageReceived(object recipient, string message)
+        private void OnMessageReceived(object recipient, string message)
         {
             if (message.StartsWith('.'))
             {
-                if (IsbnText != message.Remove(0, 1))
+                if (IsbnText == message.Remove(0, 1))
                 {
-                    return;
+                    needRefresh = true;
                 }
             }
             else if (message == "refresh")
             {
-
+                needRefresh = true;
+            }
+            else if (message == "deviceRefresh")
+            {
+                DevicesName = [.. FaceRecognition.SystemCameraDevices.Keys];
+                _deviceIndex = SettingsHelper.GetInt("DeviceIndex");
+            }
+            else if (message == "refreshUser")
+            {
+                TotalCount = UsersDb.GetRecordCount();
             }
             else
             {
                 IsbnText = message;
+                _ = OnSearchButtonClick();
             }
+        }
+
+        private void LoadingCompleted(string path)
+        {
+            Picture = path;
+            IsPictureLoading = false;
+        }
+
+        [RelayCommand]
+        public async Task OnSearchButtonClick()
+        {
             if (await BooksDb.ExistsAsync(IsbnText))
             {
                 BookInfo bookInfo = await BooksDb.GetOneBookInfoAsync(IsbnText);
@@ -162,8 +188,8 @@ namespace SmartLibrary.ViewModels
                 PressPlace = bookInfo.PressPlace ?? string.Empty;
                 Price = bookInfo.Price ?? string.Empty;
                 ClcName = bookInfo.ClcName ?? string.Empty;
-                Keyword = bookInfo.Keyword ?? string.Empty;
                 Pages = bookInfo.Pages ?? string.Empty;
+                Keyword = bookInfo.Keyword ?? string.Empty;
                 BookDesc = bookInfo.BookDesc ?? string.Empty;
                 Language = bookInfo.Language ?? string.Empty;
 
@@ -178,46 +204,8 @@ namespace SmartLibrary.ViewModels
             else
             {
                 CleanExceptIsbn();
+                _snackbarService.Show("查无此书", "此书还未收录到数据库中！", ControlAppearance.Caution, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
             }
-        }
-
-        private void LoadingCompleted(string path)
-        {
-            Picture = path;
-            IsPictureLoading = false;
-        }
-
-        [RelayCommand]
-        private void OnScanButtonClick()
-        {
-            _snackbarService.Show("正在扫描", $"请将书置于亚克力板上", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(2));
-            BluetoothHelper.Send("scan");
-            IsScanButtonEnabled = false;
-        }
-
-        private void OnBluetoothReceived(string info)
-        {
-            IsScanButtonEnabled = true;
-            if (info.StartsWith("978") && info.Length == 13)
-            {
-                IsbnText = info;
-                OnMessageReceived(this, IsbnText);
-            }
-            else if (info == "over")
-            {
-                _snackbarService.Show("操作成功", $"{BookNameText}已还至{ShelfNum}号书架", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
-            }
-            else
-            {
-                _snackbarService.Show("条码错误", $"请重新扫描", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(2));
-                System.Media.SystemSounds.Asterisk.Play();
-            }
-        }
-
-        [RelayCommand]
-        public void OnSearchButtonClick()
-        {
-            OnMessageReceived(this, IsbnText);
         }
 
         partial void OnIsbnTextChanged(string value)
@@ -291,8 +279,9 @@ namespace SmartLibrary.ViewModels
             int sleepTime = FaceRecognition.SleepTime;
             string name = string.Empty;
             int scanTime = 0;
+            int timeOut = SettingsHelper.GetInt("TimedOut") * 12;
 
-            while (FaceRecognition.IsCameraOpened && scanTime < 10)
+            while (FaceRecognition.IsCameraOpened && scanTime < timeOut)
             {
                 using Bitmap image = FaceRecognition.GetImage();
 
@@ -313,23 +302,23 @@ namespace SmartLibrary.ViewModels
                     }
                     if (!string.IsNullOrEmpty(name))
                     {
-                        cameraImage.Dispatcher.BeginInvoke(new Action(() =>
-                        {
-                            Success(name);
-                        }));
-                        return;
-                    }
-                    else
-                    {
-                        scanTime++;
+                        break;
                     }
                 }
+                scanTime++;
                 Thread.Sleep(sleepTime);
             }
             cameraImage.Dispatcher.BeginInvoke(new Action(() =>
             {
                 Success(name);
             }));
+        }
+
+        [RelayCommand]
+        private void StopCamera()
+        {
+            FaceRecognition.CloseCamera();
+            IsCameraOpened = false;
         }
 
         public void BorrowOrReturn(System.Windows.Controls.Image image)
@@ -344,36 +333,27 @@ namespace SmartLibrary.ViewModels
 
         private void Success(string name)
         {
-            FaceRecognition.CloseCamera();
-            IsCameraOpened = false;
             if (!string.IsNullOrEmpty(name))
             {
                 if (IsBorrowed)
                 {
-                    if (BluetoothHelper.IsBleConnected)
-                    {
-                        _snackbarService.Show("操作成功", $"用户 {name} 已将{BookNameText}还回，小车即将启动，把书送回{ShelfNum}号书架。", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
-                        BluetoothHelper.Send("");
-                    }
-                    else
-                    {
-                        _snackbarService.Show("操作成功", $"用户 {name} 已将{BookNameText}还回，蓝牙未连接，小车无法自动将书送回", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
-                    }
+                    _snackbarService.Show("操作成功", $"用户 {name} 已将{BookNameText}还回", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
                     BooksDb.ReturnBookAsync(IsbnText);
                 }
                 else
                 {
-                    _snackbarService.Show("操作成功", $"用户{name}已将{BookNameText}借出", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
+                    _snackbarService.Show("操作成功", $"用户 {name} 已将{BookNameText}借出", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
                     BooksDb.BorrowBookAsync(IsbnText);
                 }
                 IsBorrowed = !IsBorrowed;
-                WeakReferenceMessenger.Default.Send("refresh", "BookInfo");
                 WeakReferenceMessenger.Default.Send("refresh", "BookManage");
             }
-            else
+            else if (IsCameraOpened)
             {
                 _snackbarService.Show("操作失败", "该用户未录入数据库，请先录入人脸数据。", ControlAppearance.Caution, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(3));
             }
+            FaceRecognition.CloseCamera();
+            IsCameraOpened = false;
         }
 
         [RelayCommand]

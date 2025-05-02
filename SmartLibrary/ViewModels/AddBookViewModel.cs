@@ -38,12 +38,6 @@ namespace SmartLibrary.ViewModels
         private string _isbnAttitudeImage = "pack://application:,,,/Assets/wrong.png";
 
         [ObservableProperty]
-        private bool _isScanButtonEnabled = true;
-
-        [ObservableProperty]
-        private bool _isScanButtonVisible = false;
-
-        [ObservableProperty]
         private bool _isSearchButtonEnabled = false;
 
         [ObservableProperty]
@@ -129,12 +123,7 @@ namespace SmartLibrary.ViewModels
             _snackbarService = snackbarService;
             _contentDialogService = contentDialogService;
             localStorage.LoadingCompleted += LoadingCompleted;
-            BluetoothHelper.ReceiveEvent += OnBluetoothReceived;
 
-            if (BluetoothHelper.IsBleConnected)
-            {
-                IsScanButtonVisible = true;
-            }
 
             if (network.IsInternetConnected)
             {
@@ -152,29 +141,6 @@ namespace SmartLibrary.ViewModels
                 ErrorTitle = "提示";
                 ErrorText = "网络未连接！无法查询联网数据库，请手动录入书籍信息或连接网络后重试。";
                 ErrorSeverity = InfoBarSeverity.Warning;
-            }
-        }
-
-        [RelayCommand]
-        private void OnScanButtonClick()
-        {
-            _snackbarService.Show("正在扫描", $"请将书置于亚克力板上", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(2));
-            BluetoothHelper.Send("scan");
-            IsScanButtonEnabled = false;
-        }
-
-        private void OnBluetoothReceived(string info)
-        {
-            IsScanButtonEnabled = true;
-            if (info.StartsWith("978") && info.Length == 13)
-            {
-                IsbnText = info;
-                _ = OnSearchButtonClick();
-            }
-            else
-            {
-                _snackbarService.Show("条码错误", $"请重新扫描", ControlAppearance.Caution, new SymbolIcon(SymbolRegular.Info16), TimeSpan.FromSeconds(2));
-                System.Media.SystemSounds.Asterisk.Play();
             }
         }
 
