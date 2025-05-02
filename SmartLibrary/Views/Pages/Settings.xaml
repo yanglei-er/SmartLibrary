@@ -323,7 +323,7 @@
                                 <ui:TextBlock
                                     FontSize="13"
                                     Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
-                                    Text="设置程序中显示的强调色" />
+                                    Text="设置程序中显示的强调色（下一次启动时生效）" />
                             </StackPanel>
                             <StackPanel Grid.Column="1" Orientation="Horizontal">
                                 <RadioButton GroupName="AccentColor" IsChecked="{Binding ViewModel.IsCustomizedAccentColor, Converter={StaticResource IsCustomizedAccentColorConverter}, ConverterParameter=System, Mode=TwoWay}">

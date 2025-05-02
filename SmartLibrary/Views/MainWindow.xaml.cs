@@ -1,4 +1,5 @@
-﻿using Shared.Helpers;
+﻿using Shared.Appearance;
+using Shared.Helpers;
 using Shared.Services.Contracts;
 using SmartLibrary.Helpers;
 using SmartLibrary.ViewModels;
@@ -21,8 +22,6 @@ namespace SmartLibrary.Views
         ISnackbarService snackbarService,
         IContentDialogService contentDialogService)
         {
-            LoadingSettings();
-
             ViewModel = viewModel;
             DataContext = this;
             InitializeComponent();
@@ -33,10 +32,20 @@ namespace SmartLibrary.Views
             contentDialogService.SetDialogHost(RootContentDialog);
 
             _snackbarService = snackbarService;
-#if RELEASE
+
             Loaded += Window_Loaded;
-#endif
             BluetoothHelper.BleStateChangedEvent += OnBleStateChanged;
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            LoadingSettings();
+            WindowInteropHelper helper = new(this);
+            HwndSource hwndSource = HwndSource.FromHwnd(helper.Handle);
+            hwndSource.AddHook(new HwndSourceHook(WndProc));
+#if RELEASE
+            hwndSource.AddHook(new HwndSourceHook(BluetoothHelper.HwndHandler));
+#endif
         }
 
         private void LoadingSettings()
@@ -45,22 +54,14 @@ namespace SmartLibrary.Views
             if (SettingsHelper.GetConfig("Theme") == "System")
             {
                 SystemThemeWatcher.Watch(this);
-                ApplicationThemeManager.Changed += (t, _) => { ResourceManager.UpdateTheme(Shared.Helpers.Utils.GetUserApplicationTheme(t.ToString()).ToString()); };
+                ThemeManager.Changed += (t, _) => { ResourceManager.UpdateTheme(Shared.Helpers.Utils.GetUserApplicationTheme(t.ToString()).ToString()); };
             }
             ResourceManager.UpdateTheme(theme.ToString());
-            ApplicationThemeManager.Apply(theme, Shared.Helpers.Utils.GetUserBackdrop(SettingsHelper.GetConfig("Backdrop")));
+            ThemeManager.Apply(theme, Shared.Helpers.Utils.GetUserBackdrop(SettingsHelper.GetConfig("Backdrop")));
             if (SettingsHelper.GetBoolean("IsCustomizedAccentColor"))
             {
                 ApplicationAccentColorManager.Apply(Shared.Helpers.Utils.StringToColor(SettingsHelper.GetConfig("CustomizedAccentColor")), theme);
             }
-        }
-
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            WindowInteropHelper helper = new(this);
-            HwndSource hwndSource = HwndSource.FromHwnd(helper.Handle);
-            hwndSource.AddHook(new HwndSourceHook(BluetoothHelper.HwndHandler));
-            hwndSource.AddHook(new HwndSourceHook(WndProc));
         }
 
         private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wparam, IntPtr lparam, ref bool handled)

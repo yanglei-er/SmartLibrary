@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
+using Shared.Appearance;
 using Shared.Helpers;
 using SmartLibrary.Helpers;
-using System.Diagnostics;
 using System.IO;
 using System.Windows.Media;
 using Wpf.Ui;
@@ -206,19 +206,19 @@ namespace SmartLibrary.ViewModels
             {
                 SettingsHelper.SetConfig("Theme", "System");
                 ApplicationTheme theme = Shared.Helpers.Utils.GetUserApplicationTheme("System");
-                ApplicationThemeManager.Apply(theme, Shared.Helpers.Utils.GetUserBackdrop(SettingsHelper.GetConfig("Backdrop")));
+                ThemeManager.Apply(theme, Shared.Helpers.Utils.GetUserBackdrop(SettingsHelper.GetConfig("Backdrop")));
                 ResourceManager.UpdateTheme(theme.ToString());
             }
             else if (value == 1)
             {
                 SettingsHelper.SetConfig("Theme", "Light");
-                ApplicationThemeManager.Apply(ApplicationTheme.Light, Shared.Helpers.Utils.GetUserBackdrop(SettingsHelper.GetConfig("Backdrop")));
+                ThemeManager.Apply(ApplicationTheme.Light, Shared.Helpers.Utils.GetUserBackdrop(SettingsHelper.GetConfig("Backdrop")));
                 ResourceManager.UpdateTheme("Light");
             }
             else
             {
                 SettingsHelper.SetConfig("Theme", "Dark");
-                ApplicationThemeManager.Apply(ApplicationTheme.Dark, Shared.Helpers.Utils.GetUserBackdrop(SettingsHelper.GetConfig("Backdrop")));
+                ThemeManager.Apply(ApplicationTheme.Dark, Shared.Helpers.Utils.GetUserBackdrop(SettingsHelper.GetConfig("Backdrop")));
                 ResourceManager.UpdateTheme("Dark");
             }
         }
@@ -229,7 +229,6 @@ namespace SmartLibrary.ViewModels
             if (value)
             {
                 SystemAccentColor = Shared.Helpers.Utils.StringToSolidColorBrush(SettingsHelper.GetConfig("CustomizedAccentColor"));
-                ApplicationAccentColorManager.Apply(SystemAccentColor.Color, Shared.Helpers.Utils.GetUserApplicationTheme(SettingsHelper.GetConfig("Theme")));
             }
             else
             {
@@ -285,27 +284,31 @@ namespace SmartLibrary.ViewModels
                 Dark1 = Shared.Helpers.Utils.ColorToSolidColorBrush(_color.UpdateBrightness(-5f));
                 Dark2 = Shared.Helpers.Utils.ColorToSolidColorBrush(_color.UpdateBrightness(-10f));
                 Dark3 = Shared.Helpers.Utils.ColorToSolidColorBrush(_color.UpdateBrightness(-15f));
-                ApplicationAccentColorManager.Apply(SystemAccentColor.Color, Shared.Helpers.Utils.GetUserApplicationTheme(SettingsHelper.GetConfig("Theme")));
             }
         }
 
         partial void OnCurrentBackdropIndexChanged(int value)
         {
+            ApplicationTheme theme = Shared.Helpers.Utils.GetUserApplicationTheme(SettingsHelper.GetConfig("Theme"));
             if (value == 0)
             {
                 SettingsHelper.SetConfig("Backdrop", "None");
+                BackgroundManager.UpdateBackground(UiApplication.Current.MainWindow, theme, WindowBackdropType.None);
             }
             else if (value == 1)
             {
-                SettingsHelper.SetConfig("Backdrop", "Acrylic");
+                SettingsHelper.SetConfig("Backdrop", "Acrylic"); 
+                BackgroundManager.UpdateBackground(UiApplication.Current.MainWindow, theme, WindowBackdropType.Acrylic);
             }
             else if (value == 2)
             {
-                SettingsHelper.SetConfig("Backdrop", "Mica");
+                SettingsHelper.SetConfig("Backdrop", "Mica"); 
+                BackgroundManager.UpdateBackground(UiApplication.Current.MainWindow, theme, WindowBackdropType.Mica);
             }
             else
             {
-                SettingsHelper.SetConfig("Backdrop", "Tabbed");
+                SettingsHelper.SetConfig("Backdrop", "Tabbed"); 
+                BackgroundManager.UpdateBackground(UiApplication.Current.MainWindow, theme, WindowBackdropType.Tabbed);
             }
         }
 

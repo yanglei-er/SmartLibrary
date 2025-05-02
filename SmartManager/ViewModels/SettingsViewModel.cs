@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Shared.Appearance;
 using Shared.Helpers;
 using SmartManager.Helpers;
 using System.Windows;
@@ -116,19 +117,19 @@ namespace SmartManager.ViewModels
             {
                 SettingsHelper.SetConfig("Theme", "System");
                 ApplicationTheme theme = Utils.GetUserApplicationTheme("System");
-                ApplicationThemeManager.Apply(theme, Utils.GetUserBackdrop(SettingsHelper.GetConfig("Backdrop")));
+                ThemeManager.Apply(theme, Utils.GetUserBackdrop(SettingsHelper.GetConfig("Backdrop")));
                 ResourceManager.UpdateTheme(theme.ToString());
             }
             else if (value == 1)
             {
                 SettingsHelper.SetConfig("Theme", "Light");
-                ApplicationThemeManager.Apply(ApplicationTheme.Light, Utils.GetUserBackdrop(SettingsHelper.GetConfig("Backdrop")));
+                ThemeManager.Apply(ApplicationTheme.Light, Utils.GetUserBackdrop(SettingsHelper.GetConfig("Backdrop")));
                 ResourceManager.UpdateTheme("Light");
             }
             else
             {
                 SettingsHelper.SetConfig("Theme", "Dark");
-                ApplicationThemeManager.Apply(ApplicationTheme.Dark, Utils.GetUserBackdrop(SettingsHelper.GetConfig("Backdrop")));
+                ThemeManager.Apply(ApplicationTheme.Dark, Utils.GetUserBackdrop(SettingsHelper.GetConfig("Backdrop")));
                 ResourceManager.UpdateTheme("Dark");
             }
         }
@@ -201,21 +202,26 @@ namespace SmartManager.ViewModels
 
         partial void OnCurrentBackdropIndexChanged(int value)
         {
+            ApplicationTheme theme = Shared.Helpers.Utils.GetUserApplicationTheme(SettingsHelper.GetConfig("Theme"));
             if (value == 0)
             {
                 SettingsHelper.SetConfig("Backdrop", "None");
+                BackgroundManager.UpdateBackground(UiApplication.Current.MainWindow, theme, WindowBackdropType.None);
             }
             else if (value == 1)
             {
                 SettingsHelper.SetConfig("Backdrop", "Acrylic");
+                BackgroundManager.UpdateBackground(UiApplication.Current.MainWindow, theme, WindowBackdropType.Acrylic);
             }
             else if (value == 2)
             {
                 SettingsHelper.SetConfig("Backdrop", "Mica");
+                BackgroundManager.UpdateBackground(UiApplication.Current.MainWindow, theme, WindowBackdropType.Mica);
             }
             else
             {
                 SettingsHelper.SetConfig("Backdrop", "Tabbed");
+                BackgroundManager.UpdateBackground(UiApplication.Current.MainWindow, theme, WindowBackdropType.Tabbed);
             }
         }
 

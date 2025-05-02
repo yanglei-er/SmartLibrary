@@ -7,6 +7,9 @@ namespace Shared.Helpers
 {
     public static class Utils
     {
+        private static readonly Version _osVersion = Environment.OSVersion.Version;
+        public static bool IsOSWindows11Insider1OrNewer => _osVersion.Build >= 22523;
+
         public static int GetCurrentApplicationThemeIndex(string theme)
         {
             if (theme == "System")
