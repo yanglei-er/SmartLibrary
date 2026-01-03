@@ -1,10 +1,8 @@
-﻿using Shared.Appearance;
-using Shared.Helpers;
+﻿using Shared.Helpers;
 using Shared.Services.Contracts;
 using SmartLibrary.Helpers;
 using SmartLibrary.ViewModels;
 using System.Runtime.InteropServices;
-using System.Windows.Interop;
 using Wpf.Ui;
 using Wpf.Ui.Appearance;
 
@@ -23,6 +21,7 @@ namespace SmartLibrary.Views
             ViewModel = viewModel;
             DataContext = this;
             InitializeComponent();
+            WindowBackdropType = Utils.GetUserBackdrop(SettingsHelper.GetConfig("Backdrop"));
 
             RootNavigation.SetServiceProvider(serviceProvider);
             navigationService.SetNavigationControl(RootNavigation);
@@ -48,10 +47,10 @@ namespace SmartLibrary.Views
             if (SettingsHelper.GetConfig("Theme") == "System")
             {
                 SystemThemeWatcher.Watch(this);
-                ThemeManager.Changed += (t, _) => { ResourceManager.UpdateTheme(Utils.GetUserApplicationTheme(t.ToString()).ToString()); };
+                ApplicationThemeManager.Changed += (t, _) => { ResourceManager.UpdateTheme(Utils.GetUserApplicationTheme(t.ToString()).ToString()); };
             }
             ResourceManager.UpdateTheme(theme.ToString());
-            ThemeManager.Apply(theme, Utils.GetUserBackdrop(SettingsHelper.GetConfig("Backdrop")));
+            ApplicationThemeManager.Apply(theme);
             if (SettingsHelper.GetBoolean("IsCustomizedAccentColor"))
             {
                 ApplicationAccentColorManager.Apply(Utils.StringToColor(SettingsHelper.GetConfig("CustomizedAccentColor")), theme);

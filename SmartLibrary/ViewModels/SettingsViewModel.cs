@@ -1,6 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
-using Newtonsoft.Json.Linq;
-using Shared.Appearance;
 using Shared.Helpers;
 using SmartLibrary.Helpers;
 using System.IO;
@@ -106,7 +104,7 @@ namespace SmartLibrary.ViewModels
             _contentDialogService = contentDialogService;
             _snackbarService = snackbarService;
             int _deviceIndex = SettingsHelper.GetInt("DeviceIndex");
-            if(_deviceIndex > DevicesName.Count)
+            if (_deviceIndex > DevicesName.Count)
             {
                 DevicesIndex = 0;
                 SettingsHelper.SetConfig("DeviceIndex", "0");
@@ -242,7 +240,7 @@ namespace SmartLibrary.ViewModels
 
         partial void OnTimeOutChanged(int value)
         {
-           if (value > 15)
+            if (value > 15)
             {
                 FlyoutText = $"等待时长不能超过15秒";
                 IsFlyoutOpen = true;
@@ -265,7 +263,7 @@ namespace SmartLibrary.ViewModels
 
         public void SetTimeOut(string timeOut)
         {
-            if(string.IsNullOrEmpty(timeOut))
+            if (string.IsNullOrEmpty(timeOut))
             {
                 TimeOut = 5;
             }
@@ -282,19 +280,19 @@ namespace SmartLibrary.ViewModels
             {
                 SettingsHelper.SetConfig("Theme", "System");
                 ApplicationTheme theme = Shared.Helpers.Utils.GetUserApplicationTheme("System");
-                ThemeManager.Apply(theme, Shared.Helpers.Utils.GetUserBackdrop(SettingsHelper.GetConfig("Backdrop")));
+                ApplicationThemeManager.Apply(theme, Shared.Helpers.Utils.GetUserBackdrop(SettingsHelper.GetConfig("Backdrop")));
                 ResourceManager.UpdateTheme(theme.ToString());
             }
             else if (value == 1)
             {
                 SettingsHelper.SetConfig("Theme", "Light");
-                ThemeManager.Apply(ApplicationTheme.Light, Shared.Helpers.Utils.GetUserBackdrop(SettingsHelper.GetConfig("Backdrop")));
+                ApplicationThemeManager.Apply(ApplicationTheme.Light, Shared.Helpers.Utils.GetUserBackdrop(SettingsHelper.GetConfig("Backdrop")));
                 ResourceManager.UpdateTheme("Light");
             }
             else
             {
                 SettingsHelper.SetConfig("Theme", "Dark");
-                ThemeManager.Apply(ApplicationTheme.Dark, Shared.Helpers.Utils.GetUserBackdrop(SettingsHelper.GetConfig("Backdrop")));
+                ApplicationThemeManager.Apply(ApplicationTheme.Dark, Shared.Helpers.Utils.GetUserBackdrop(SettingsHelper.GetConfig("Backdrop")));
                 ResourceManager.UpdateTheme("Dark");
             }
         }
@@ -365,26 +363,26 @@ namespace SmartLibrary.ViewModels
 
         partial void OnCurrentBackdropIndexChanged(int value)
         {
-            ApplicationTheme theme = Shared.Helpers.Utils.GetUserApplicationTheme(SettingsHelper.GetConfig("Theme"));
+            ApplicationTheme theme = Utils.GetUserApplicationTheme(SettingsHelper.GetConfig("Theme"));
             if (value == 0)
             {
                 SettingsHelper.SetConfig("Backdrop", "None");
-                BackgroundManager.UpdateBackground(UiApplication.Current.MainWindow, theme, WindowBackdropType.None);
+                ApplicationThemeManager.Apply(theme, WindowBackdropType.None);
             }
             else if (value == 1)
             {
                 SettingsHelper.SetConfig("Backdrop", "Acrylic");
-                BackgroundManager.UpdateBackground(UiApplication.Current.MainWindow, theme, WindowBackdropType.Acrylic);
+                ApplicationThemeManager.Apply(theme, WindowBackdropType.Acrylic);
             }
             else if (value == 2)
             {
                 SettingsHelper.SetConfig("Backdrop", "Mica");
-                BackgroundManager.UpdateBackground(UiApplication.Current.MainWindow, theme, WindowBackdropType.Mica);
+                ApplicationThemeManager.Apply(theme, WindowBackdropType.Mica);
             }
             else
             {
                 SettingsHelper.SetConfig("Backdrop", "Tabbed");
-                BackgroundManager.UpdateBackground(UiApplication.Current.MainWindow, theme, WindowBackdropType.Tabbed);
+                ApplicationThemeManager.Apply(theme, WindowBackdropType.Tabbed);
             }
         }
 

@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net9.0-windows10.0.26100.0</TargetFramework>
+    <TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
 	<SupportedOSPlatformVersion>10.0.18362.0</SupportedOSPlatformVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
@@ -88,11 +88,12 @@
 
     <ItemGroup>
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-		<PackageReference Include="EleCho.WpfSuite" Version="0.10.12" />
-		<PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.4" />
-		<PackageReference Include="System.Data.SQLite" Version="1.0.119" />
-		<PackageReference Include="WPF-UI" Version="4.0.2" />
-		<PackageReference Include="WPF-UI.DependencyInjection" Version="4.0.2" />
+		<PackageReference Include="EleCho.WpfSuite" Version="0.10.20" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.1" />
+		<PackageReference Include="SourceGear.sqlite3" Version="3.50.4.5" />
+		<PackageReference Include="System.Data.SQLite" Version="2.0.2" />
+		<PackageReference Include="WPF-UI" Version="4.1.0" />
+		<PackageReference Include="WPF-UI.DependencyInjection" Version="4.1.0" />
 		<PackageReference Include="WpfAnimatedGif" Version="2.0.2" />
 		<PackageReference Include="Yitter.IdGenerator" Version="1.0.14" />
 	</ItemGroup>
